@@ -5,6 +5,27 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (real coordination-cost wage component)
+
+### Changed
+- `coordination_cost`'s wage component replaced with a real, sourced value: the O*NET OnLine (BLS
+  OEWS) median hourly wage for SOC 43-6013 Medical Secretaries and Administrative Assistants,
+  **$22.08/hour** (2025) -- also added as its own citable reference parameter,
+  `scheduler_hourly_wage_onet_2025`. bls.gov itself returns HTTP 403 to automated retrieval with an
+  explicit stated bot policy; O*NET OnLine is the DOL/BLS-funded site that republishes the same OEWS
+  data and does not block this.
+- The time component (2 schedulers -- GYN and colorectal -- x 30 minutes each) is a practitioner
+  estimate from the PI's own Denver Health institutional experience, obtained by asking rather than
+  guessing, and remains flagged `provisional = TRUE` since it is not independently published. Base
+  value: 2 x 0.5hr x $22.08 = **$22.08** (coincidentally close to the $25 placeholder it replaced,
+  but now traceable and defensible rather than an unfounded guess).
+- Caught and fixed a second small mistake before committing (this time unrelated to CSV quoting: the
+  new notes text used lowercase "provisional" where `test-parameters.R`'s own-provenance check
+  requires the uppercase `PROVISIONAL` keyword) via the same immediate-test-run discipline.
+- Base case updated: combined EMB $540.26 (was $543.18), office EMB unchanged $875.26, D&C unchanged
+  $4,101.64. Minutes threshold ~15.0 (was ~14.9); PSA cost-saving frequency 93.9% (was 94%, both
+  within Monte Carlo noise of the small $2.92 base-case shift).
+
 ## 2026-08-28 (real D&C anesthesia cost)
 
 ### Changed

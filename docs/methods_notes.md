@@ -85,21 +85,28 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$543.18** per patient
+- Combined EMB: **$540.26** per patient
 - Office EMB: **$875.26** per patient
 - Operative D&C: **$4,101.64** per patient
-- Combined EMB is **$332.09 (37.9%) cheaper** than office EMB
+- Combined EMB is **$335.01 (38.3%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~14.9 minutes** -- comfortably above the entire observed 1-12 minute range from
+  stays below **~15.0 minutes** -- comfortably above the entire observed 1-12 minute range from
   Huang et al. 2011, not just its upper end
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **94%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **93.9%** of 1,000 probabilistic-sensitivity draws
 
-(Updated 2026-08-28, in two steps: first when `dnc_facility_or_asc_fee` was replaced with a real,
-sourced CMS OPPS rate, then when `dnc_anesthesia_cost` was replaced with a real CMS PUF-derived
-value -- see the caveat below. Net effect: the minutes threshold rose from ~11.2 to ~14.9 minutes,
-and PSA cost-saving frequency rose from 85.8% to 94%.)
+(Updated 2026-08-28, in three steps: `dnc_facility_or_asc_fee` and `dnc_anesthesia_cost` replaced with
+real CMS values, then `coordination_cost`'s wage component replaced with a real BLS/O*NET wage --
+see the caveats below. Net effect: the minutes threshold rose from ~11.2 to ~15.0 minutes, and PSA
+cost-saving frequency rose from 85.8% to 93.9%.)
+
+**On `coordination_cost` ($22.08):** the wage half is now real (O*NET/BLS OEWS median wage for SOC
+43-6013, $22.08/hr); the time half (2 schedulers x 30 min each) is a practitioner estimate from the
+PI's own institutional experience (Denver Health), not an independently published source. This is a
+genuinely different kind of "provisional" than an unfounded guess -- it reflects real workflow
+knowledge -- but is kept flagged `provisional = TRUE` until a formal micro-costing study of
+coordination time exists. See `docs/data_sources.md`.
 
 **Caveat on the D&C-dominance finding:** two of the D&C arm's four non-professional/pathology cost
 components are now real, sourced values rather than assumptions:

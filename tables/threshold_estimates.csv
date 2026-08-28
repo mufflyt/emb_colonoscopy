@@ -1,5 +1,5 @@
 question,parameter,threshold_value,converged,search_lower,search_upper
-Max incremental colonoscopy-suite minutes before combined stops being cheapest,combined_emb_added_minutes,14.932241842121222,TRUE,0,200
-Office EMB failure probability at which combined becomes cost-saving vs. office,emb_failure_lynch,0.05603516982174767,TRUE,1e-4,0.9999
+Max incremental colonoscopy-suite minutes before combined stops being cheapest,combined_emb_added_minutes,15.019574401555905,TRUE,0,200
+Office EMB failure probability at which combined becomes cost-saving vs. office,emb_failure_lynch,0.05532325946393955,TRUE,1e-4,0.9999
 D&C facility fee at which D&C becomes dominated by both alternatives,dnc_facility_or_asc_fee,NA,FALSE,0,20000
 Max coordination cost before combined loses its advantage vs. office,coordination_cost,357.08858605232706,TRUE,0,5000

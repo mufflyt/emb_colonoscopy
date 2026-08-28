@@ -1,4 +1,4 @@
 strategy,strategy_label,initial_cost,escalation_probability,escalation_cost,expected_total_cost,incremental_cost_vs_cheapest,pct_difference_vs_cheapest,is_cheapest
-combined_emb,EMB with colonoscopy,395.52,0.036,147.66,543.18,0,0,TRUE
-office_emb,Office EMB (standalone),313.34,0.137,561.92,875.26,332.09,61.1,FALSE
-dnc,Operative D&C,4101.64,0,0,4101.64,3558.46,655.1,FALSE
+combined_emb,EMB with colonoscopy,392.6,0.036,147.66,540.26,0,0,TRUE
+office_emb,Office EMB (standalone),313.34,0.137,561.92,875.26,335.01,62,FALSE
+dnc,Operative D&C,4101.64,0,0,4101.64,3561.38,659.2,FALSE

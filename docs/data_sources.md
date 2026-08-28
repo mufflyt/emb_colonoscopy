@@ -14,6 +14,7 @@ mining, in the order it was identified during model design.
 | `dc_professional_cost` | $209.76 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
 | `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
 | `dnc_anesthesia_cost` | $114.50 | CMS PUF 2024, CPT 00952 (ASA crosswalk code for CPT 58120), service-weighted mean across 118 real provider-service rows, 1,936 observed services; low/high are the real p25/p75 |
+| `scheduler_hourly_wage_onet_2025` | $22.08/hr | O*NET OnLine, median wage report for SOC 43-6013 Medical Secretaries and Administrative Assistants, 2025 (BLS OEWS data; bls.gov itself blocks automated retrieval, so this real number was retrieved via O*NET OnLine, the DOL/BLS-funded site republishing the same data) |
 | `combined_emb_added_minutes` | 5 (1-12) | Huang et al. 2011, PMC3014510 |
 | `combined_emb_anesthesia_drug_increment_cost` | $0 | Huang et al. 2011, PMC3014510 |
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
@@ -94,7 +95,7 @@ anything.
 | --- | --- | --- |
 | `emb_disposable_supply_cost` | $35 | Pipelle device + tray + prep supply cost (hospital supply chain or CMS supply fee schedule) |
 | `office_visit_em_cost` | $110 | Confirmed CMS PFS value for the applicable E/M code (currently a rough CPT 99213 anchor) |
-| `coordination_cost` | $25 | A micro-costing or implementation-cost estimate of scheduling/staffing overhead for a combined visit |
+| `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
 | `dnc_preop_clinic_visit_cost` | $150 | Source needed |
 | `dnc_recovery_room_cost` | $250 | Source needed (could be re-modeled as recovery-minutes x a per-minute rate) |
 | `office_to_dnc_escalation_fraction` | 100% | Lynch-specific data on how often a failed office attempt is repeated in-office vs. escalated |

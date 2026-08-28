@@ -3,6 +3,16 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (real coordination-cost wage)
+
+**Coordination cost is now half-real, half-asked.** The wage component of `coordination_cost` --
+what a GYN and colorectal scheduler actually earn per hour -- is now a real BLS-sourced figure
+($22.08/hr, via O*NET OnLine, since bls.gov itself blocks automated retrieval). The time component
+(30 minutes per scheduler) came from asking the PI directly about real Denver Health workflow, rather
+than guessing -- a genuinely different kind of "provisional" than an unfounded number, though still
+flagged as such since it isn't independently published. Base value: $22.08, barely moving the
+headline result (combined EMB $540.26 vs. $543.18 before).
+
 ## 2026-08-28 (real D&C anesthesia cost)
 
 **A second D&C-arm placeholder replaced with real data.** `dnc_anesthesia_cost` -- previously a $400
