@@ -79,6 +79,40 @@ cms_extract_rows <- function(payload) {
   base::stop("Unrecognized CMS API response.")
 }
 
+#' Guard against the CMS API's silent-unfiltered-response failure mode
+#'
+#' The CMS data-api silently ignores a filter condition on a field that
+#' does not exist in the target dataset, returning the ENTIRE unfiltered
+#' table rather than erroring (confirmed empirically: an OPPS "by
+#' Provider and Service" query filtered on "HCPCS_Cd" -- a column that
+#' dataset does not have, since it is organized by APC code instead --
+#' silently returned 116,182 unfiltered rows; see docs/evidence_layers.md
+#' and docs/appendix.md). Pulled out of [cms_query_hcpcs()] as a pure
+#' function so this guard can be unit-tested without a live network call.
+#'
+#' @param page_tbl A tibble/data.frame of results from a single CMS API
+#'   page (only the first page, at offset 0, needs checking).
+#' @param hcpcs_field Character scalar: the field name the query
+#'   requested filtering on.
+#' @return Invisibly `TRUE` if `page_tbl` is empty or actually contains
+#'   `hcpcs_field`; otherwise raises an error.
+validate_cms_filter_field <- function(page_tbl, hcpcs_field) {
+  if (base::nrow(page_tbl) == 0L) {
+    return(base::invisible(TRUE))
+  }
+
+  if (!hcpcs_field %in% base::names(page_tbl)) {
+    base::stop(
+      "CMS dataset has no '", hcpcs_field, "' field to filter on -- got ",
+      "columns: ", base::paste(base::names(page_tbl), collapse = ", "),
+      ". This dataset may be organized by a different code (e.g. APC ",
+      "rather than HCPCS); do not treat this result as filtered."
+    )
+  }
+
+  base::invisible(TRUE)
+}
+
 cms_query_hcpcs <- function(uuid,
                             hcpcs_code,
                             hcpcs_field = "HCPCS_Cd",
@@ -125,22 +159,8 @@ cms_query_hcpcs <- function(uuid,
 
     page_tbl <- cms_extract_rows(payload)
 
-    if (offset == 0L && base::nrow(page_tbl) > 0L &&
-        !hcpcs_field %in% base::names(page_tbl)) {
-      # The CMS data-api silently ignores a filter condition on a field
-      # that does not exist in the dataset, returning the ENTIRE
-      # unfiltered table rather than erroring (confirmed empirically: an
-      # OPPS "by Provider and Service" query filtered on "HCPCS_Cd" -- a
-      # column that dataset does not have, since it is organized by APC
-      # code instead -- silently returned 116,182 unfiltered rows). Fail
-      # loudly instead of returning data that looks plausible but is not
-      # actually filtered to the requested code.
-      base::stop(
-        "CMS dataset has no '", hcpcs_field, "' field to filter on -- got ",
-        "columns: ", base::paste(base::names(page_tbl), collapse = ", "),
-        ". This dataset may be organized by a different code (e.g. APC ",
-        "rather than HCPCS); do not treat this result as filtered."
-      )
+    if (offset == 0L) {
+      validate_cms_filter_field(page_tbl, hcpcs_field)
     }
 
     if (base::nrow(page_tbl) == 0L) {

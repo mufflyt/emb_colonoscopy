@@ -1,3 +1,28 @@
+test_that("validate_cms_filter_field errors when the CMS API silently returns an unfiltered dataset", {
+  # Regression test for the bug documented in docs/evidence_layers.md: a
+  # dataset organized by APC_Cd rather than HCPCS_Cd, queried with
+  # hcpcs_field = "HCPCS_Cd", used to silently return every row instead of
+  # erroring. This is the pure, offline-testable guard extracted from
+  # cms_query_hcpcs().
+  unfiltered_response <- tibble::tibble(
+    APC_Cd = c("5072", "5073"), Avg_Mdcr_Alowd_Amt = c("1365.37", "2337.16")
+  )
+  expect_error(
+    validate_cms_filter_field(unfiltered_response, "HCPCS_Cd"),
+    "no 'HCPCS_Cd' field"
+  )
+})
+
+test_that("validate_cms_filter_field passes when the filter field is present or the page is empty", {
+  properly_filtered_response <- tibble::tibble(
+    HCPCS_Cd = c("58100", "58100"), Avg_Mdcr_Alowd_Amt = c("98.20", "98.20")
+  )
+  expect_true(validate_cms_filter_field(properly_filtered_response, "HCPCS_Cd"))
+
+  empty_response <- tibble::tibble(HCPCS_Cd = character(0))
+  expect_true(validate_cms_filter_field(empty_response, "HCPCS_Cd"))
+})
+
 test_that("summarize_probability_cheapest sums to 100% and covers all three strategies", {
   probabilistic_estimates <- tibble::tibble(
     draw = 1:10,

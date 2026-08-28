@@ -177,7 +177,13 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/appendix.md`](docs/appendix.md) -- documentation index, bug-reproduction record, CI workflow notes
 - [`docs/reuse_mapping.md`](docs/reuse_mapping.md), [`docs/data_sources.md`](docs/data_sources.md),
   [`docs/methods_notes.md`](docs/methods_notes.md), [`docs/validation_notes.md`](docs/validation_notes.md),
-  [`docs/evidence_layers.md`](docs/evidence_layers.md)
+  [`docs/evidence_layers.md`](docs/evidence_layers.md), [`docs/testing_philosophy.md`](docs/testing_philosophy.md)
+
+Every blocking test in `tests/testthat/` is required to be proven to fail on a
+planted defect and pass when reverted, and any finding capable of changing the
+study's conclusions requires independent re-derivation before being treated as
+established -- see [`docs/testing_philosophy.md`](docs/testing_philosophy.md) for
+both rules and a worked log of five real mutation tests.
 
 Continuous integration ([![R tests](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml/badge.svg)](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml))
 runs the full test suite on every push and pull request to `main`.

@@ -103,6 +103,16 @@ The finding that D&C is dominated even before any facility fee is added is there
 by stacked placeholder assumptions and should be treated as illustrative until those four parameters
 are replaced with real data (see `docs/data_sources.md`'s priority list).
 
+This specific finding is capable of changing the study's frame (it says D&C isn't
+merely more expensive but strictly dominated even in a best case), so per
+`docs/testing_philosophy.md`'s independent-confirmation rule it has been re-derived
+via a second, independent arithmetic path
+(`tests/testthat/test-independent-confirmation.R`) that never calls the pipeline
+functions that originally produced it. Both paths agree: the $618.61 gap at zero
+facility fee is a correct consequence of the current parameter values -- not a
+pipeline bug. The caveat above about those values still being provisional stands
+regardless.
+
 ## Simplifying assumptions not yet relaxed
 
 - Pathology cost (`emb_pathology_cost`) is assumed identical across all three strategies (one
