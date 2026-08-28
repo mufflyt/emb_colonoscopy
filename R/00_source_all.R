@@ -8,7 +8,9 @@
 
 required_packages <- c(
   "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
-  "forcats", "rlang"
+  "forcats", "rlang",
+  # evidence layer (CMS/HPT/MEPS) -- see docs/evidence_layers.md
+  "duckplyr", "httr2", "readxl", "stringr"
 )
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
@@ -45,8 +47,17 @@ source_files <- c(
   "sensitivity_probabilistic.R",
   "threshold_analysis.R",
   "scenarios.R",
+  "budget_impact.R",
+  "literature_replication.R",
   "plotting.R",
-  "tables.R"
+  "tables.R",
+  # evidence layer (CMS/HPT/MEPS) -- see docs/evidence_layers.md
+  "evidence_codes.R",
+  "cms_benchmarks.R",
+  "hpt_prices.R",
+  "meps_burden.R",
+  "evidence_synthesis.R",
+  "evidence_provenance.R"
 )
 
 for (source_file in source_files) {

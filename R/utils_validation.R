@@ -76,7 +76,8 @@ validate_model_parameters <- function(model_parameters) {
   required_columns <- c(
     "parameter", "category", "strategy", "description", "base_value",
     "unit", "low_value", "high_value", "distribution", "dollar_year",
-    "source", "provisional", "notes", "gamma_alpha", "gamma_rate"
+    "source", "provisional", "notes", "gamma_alpha", "gamma_rate",
+    "evidence_tier"
   )
 
   missing_columns <- base::setdiff(required_columns, base::names(model_parameters))

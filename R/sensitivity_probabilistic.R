@@ -143,15 +143,26 @@ run_probabilistic_sensitivity <- function(
       strategy_result$strategy_costs
     )
 
+    dnc_cost <- strategy_result$strategy_costs$expected_total_cost[
+      strategy_result$strategy_costs$strategy == "dnc"
+    ]
+
+    draw_costs <- c(
+      office_emb = incremental_result$office_emb_cost,
+      combined_emb = incremental_result$combined_emb_cost,
+      dnc = dnc_cost
+    )
+
     tibble::tibble(
       draw = draw_index,
       office_emb_cost = incremental_result$office_emb_cost,
       combined_emb_cost = incremental_result$combined_emb_cost,
-      dnc_cost = strategy_result$strategy_costs$expected_total_cost[
-        strategy_result$strategy_costs$strategy == "dnc"
-      ],
+      dnc_cost = dnc_cost,
       incremental_cost_combined_vs_office =
-        incremental_result$incremental_cost_combined_vs_office
+        incremental_result$incremental_cost_combined_vs_office,
+      cheapest_strategy = base::names(draw_costs)[
+        base::which.min(draw_costs)
+      ]
     )
   })
 
@@ -167,4 +178,36 @@ run_probabilistic_sensitivity <- function(
   )
 
   probabilistic_estimates
+}
+
+#' Probability each strategy is the least expensive, across PSA draws
+#'
+#' Answers "combined sampling was the least-cost strategy in N% of
+#' simulations" rather than only reporting a single deterministic
+#' comparison.
+#'
+#' @param probabilistic_estimates Tibble from
+#'   [run_probabilistic_sensitivity()], which must include a
+#'   `cheapest_strategy` column.
+#' @return A tibble with one row per strategy: `strategy`, `n_draws_cheapest`,
+#'   `pct_draws_cheapest`.
+summarize_probability_cheapest <- function(probabilistic_estimates) {
+  base::message("Summarizing probability each strategy is least expensive.")
+
+  n_total <- base::nrow(probabilistic_estimates)
+
+  summary_tbl <- probabilistic_estimates %>%
+    dplyr::count(.data$cheapest_strategy, name = "n_draws_cheapest") %>%
+    dplyr::mutate(pct_draws_cheapest = 100 * .data$n_draws_cheapest / n_total) %>%
+    dplyr::rename(strategy = "cheapest_strategy") %>%
+    dplyr::arrange(dplyr::desc(.data$pct_draws_cheapest))
+
+  purrr::walk2(
+    summary_tbl$strategy, summary_tbl$pct_draws_cheapest,
+    ~ base::message(
+      "  ", .x, " was cheapest in ", base::round(.y, 1), "% of draws."
+    )
+  )
+
+  summary_tbl
 }

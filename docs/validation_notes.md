@@ -1,5 +1,13 @@
 # Validation notes
 
+`R/literature_replication.R` implements the harness described below in code:
+`validate_against_published_model()` runs this repository's cost engine against any
+supplied parameter table and reports the percent difference from named target costs,
+and `literature_replication_status()` tracks where each candidate published model
+currently stands. Run `tests/testthat/test-evidence-extras.R` for the tests that
+enforce this honestly (in particular, that Yi et al. 2018 and Havrilesky et al. 2009
+are never marked as reproduced).
+
 ## Why this repository does not reproduce Yi et al. 2018's $1,897.80 / $2,999.11 numerically
 
 Yi et al. 2018 (Gynecologic Oncology, PubMed 29747864) modeled office Pipelle vs. D&C from a U.S.

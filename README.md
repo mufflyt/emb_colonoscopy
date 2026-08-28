@@ -98,11 +98,13 @@ install.packages(c(
 ```sh
 cd emb_colonoscopy
 Rscript tests/testthat.R                        # run the test suite
-Rscript analysis/01_base_case.R                  # base-case comparison + Figure 1
+Rscript analysis/01_base_case.R                  # base-case comparison + budget impact + Figure 1
 Rscript analysis/02_deterministic_sensitivity.R  # one-way sensitivity + tornado (Figure 2)
-Rscript analysis/03_probabilistic_sensitivity.R  # Monte Carlo PSA (Figure 4)
+Rscript analysis/03_probabilistic_sensitivity.R  # Monte Carlo PSA + probability-cheapest (Figure 4)
 Rscript analysis/04_threshold_analysis.R         # threshold analyses + sweep plots (Figure 3)
 Rscript analysis/05_scenario_analysis.R          # Medicaid/commercial/historical scenarios (Figure 5)
+Rscript analysis/06_evidence_layers.R            # CMS/HPT/MEPS public-data benchmarks
+Rscript analysis/07_manuscript_outputs.R         # consolidated Tables 1-9
 ```
 
 Every script logs its inputs, major transformations, and exact output file paths via
@@ -123,6 +125,28 @@ own escalation-to-D&C branches):
   -- see the caveat in `docs/methods_notes.md`.)
 - How much coordination/staffing cost can be added to the combined strategy before it loses its
   advantage over standalone office EMB?
+
+## Evidence layer: benchmarking parameters against public data
+
+Beyond the literature-parameterized model, `R/cms_benchmarks.R`, `R/hpt_prices.R`,
+and `R/meps_burden.R` pull cost benchmarks directly from public sources: the live
+CMS Medicare physician-fee API (no setup required), hospital Price Transparency
+machine-readable files (requires a manifest of real hospital URLs, never committed),
+and MEPS patient/societal burden data (requires local public-use files, never
+committed). An APCD claims-linkage layer and a CMS facility/OPPS layer were designed
+and prototyped but deliberately dropped -- see
+[`docs/evidence_layers.md`](docs/evidence_layers.md) for why, including three real
+bugs the review process caught (a data-masking name collision, a reversed
+inequality-join, and a CMS API endpoint that silently returns an unfiltered dataset
+rather than erroring on a bad filter field).
+
+Every parameter also carries an `evidence_tier` (A = Lynch-specific direct data, B =
+contemporary public cost data, C = general/adjacent literature, D = provisional
+placeholder). `R/literature_replication.R` provides a harness for validating this
+model's engine against a published study's own parameters -- honestly scoped: it
+cross-checks the Ladabaum et al. 2011 cost anchor, and explicitly marks Yi et al.
+2018 and Havrilesky et al. 2009 as `pending_parameter_extraction` rather than faking
+a reproduction (see [`docs/validation_notes.md`](docs/validation_notes.md)).
 
 ## Perspective and extending this model
 

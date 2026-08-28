@@ -36,6 +36,9 @@ psa_summary <- probabilistic_estimates %>%
 
 save_table(psa_summary, "probabilistic_sensitivity_summary.csv")
 
+probability_cheapest <- summarize_probability_cheapest(probabilistic_estimates)
+save_table(probability_cheapest, "probabilistic_sensitivity_probability_cheapest.csv")
+
 psa_histogram <- ggplot2::ggplot(
   probabilistic_estimates,
   ggplot2::aes(x = .data$incremental_cost_combined_vs_office)

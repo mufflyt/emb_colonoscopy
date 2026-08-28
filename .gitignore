@@ -5,3 +5,8 @@
 *.Rproj
 renv/
 tmp/
+
+# Evidence layer: a real (filled-in) hospital MRF manifest must never be
+# committed -- only the _template.csv is tracked. See docs/evidence_layers.md.
+config/hpt_mrf_manifest.csv
+!config/hpt_mrf_manifest_template.csv

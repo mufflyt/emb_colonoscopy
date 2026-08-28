@@ -39,7 +39,8 @@ load_model_parameters <- function(path = "config/model_parameters.csv") {
       provisional = readr::col_logical(),
       notes = readr::col_character(),
       gamma_alpha = readr::col_double(),
-      gamma_rate = readr::col_double()
+      gamma_rate = readr::col_double(),
+      evidence_tier = readr::col_character()
     ),
     show_col_types = FALSE
   )

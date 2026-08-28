@@ -20,6 +20,7 @@ combined_vs_office <- compare_combined_vs_office(strategy_result$strategy_costs)
 pairwise_comparison <- build_pairwise_comparison_table(strategy_result$strategy_costs)
 
 threshold_estimates <- run_threshold_analyses(model_parameters, price_index_table)
+budget_impact <- estimate_budget_impact_all_comparators(strategy_result$strategy_costs)
 
 summary_sentence <- build_summary_sentence(
   strategy_comparison, combined_vs_office, threshold_estimates
@@ -34,6 +35,7 @@ save_table(strategy_result$cost_components, "cost_components.csv")
 save_table(pairwise_comparison, "pairwise_comparison.csv")
 save_table(combined_vs_office, "combined_vs_office.csv")
 save_table(threshold_estimates, "threshold_estimates_base_case.csv")
+save_table(budget_impact, "budget_impact.csv")
 
 readr::write_lines(summary_sentence, "tables/summary_sentence.txt")
 base::message("Saved summary sentence to: tables/summary_sentence.txt")
