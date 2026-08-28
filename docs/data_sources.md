@@ -13,6 +13,7 @@ mining, in the order it was identified during model design.
 | `emb_pathology_cost` | $70.14 | CMS PFS 2026, CPT 88305 (third-party aggregator) |
 | `dc_professional_cost` | $209.76 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
 | `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
+| `dnc_anesthesia_cost` | $114.50 | CMS PUF 2024, CPT 00952 (ASA crosswalk code for CPT 58120), service-weighted mean across 118 real provider-service rows, 1,936 observed services; low/high are the real p25/p75 |
 | `combined_emb_added_minutes` | 5 (1-12) | Huang et al. 2011, PMC3014510 |
 | `combined_emb_anesthesia_drug_increment_cost` | $0 | Huang et al. 2011, PMC3014510 |
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
@@ -96,7 +97,6 @@ anything.
 | `coordination_cost` | $25 | A micro-costing or implementation-cost estimate of scheduling/staffing overhead for a combined visit |
 | `dnc_preop_clinic_visit_cost` | $150 | Source needed |
 | `dnc_recovery_room_cost` | $250 | Source needed (could be re-modeled as recovery-minutes x a per-minute rate) |
-| `dnc_anesthesia_cost` | $400 | Source needed (could be re-modeled minute-based) |
 | `office_to_dnc_escalation_fraction` | 100% | Lynch-specific data on how often a failed office attempt is repeated in-office vs. escalated |
 | `combined_requires_preop_office_visit` | FALSE | Structural scenario assumption, not a literature parameter |
 

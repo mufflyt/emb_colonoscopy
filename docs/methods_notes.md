@@ -85,28 +85,35 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$553.45** per patient
-- Office EMB: **$914.38** per patient
-- Operative D&C: **$4,387.14** per patient
-- Combined EMB is **$360.92 (39.5%) cheaper** than office EMB
+- Combined EMB: **$543.18** per patient
+- Office EMB: **$875.26** per patient
+- Operative D&C: **$4,101.64** per patient
+- Combined EMB is **$332.09 (37.9%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~15.8 minutes** -- comfortably above the entire observed 1-12 minute range from
+  stays below **~14.9 minutes** -- comfortably above the entire observed 1-12 minute range from
   Huang et al. 2011, not just its upper end
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **93.4%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **94%** of 1,000 probabilistic-sensitivity draws
 
-(Updated 2026-08-28 when `dnc_facility_or_asc_fee` was replaced with a real, sourced CMS OPPS rate
--- see the caveat below. The D&C-dominance finding strengthened accordingly: the minutes threshold
-rose from ~11.2 to ~15.8 minutes, and PSA cost-saving frequency rose from 85.8% to 93.4%.)
+(Updated 2026-08-28, in two steps: first when `dnc_facility_or_asc_fee` was replaced with a real,
+sourced CMS OPPS rate, then when `dnc_anesthesia_cost` was replaced with a real CMS PUF-derived
+value -- see the caveat below. Net effect: the minutes threshold rose from ~11.2 to ~14.9 minutes,
+and PSA cost-saving frequency rose from 85.8% to 94%.)
 
-**Caveat on the D&C-dominance finding:** `dnc_facility_or_asc_fee` -- the largest single D&C-arm
-cost component (~75% of the arm's total) -- is now a real, sourced value: the CMS OPPS (hospital
-outpatient) facility payment for CPT 58120, $3,307.24 (July 2026 Addendum B), with the real CMS ASC
-facility payment ($1,738.07, July 2026 Addendum AA) as the low sensitivity bound. Three smaller D&C-arm
-components (`dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`, `dnc_anesthesia_cost`) remain
+**Caveat on the D&C-dominance finding:** two of the D&C arm's four non-professional/pathology cost
+components are now real, sourced values rather than assumptions:
+- `dnc_facility_or_asc_fee` (the largest single component, ~80% of the arm's total): the CMS OPPS
+  (hospital outpatient) facility payment for CPT 58120, $3,307.24 (July 2026 Addendum B), with the
+  real CMS ASC facility payment ($1,738.07, July 2026 Addendum AA) as the low sensitivity bound.
+- `dnc_anesthesia_cost`: the real, CMS PUF-derived anesthesia professional-service cost for CPT 00952
+  (the ASA crosswalk code for 58120), $114.50 -- notably far below the $400 placeholder it replaced,
+  which had been *inflating* the dominance gap rather than deflating it (the finding is now more
+  conservative, not less, than when this component was an unfounded guess).
+
+Two smaller D&C-arm components (`dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`) remain
 provisional placeholders. The dominance finding is therefore now substantially more defensible than
-when all four components were assumed, but is not yet a fully empirical claim until those three
+when all four components were assumed, but is not yet a fully empirical claim until those two
 remaining parameters are also replaced with real data (see `docs/data_sources.md`'s priority list).
 
 This specific finding is capable of changing the study's frame (it says D&C isn't

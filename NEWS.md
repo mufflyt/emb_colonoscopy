@@ -3,6 +3,16 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (real D&C anesthesia cost)
+
+**A second D&C-arm placeholder replaced with real data.** `dnc_anesthesia_cost` -- previously a $400
+guess -- is now the real CMS PUF-derived professional anesthesia cost for CPT 00952: $114.50, from
+118 real provider-service rows. Notably, this real number is *lower* than the placeholder it
+replaced, so fixing it made the D&C-dominance finding more conservative, not less. The D&C arm now
+has only two remaining provisional components (down from four this morning). Base case: combined EMB
+$543.18 vs. office EMB $875.26 vs. D&C $4,101.64 -- a 37.9% saving, holding up to ~14.9 minutes of
+added colonoscopy-suite time.
+
 ## 2026-08-28 (real D&C facility fee)
 
 **The largest placeholder in the model is now real data.** The D&C facility fee --

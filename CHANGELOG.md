@@ -5,6 +5,25 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (real D&C anesthesia cost)
+
+### Changed
+- `dnc_anesthesia_cost` replaced with a real, sourced value: the CMS PUF (Physician & Other
+  Practitioners by Provider and Service) service-weighted mean allowed amount for CPT 00952 (the ASA
+  crosswalk anesthesia code for CPT 58120), **$114.50** (2024, 118 real provider-service rows, 1,936
+  observed services; low/high are the real p25/p75, $77.84/$139.10). Previously a $400 unsourced
+  placeholder -- notably, the real value is far *below* the placeholder, so this fix makes the
+  D&C-dominance finding more conservative, not less, correcting an assumption that had been inflating
+  it. Represents only the anesthesia provider's separately-billed professional fee; routine anesthesia
+  drugs/supplies are packaged into `dnc_facility_or_asc_fee` under OPPS/ASC methodology, so this does
+  not double-count facility-side anesthesia costs.
+- Base case updated: combined EMB $543.18 (was $553.45), office EMB $875.26 (was $914.38), D&C
+  $4,101.64 (was $4,387.14). Combined EMB is 37.9% cheaper than office EMB (was 39.5%); minutes
+  threshold ~14.9 (was ~15.8, still comfortably above Huang et al.'s entire 1-12 minute range); PSA
+  cost-saving frequency 94% (was 93.4%). The D&C arm now has only two remaining provisional
+  components (`dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`), down from four at the start
+  of this session.
+
 ## 2026-08-28 (real D&C facility fee)
 
 ### Changed
