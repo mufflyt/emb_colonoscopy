@@ -85,33 +85,39 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$499.19** per patient
-- Office EMB: **$707.89** per patient
-- Operative D&C: **$2,879.90** per patient
-- Combined EMB is **$208.69 (29.5%) cheaper** than office EMB
+- Combined EMB: **$553.45** per patient
+- Office EMB: **$914.38** per patient
+- Operative D&C: **$4,387.14** per patient
+- Combined EMB is **$360.92 (39.5%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~11.2 minutes** -- notably close to, but comfortably above, the upper end of the
-  observed 1-12 minute range from Huang et al. 2011
+  stays below **~15.8 minutes** -- comfortably above the entire observed 1-12 minute range from
+  Huang et al. 2011, not just its upper end
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **85.8%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **93.4%** of 1,000 probabilistic-sensitivity draws
 
-**Caveat on the D&C-dominance finding:** several D&C-arm cost components
-(`dnc_facility_or_asc_fee`, `dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`,
-`dnc_anesthesia_cost`) are still provisional placeholders, not literature- or CMS-sourced values.
-The finding that D&C is dominated even before any facility fee is added is therefore driven partly
-by stacked placeholder assumptions and should be treated as illustrative until those four parameters
-are replaced with real data (see `docs/data_sources.md`'s priority list).
+(Updated 2026-08-28 when `dnc_facility_or_asc_fee` was replaced with a real, sourced CMS OPPS rate
+-- see the caveat below. The D&C-dominance finding strengthened accordingly: the minutes threshold
+rose from ~11.2 to ~15.8 minutes, and PSA cost-saving frequency rose from 85.8% to 93.4%.)
+
+**Caveat on the D&C-dominance finding:** `dnc_facility_or_asc_fee` -- the largest single D&C-arm
+cost component (~75% of the arm's total) -- is now a real, sourced value: the CMS OPPS (hospital
+outpatient) facility payment for CPT 58120, $3,307.24 (July 2026 Addendum B), with the real CMS ASC
+facility payment ($1,738.07, July 2026 Addendum AA) as the low sensitivity bound. Three smaller D&C-arm
+components (`dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`, `dnc_anesthesia_cost`) remain
+provisional placeholders. The dominance finding is therefore now substantially more defensible than
+when all four components were assumed, but is not yet a fully empirical claim until those three
+remaining parameters are also replaced with real data (see `docs/data_sources.md`'s priority list).
 
 This specific finding is capable of changing the study's frame (it says D&C isn't
 merely more expensive but strictly dominated even in a best case), so per
 `docs/testing_philosophy.md`'s independent-confirmation rule it has been re-derived
 via a second, independent arithmetic path
 (`tests/testthat/test-independent-confirmation.R`) that never calls the pipeline
-functions that originally produced it. Both paths agree: the $618.61 gap at zero
-facility fee is a correct consequence of the current parameter values -- not a
-pipeline bug. The caveat above about those values still being provisional stands
-regardless.
+functions that originally produced it. Both paths agree: the D&C-vs-alternatives gap
+at zero facility fee (the three still-provisional components alone) is a correct
+consequence of the current parameter values -- not a pipeline bug. The caveat above
+about those three values still being provisional stands regardless.
 
 ## Simplifying assumptions not yet relaxed
 

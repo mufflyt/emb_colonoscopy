@@ -3,6 +3,17 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (real D&C facility fee)
+
+**The largest placeholder in the model is now real data.** The D&C facility fee --
+~75% of that strategy's total cost, and previously an unsourced $1,800 guess -- is
+now the actual CMS hospital-outpatient (OPPS) payment for CPT 58120: $3,307.24,
+pulled directly from the current CMS payment addenda. The base case updated
+accordingly: combined EMB is now $553.45 per patient vs. $914.38 for office EMB and
+$4,387.14 for D&C, a 39.5% saving (was 29.5%), remaining the cheapest strategy up to
+~15.8 minutes of added colonoscopy-suite time -- comfortably covering the entire
+observed 1-12 minute range from the literature, not just brushing its upper edge.
+
 ## 2026-08-28 (national colonoscopy-setting analysis)
 
 **A new national feasibility analysis, complementary to the cost model.** Beyond

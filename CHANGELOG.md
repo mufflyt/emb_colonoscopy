@@ -5,6 +5,32 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (real D&C facility fee)
+
+### Changed
+- `dnc_facility_or_asc_fee` replaced with a real, sourced value: the CMS OPPS (hospital outpatient)
+  facility payment for CPT 58120, **$3,307.24** (July 2026 Addendum B, status indicator J1, APC 5414,
+  relative weight 36.1783), downloaded directly from cms.gov. Previously a $1,800 placeholder with no
+  source -- the largest-magnitude provisional input anywhere in the model (~75% of the D&C arm's
+  total cost). Low sensitivity bound is now the real CMS ASC facility rate ($1,738.07, July 2026
+  Addendum AA, payment indicator A2), also added as its own named parameter
+  (`dnc_facility_fee_asc_2026`) for a "D&C in ASC" scenario. Both files required a POST-based
+  workaround for CMS's AMA-license click-through gate -- documented in `docs/data_sources.md` for
+  future quarterly refreshes.
+- Added `cost_hysteroscopy_or_opps_2026` ($3,307.24) -- CPT 58558's own OPPS rate, confirmed identical
+  to 58120's since both group into APC 5414; a same-methodology cross-check distinct from the earlier
+  Munro et al. 2022 comparison (which now compares against the facility-fee component specifically,
+  not the whole D&C arm total, since that total changed).
+- Base case updated accordingly: combined EMB $553.45 (was $499.19), office EMB $914.38 (was
+  $707.89), D&C $4,387.14 (was $2,879.90). Combined EMB is now 39.5% cheaper than office EMB (was
+  29.5%); the minutes threshold rose to ~15.8 (was ~11.2, now comfortably above Huang et al.'s entire
+  1-12 minute observed range rather than just its upper end); PSA cost-saving frequency rose to 93.4%
+  (was 85.8%). The independent-confirmation test's premise (D&C dominance driven by its three
+  *remaining* provisional components) is unaffected, since it explicitly zeroes this exact parameter.
+- `docs/methods_notes.md`'s D&C-dominance caveat updated: the largest D&C-arm cost driver is no longer
+  provisional, though three smaller components (`dnc_preop_clinic_visit_cost`,
+  `dnc_recovery_room_cost`, `dnc_anesthesia_cost`) still are.
+
 ## 2026-08-28 (national colonoscopy-setting analysis)
 
 ### Added

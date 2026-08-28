@@ -12,12 +12,26 @@ mining, in the order it was identified during model design.
 | `emb_office_professional_cost` | $98.20 | CMS PFS 2026, CPT 58100 national nonfacility allowed amount (third-party aggregator) |
 | `emb_pathology_cost` | $70.14 | CMS PFS 2026, CPT 88305 (third-party aggregator) |
 | `dc_professional_cost` | $209.76 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
+| `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
 | `combined_emb_added_minutes` | 5 (1-12) | Huang et al. 2011, PMC3014510 |
 | `combined_emb_anesthesia_drug_increment_cost` | $0 | Huang et al. 2011, PMC3014510 |
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
 | `anesthesia_cost_per_minute` | $3.42/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
 | `emb_failure_lynch` | 13.7% (pooled) | Elmasry 6/25, Lecuru 12/116, Rijcken 2/17, Woolderink 5/25 (via NIHR review, NBK606812) |
 | `combined_to_dnc_probability` | 3.6% (2/55) | Nebgen et al. 2014, PMC4389779 |
+
+**Retrieving the CMS OPPS/ASC addenda:** these are the official CMS payment addenda, updated
+quarterly, at `cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient-pps/
+quarterly-addenda-updates` (OPPS Addendum B) and `cms.gov/medicare/payment/prospective-payment-
+systems/ambulatory-surgical-center-asc/asc-payment-rates-addenda` (ASC Addendum AA). Both sit behind
+an AMA CPT-license click-through (`cms.gov/apps/ama/license.asp?file=/files/zip/{slug}.zip`) rather
+than a direct download link; `curl -X POST` with `agree=yes&next=Accept` to
+`https://www.cms.gov/files/zip/{slug}.zip` (the same URL, POST instead of the GET the license page
+redirects through) returns the real zip. The July 2026 files used here also had a text encoding quirk
+(a curly-apostrophe byte that makes naive `grep` treat the CSV as binary and silently return no
+matches) -- use `grep -a` or open in R with `readr::read_csv()` rather than trusting an unqualified
+`grep` "not found" result. To refresh: replace `july-2026` in the two slugs above with the current
+quarter and re-run the same lookup for CPT 58120.
 
 ## Real values kept deliberately separate from the base-case engine (reference/validation only)
 
@@ -31,8 +45,12 @@ with the CMS-2026 track, or because they are pure external benchmarks:
   inflation-adjusts it to the reference year using the real BLS CPI anchors below and substitutes it
   for `emb_office_professional_cost` as a cross-check, not a base-case input.
 - `cost_hysteroscopy_office_munro_2022` / `_asc_` / `_or_` ($1,382.48 / $1,655.31 / $2,918.10) --
-  Munro et al. 2022, an independent U.S. economic model of CPT 58558 by setting. The OR figure
-  ($2,918.10) is a useful convergent-validation check against this model's D&C arm.
+  Munro et al. 2022, an independent U.S. economic model of CPT 58558 by setting. Munro's OR figure
+  ($2,918.10) is now a convergent-validation check against `dnc_facility_or_asc_fee`'s real CMS OPPS
+  value specifically ($3,307.24, ~13% higher) rather than the full D&C arm total, since the facility
+  fee is now sourced separately from the arm's other components -- see `cost_hysteroscopy_or_opps_2026`
+  ($3,307.24, CPT 58558's own OPPS rate, identical to 58120's since both group into APC 5414) for a
+  same-code, same-methodology comparison instead.
 - `emb_failure_general_adambekov_2017` (22.9%, with an 8/201 access-failure vs. 37/201
   inadequate-specimen breakdown) -- a general (non-Lynch) U.S. Pipelle failure-rate study.
 - `emb_failure_general` (11%) and `emb_insufficient_general` (31%) -- a general postmenopausal-bleeding
@@ -76,7 +94,6 @@ anything.
 | `emb_disposable_supply_cost` | $35 | Pipelle device + tray + prep supply cost (hospital supply chain or CMS supply fee schedule) |
 | `office_visit_em_cost` | $110 | Confirmed CMS PFS value for the applicable E/M code (currently a rough CPT 99213 anchor) |
 | `coordination_cost` | $25 | A micro-costing or implementation-cost estimate of scheduling/staffing overhead for a combined visit |
-| `dnc_facility_or_asc_fee` | $1,800 | CMS OPPS or ASC facility payment for CPT 58120/58558 |
 | `dnc_preop_clinic_visit_cost` | $150 | Source needed |
 | `dnc_recovery_room_cost` | $250 | Source needed (could be re-modeled as recovery-minutes x a per-minute rate) |
 | `dnc_anesthesia_cost` | $400 | Source needed (could be re-modeled minute-based) |
