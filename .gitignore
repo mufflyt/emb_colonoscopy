@@ -10,3 +10,24 @@ tmp/
 # committed -- only the _template.csv is tracked. See docs/evidence_layers.md.
 config/hpt_mrf_manifest.csv
 !config/hpt_mrf_manifest_template.csv
+
+# Public-input acquisition pipeline (analysis/00_get_public_inputs.R):
+# downloaded raw government/survey data files are large, redownloadable,
+# and don't belong in git.
+data-raw/meps/
+data-raw/cms/
+data-raw/hpt/
+
+# Machine-specific generated config (absolute local file paths) -- never
+# committed. Real .Renviron with actual paths stays local too.
+config/public_inputs.R
+config/.Renviron
+
+# Per-run timestamped provenance/sample/manifest snapshots. The frozen
+# canonical files (config/hpt_hospital_sample.csv, config/hpt_mrf_manifest.csv,
+# config/hpt_hospital_domains.csv) are NOT ignored once generated for real --
+# see docs/evidence_layers.md on committing the frozen 120-hospital sample
+# for manuscript reproducibility.
+config/hpt_hospital_sample_*.csv
+config/hpt_mrf_manifest_*.csv
+config/hpt_mrf_failures_*.csv

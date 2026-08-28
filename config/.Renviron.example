@@ -1,0 +1,8 @@
+# Usually not needed: analysis/00_get_public_inputs.R writes a session config.
+MEPS_OFFICE_XLSX=/absolute/path/to/h254g.xlsx
+MEPS_JOBS_XLSX=/absolute/path/to/h253.xlsx
+HPT_MRF_MANIFEST=/absolute/path/to/hpt_mrf_manifest.csv
+
+# Optional controls.
+RUN_EVIDENCE_LAYERS=false
+RESAMPLE_HPT=false

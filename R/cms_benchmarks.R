@@ -1,79 +1,203 @@
-#' CMS Medicare benchmark queries
-#'
-#' Queries the public CMS data.cms.gov API by HCPCS code. Keeps the
-#' professional (Physician & Other Practitioners) and facility (Outpatient
-#' Hospitals) layers separate rather than treating them as contemporaneous
-#' -- the physician file and the facility file are not released on the
-#' same schedule. No API key is required; this hits a public endpoint.
+cms_or_else <- function(value,
+                        fallback) {
+  if (base::is.null(value) || base::length(value) == 0L) {
+    return(fallback)
+  }
 
-cms_find_dataset_uuid <- function(title_pattern) {
-  catalog_url <- "https://data.cms.gov/data.json"
+  value
+}
 
-  base::message("Reading CMS Open Data catalog.")
-
-  response <- httr2::request(catalog_url) |>
-    httr2::req_retry(max_tries = 3) |>
-    httr2::req_perform()
-
-  payload <- httr2::resp_body_json(
-    response,
-    simplifyVector = TRUE
+cms_distribution_uuid <- function(download_url) {
+  matched <- stringr::str_match(
+    download_url,
+    "/dataset/([^/]+)/data"
   )
 
-  catalog_tbl <- tibble::as_tibble(payload$dataset)
+  uuid <- matched[, 2]
 
-  match_tbl <- catalog_tbl |>
-    dplyr::filter(
+  if (base::is.na(uuid)) {
+    base::stop(
+      "Could not extract CMS version UUID from: ",
+      download_url
+    )
+  }
+
+  uuid
+}
+
+cms_resolve_version_uuid <- function(catalog_payload,
+                                     title_pattern,
+                                     data_year = 2024L) {
+  dataset_list <- catalog_payload$dataset
+
+  matched_datasets <- purrr::keep(
+    dataset_list,
+    function(dataset_item) {
+      dataset_title <- cms_or_else(
+        dataset_item$title,
+        ""
+      )
+
       stringr::str_detect(
-        .data$title,
+        dataset_title,
         stringr::regex(
           title_pattern,
           ignore_case = TRUE
         )
       )
-    )
+    }
+  )
 
-  if (base::nrow(match_tbl) != 1L) {
+  if (base::length(matched_datasets) != 1L) {
     base::stop(
       "CMS title matched ",
-      base::nrow(match_tbl),
-      " records: ",
+      base::length(matched_datasets),
+      " datasets: ",
       title_pattern
     )
   }
 
-  # The catalog's `identifier` field is a full URL (e.g.
-  # ".../dataset/<uuid>/data-viewer"), not a bare UUID -- extract the UUID
-  # itself, which is what the data-api endpoints in cms_query_hcpcs()
-  # expect.
-  identifier_value <- match_tbl$identifier[[1]]
-  uuid_pattern <- "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-  uuid <- stringr::str_extract(identifier_value, uuid_pattern)
+  distribution_list <- matched_datasets[[1]]$distribution
+  year_pattern <- base::paste0(
+    "(^|[^0-9])",
+    data_year,
+    "([^0-9]|$)"
+  )
 
-  if (base::is.na(uuid)) {
+  year_candidates <- purrr::keep(
+    distribution_list,
+    function(distribution_item) {
+      format_value <- cms_or_else(
+        distribution_item$format,
+        ""
+      )
+      distribution_title <- cms_or_else(
+        distribution_item$title,
+        ""
+      )
+      temporal_value <- cms_or_else(
+        distribution_item$temporal,
+        ""
+      )
+      access_url <- cms_or_else(
+        distribution_item$accessURL,
+        ""
+      )
+
+      base::identical(format_value, "API") &&
+        (
+          stringr::str_detect(
+            distribution_title,
+            year_pattern
+          ) ||
+            stringr::str_detect(
+              temporal_value,
+              year_pattern
+            )
+        ) &&
+        stringr::str_detect(
+          access_url,
+          "/data-api/v1/dataset/"
+        )
+    }
+  )
+
+  latest_candidates <- purrr::keep(
+    year_candidates,
+    function(distribution_item) {
+      description <- cms_or_else(
+        distribution_item$description,
+        ""
+      )
+
+      base::identical(
+        base::tolower(description),
+        "latest"
+      )
+    }
+  )
+
+  selected_candidates <- if (
+    base::length(latest_candidates) == 1L
+  ) {
+    latest_candidates
+  } else {
+    year_candidates
+  }
+
+  if (base::length(selected_candidates) != 1L) {
     base::stop(
-      "Could not extract a dataset UUID from CMS identifier: ", identifier_value
+      "Expected one CMS API distribution for ",
+      data_year,
+      "; found ",
+      base::length(selected_candidates),
+      "."
     )
   }
 
-  base::message("Resolved CMS UUID: ", uuid)
+  access_url <- selected_candidates[[1]]$accessURL
+  uuid <- cms_distribution_uuid(access_url)
+
+  base::message(
+    "Resolved CMS ",
+    data_year,
+    " version UUID: ",
+    uuid
+  )
 
   uuid
 }
 
+cms_find_dataset_uuid <- function(title_pattern,
+                                  data_year = 2024L) {
+  catalog_url <- "https://data.cms.gov/data.json"
+
+  base::message("Reading CMS Open Data catalog: ", catalog_url)
+
+  response <- httr2::request(catalog_url) |>
+    httr2::req_user_agent(
+      "emb-colonoscopy-research/0.1"
+    ) |>
+    httr2::req_retry(max_tries = 3) |>
+    httr2::req_timeout(seconds = 60) |>
+    httr2::req_perform()
+
+  catalog_payload <- httr2::resp_body_json(
+    response,
+    simplifyVector = FALSE
+  )
+
+  cms_resolve_version_uuid(
+    catalog_payload,
+    title_pattern = title_pattern,
+    data_year = data_year
+  )
+}
+
 cms_extract_rows <- function(payload) {
-  if (is.data.frame(payload)) {
+  if (base::is.data.frame(payload)) {
     return(tibble::as_tibble(payload))
   }
 
-  if (!is.null(payload$data) &&
-      is.data.frame(payload$data)) {
+  if (!base::is.null(payload$data) &&
+      base::is.data.frame(payload$data)) {
     return(tibble::as_tibble(payload$data))
   }
 
-  if (!is.null(payload$data) &&
-      is.list(payload$data)) {
+  if (!base::is.null(payload$data) &&
+      base::is.list(payload$data)) {
     return(dplyr::bind_rows(payload$data))
+  }
+
+  if (base::is.list(payload) &&
+      base::length(payload) > 0L &&
+      base::all(
+        purrr::map_lgl(
+          payload,
+          base::is.list
+        )
+      )) {
+    return(dplyr::bind_rows(payload))
   }
 
   base::stop("Unrecognized CMS API response.")
@@ -87,15 +211,8 @@ cms_extract_rows <- function(payload) {
 #' Provider and Service" query filtered on "HCPCS_Cd" -- a column that
 #' dataset does not have, since it is organized by APC code instead --
 #' silently returned 116,182 unfiltered rows; see docs/evidence_layers.md
-#' and docs/appendix.md). Pulled out of [cms_query_hcpcs()] as a pure
-#' function so this guard can be unit-tested without a live network call.
-#'
-#' @param page_tbl A tibble/data.frame of results from a single CMS API
-#'   page (only the first page, at offset 0, needs checking).
-#' @param hcpcs_field Character scalar: the field name the query
-#'   requested filtering on.
-#' @return Invisibly `TRUE` if `page_tbl` is empty or actually contains
-#'   `hcpcs_field`; otherwise raises an error.
+#' and docs/appendix.md). Pulled out as a pure function so this guard can
+#' be unit-tested without a live network call.
 validate_cms_filter_field <- function(page_tbl, hcpcs_field) {
   if (base::nrow(page_tbl) == 0L) {
     return(base::invisible(TRUE))
@@ -123,15 +240,21 @@ cms_query_hcpcs <- function(uuid,
     "/data"
   )
 
-  base::message("Querying CMS HCPCS: ", hcpcs_code)
+  base::message(
+    "Querying CMS HCPCS ",
+    hcpcs_code,
+    " from version ",
+    uuid,
+    "."
+  )
 
   offset <- 0L
-  page_list <- list()
+  page_list <- base::list()
 
   repeat {
     request_obj <- httr2::request(base_url)
 
-    query_args <- list(
+    query_args <- base::list(
       size = page_size,
       offset = offset,
       `filter[filter-1][condition][path]` =
@@ -149,7 +272,11 @@ cms_query_hcpcs <- function(uuid,
     )
 
     response <- request_obj |>
+      httr2::req_user_agent(
+        "emb-colonoscopy-research/0.1"
+      ) |>
       httr2::req_retry(max_tries = 3) |>
+      httr2::req_timeout(seconds = 60) |>
       httr2::req_perform()
 
     payload <- httr2::resp_body_json(
@@ -180,7 +307,9 @@ cms_query_hcpcs <- function(uuid,
   combined_tbl <- dplyr::bind_rows(page_list)
 
   base::message(
-    "CMS HCPCS rows: ",
+    "CMS HCPCS ",
+    hcpcs_code,
+    " rows: ",
     scales::comma(base::nrow(combined_tbl))
   )
 
@@ -202,7 +331,7 @@ cms_sampling_benchmarks <- function(
     }
   )
 
-  numeric_candidates <- c(
+  numeric_candidates <- base::c(
     "Avg_Sbmtd_Chrg",
     "Avg_Mdcr_Alowd_Amt",
     "Avg_Mdcr_Pymt_Amt",
@@ -218,7 +347,7 @@ cms_sampling_benchmarks <- function(
     dplyr::mutate(
       dplyr::across(
         dplyr::all_of(keep_numeric),
-        as.numeric
+        base::as.numeric
       )
     )
 }
@@ -226,9 +355,10 @@ cms_sampling_benchmarks <- function(
 summarize_cms_benchmarks <- function(cms_tbl) {
   base::message("Summarizing CMS benchmark costs.")
 
-  required_cols <- c(
+  required_cols <- base::c(
     "HCPCS_Cd",
-    "Avg_Mdcr_Alowd_Amt"
+    "Avg_Mdcr_Alowd_Amt",
+    "Tot_Srvcs"
   )
 
   missing_cols <- base::setdiff(
@@ -246,8 +376,17 @@ summarize_cms_benchmarks <- function(cms_tbl) {
   cms_tbl |>
     dplyr::group_by(.data$HCPCS_Cd) |>
     dplyr::summarise(
-      n_rows = dplyr::n(),
-      mean_allowed = mean(
+      n_provider_service_rows = dplyr::n(),
+      total_services = base::sum(
+        .data$Tot_Srvcs,
+        na.rm = TRUE
+      ),
+      service_weighted_mean_allowed = stats::weighted.mean(
+        .data$Avg_Mdcr_Alowd_Amt,
+        .data$Tot_Srvcs,
+        na.rm = TRUE
+      ),
+      mean_allowed = base::mean(
         .data$Avg_Mdcr_Alowd_Amt,
         na.rm = TRUE
       ),
@@ -273,14 +412,13 @@ summarize_cms_benchmarks <- function(cms_tbl) {
     )
 }
 
-
 summarize_cms_facility_benchmarks <- function(
     cms_facility_tbl,
     code_field = "HCPCS_Cd",
     payment_field = "Avg_Tot_Pymt_Amt") {
   base::message("Summarizing CMS facility benchmarks.")
 
-  required_cols <- c(
+  required_cols <- base::c(
     code_field,
     payment_field
   )
@@ -303,25 +441,25 @@ summarize_cms_facility_benchmarks <- function(
     ) |>
     dplyr::summarise(
       n_rows = dplyr::n(),
-      mean_payment = mean(
-        as.numeric(.data[[payment_field]]),
+      mean_payment = base::mean(
+        base::as.numeric(.data[[payment_field]]),
         na.rm = TRUE
       ),
       sd_payment = stats::sd(
-        as.numeric(.data[[payment_field]]),
+        base::as.numeric(.data[[payment_field]]),
         na.rm = TRUE
       ),
       median_payment = stats::median(
-        as.numeric(.data[[payment_field]]),
+        base::as.numeric(.data[[payment_field]]),
         na.rm = TRUE
       ),
       p25_payment = stats::quantile(
-        as.numeric(.data[[payment_field]]),
+        base::as.numeric(.data[[payment_field]]),
         0.25,
         na.rm = TRUE
       ),
       p75_payment = stats::quantile(
-        as.numeric(.data[[payment_field]]),
+        base::as.numeric(.data[[payment_field]]),
         0.75,
         na.rm = TRUE
       ),

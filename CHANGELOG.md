@@ -5,7 +5,59 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
-## 2026-08-28
+## 2026-08-28 (public-input acquisition)
+
+### Added
+- `R/meps_download.R`, `R/hpt_hospital_discovery.R`, `R/public_input_config.R`,
+  `analysis/00_get_public_inputs.R`: a reproducible pipeline that downloads and
+  validates the real 2024 MEPS office-visit and Jobs files, downloads the current CMS
+  hospital list, and draws a fixed-seed (`20260828`), stratified (4 Census regions x
+  3 ownership types x 10 hospitals) sample of 120 hospitals for the HPT layer.
+- `R/cms_benchmarks.R` rewritten with year-aware CMS dataset resolution (walks the
+  catalog's `distribution` array by format/year/`accessURL` rather than regex-parsing
+  the top-level `identifier`), verified against live data to resolve the same UUID as
+  the previous approach.
+- `R/hpt_prices.R` rewritten to handle both CMS v3 tall and wide MRF CSV layouts
+  (metadata rows before the real header, `code|1`/`code|2`/... columns, payer-pivoted
+  wide columns), with per-hospital failure auditing instead of silent drops.
+- `tests/testthat/test-public-inputs.R`: 13 test blocks (23 assertions) covering MEPS
+  column validation, `cms-hpt.txt` parsing, domain normalization, Census
+  region/ownership classification, deterministic stratified sampling, config writing,
+  CMS year-resolution, and tall/wide HPT parsing.
+
+### Fixed (all found by actually running the code against real or realistic data)
+- **Data-masking name collision**, again, in a fresh delivery of `R/evidence_codes.R`
+  (`sampling_code_vector()`) -- same bug as 2026-08-28 (evidence layer), reintroduced
+  in a later delivery of the same file. Fixed the same way.
+- **Data-masking name collision in `hpt_wide_metric_column()`** (`R/hpt_prices.R`):
+  `dplyr::filter(.data$payer_name == payer_name, .data$plan_name == plan_name,
+  .data$metric == metric)` had all three arguments colliding with same-named columns,
+  making the filter always match every row and always return the first payer's price
+  column regardless of which payer was requested. This one was caught by the author's
+  own test on first execution (`Expected: 140, 110`, `Actual: 140, 140`) -- the test
+  was right, it had simply never been run. Fixed with `.env$` on all three comparisons.
+- **Real-vs-assumed CMS column name mismatch** (`download_cms_hospital_frame()`):
+  code and the author's own synthetic test fixture both assumed a normalized column
+  named `citytown`; CMS's real `"City/Town"` header actually normalizes to
+  `city_town`. Only a live download (5,419 real hospitals) surfaced this, since the
+  test shared the same wrong assumption as the implementation. Fixed by extracting
+  `normalize_cms_hospital_frame_names()` as a pure, offline-testable function and
+  adding a regression test using the real column name.
+- Restored the silent-CMS-filter guard (dropped in the rewritten `04_cms_benchmarks.R`)
+  and a stray `.data$` tidyselect deprecation warning.
+
+### Verified against live data during this integration
+- Full MEPS pipeline (download -> extract -> validate -> estimate) against the real
+  2024 files: weighted office-visit total payment $308.10, out-of-pocket $57.38,
+  weighted hourly wage $23.71, 4-hour avoided-visit time cost $94.85.
+- CMS hospital sampling frame: 5,419 real hospitals downloaded, correctly classified
+  into 4 regions x 3 ownership groups, and stratified-sampled to exactly 120 (10 per
+  stratum).
+- `cms-hpt.txt` discovery + parsing against one real hospital (NYU Langone): 5
+  locations correctly parsed with location name, source page, MRF URL, and contact
+  info. Not run in bulk across the full 120-hospital sample (see `docs/evidence_layers.md`).
+
+## 2026-08-28 (evidence layer)
 
 ### Added
 - CI: `.github/workflows/r-tests.yml` runs `tests/testthat.R` on every push and pull

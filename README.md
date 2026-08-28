@@ -93,7 +93,9 @@ emb_colonoscopy/
 ```r
 install.packages(c(
   "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
-  "forcats", "rlang", "testthat"
+  "forcats", "rlang", "testthat",
+  # evidence layer + public-input acquisition
+  "duckplyr", "httr2", "readxl", "stringr", "openssl"
 ))
 ```
 
@@ -105,6 +107,7 @@ Rscript analysis/02_deterministic_sensitivity.R  # one-way sensitivity + tornado
 Rscript analysis/03_probabilistic_sensitivity.R  # Monte Carlo PSA + probability-cheapest (Figure 4)
 Rscript analysis/04_threshold_analysis.R         # threshold analyses + sweep plots (Figure 3)
 Rscript analysis/05_scenario_analysis.R          # Medicaid/commercial/historical scenarios (Figure 5)
+Rscript analysis/00_get_public_inputs.R          # acquire MEPS files + a frozen 120-hospital HPT sample
 Rscript analysis/06_evidence_layers.R            # CMS/HPT/MEPS public-data benchmarks
 Rscript analysis/07_manuscript_outputs.R         # consolidated Tables 1-9
 ```
@@ -137,10 +140,24 @@ machine-readable files (requires a manifest of real hospital URLs, never committ
 and MEPS patient/societal burden data (requires local public-use files, never
 committed). An APCD claims-linkage layer and a CMS facility/OPPS layer were designed
 and prototyped but deliberately dropped -- see
-[`docs/evidence_layers.md`](docs/evidence_layers.md) for why, including three real
-bugs the review process caught (a data-masking name collision, a reversed
-inequality-join, and a CMS API endpoint that silently returns an unfiltered dataset
-rather than erroring on a bad filter field).
+[`docs/evidence_layers.md`](docs/evidence_layers.md) for why, including real bugs the
+review process caught (data-masking name collisions in three separate places, a
+reversed inequality-join, a CMS API endpoint that silently returns an unfiltered
+dataset rather than erroring on a bad filter field, and a real-vs-assumed CMS column
+name mismatch that a synthetic test fixture shared the same wrong assumption with and
+so never caught) -- every one of them found only by actually running the code against
+real or realistic data, not by reading it.
+
+`analysis/00_get_public_inputs.R` reproducibly acquires the public inputs the CMS/HPT/
+MEPS layers need: it downloads and validates the real 2024 MEPS office-visit and Jobs
+files, downloads the current CMS hospital list, and draws a fixed-seed (`20260828`),
+stratified (4 Census regions x 3 ownership types x 10 hospitals) sample of 120
+hospitals for the HPT layer. Resolving that sample's actual price-transparency file
+locations requires fetching each hospital's own CMS-mandated `cms-hpt.txt` -- a
+larger, hospital-by-hospital network operation with genuinely spotty real-world
+coverage (verified against one hospital's live file; not run in bulk as part of this
+integration) -- so that step is left for a deliberate, separate run rather than
+folded into routine setup.
 
 Every parameter also carries an `evidence_tier` (A = Lynch-specific direct data, B =
 contemporary public cost data, C = general/adjacent literature, D = provisional

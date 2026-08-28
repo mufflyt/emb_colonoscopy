@@ -10,7 +10,7 @@ required_packages <- c(
   "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
   "forcats", "rlang",
   # evidence layer (CMS/HPT/MEPS) -- see docs/evidence_layers.md
-  "duckplyr", "httr2", "readxl", "stringr"
+  "duckplyr", "httr2", "readxl", "stringr", "openssl"
 )
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
@@ -57,7 +57,14 @@ source_files <- c(
   "hpt_prices.R",
   "meps_burden.R",
   "evidence_synthesis.R",
-  "evidence_provenance.R"
+  "evidence_provenance.R",
+  # public-input acquisition (reproducible download/discovery pipeline) --
+  # see docs/evidence_layers.md. meps_download.R must precede
+  # hpt_hospital_discovery.R, which reuses its download_public_file() and
+  # sha256_file() helpers.
+  "meps_download.R",
+  "hpt_hospital_discovery.R",
+  "public_input_config.R"
 )
 
 for (source_file in source_files) {

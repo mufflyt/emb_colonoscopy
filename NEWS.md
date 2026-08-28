@@ -3,6 +3,17 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (public-input acquisition)
+
+**Public inputs can now be acquired reproducibly.** `analysis/00_get_public_inputs.R`
+downloads and validates the real 2024 MEPS files and draws a frozen, fixed-seed
+120-hospital sample for the commercial-price layer, instead of requiring hand
+downloads. Verified against live data during integration -- and along the way, two
+more real bugs turned up (another instance of the data-masking bug from the entry
+below, and a CMS column-naming mismatch that the author's own test had shared the
+same wrong assumption with, so it never caught it). See
+[`docs/evidence_layers.md`](docs/evidence_layers.md).
+
 ## 2026-08-28
 
 **CI added.** Every push and pull request now runs the full test suite automatically

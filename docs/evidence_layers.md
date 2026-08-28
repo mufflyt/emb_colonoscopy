@@ -4,20 +4,38 @@ In addition to the literature-parameterized decision model in `R/strategy_costs.
 (driven by `config/model_parameters.csv`), this repository has an "evidence layer" --
 code that pulls cost benchmarks directly from public government and survey data rather
 than from a hand-curated parameter table. This document covers what exists, what was
-tried and dropped, and three real bugs the review process caught before they could
-silently corrupt a result.
+tried and dropped, and several real bugs the review process caught before they could
+silently corrupt a result -- every one of them found by actually running the code
+against real or realistic data, none of them by reading it.
 
 ## What exists
 
 | Layer | File(s) | Data source | Status |
 | --- | --- | --- | --- |
 | CMS Medicare professional benchmarks | `R/cms_benchmarks.R`, `R/evidence_codes.R` | Public `data.cms.gov` API, "Medicare Physician & Other Practitioners - by Provider and Service" (2024) | Working against live data, no setup required |
-| Hospital Price Transparency (commercial) | `R/hpt_prices.R` | Hospital-published CMS-format MRFs, listed in a local manifest | Working; requires a real (non-template) `config/hpt_mrf_manifest.csv` |
+| Hospital Price Transparency (commercial) | `R/hpt_prices.R` | Hospital-published CMS-format MRFs, listed in a local manifest | Working; requires a real (non-template) `config/hpt_mrf_manifest.csv`; parser handles both CMS v3 tall and wide CSV layouts |
 | MEPS patient/societal burden | `R/meps_burden.R` | 2024 MEPS office-based visit and Jobs public-use files | Working; requires local MEPS `.xlsx` files (large, downloaded separately, never committed) |
+| Public-input acquisition | `R/meps_download.R`, `R/hpt_hospital_discovery.R`, `R/public_input_config.R`, `analysis/00_get_public_inputs.R` | Live downloads: 2024 MEPS ZIPs, CMS hospital list, each sampled hospital's CMS-mandated `cms-hpt.txt` | MEPS download/extract/validate and the CMS hospital download + fixed-seed 120-hospital stratified sample are verified working against live data; the per-hospital `cms-hpt.txt` resolution step (potentially 100+ requests to real hospital domains) is verified on one hospital but was deliberately not run in bulk as part of this integration -- see below |
 
-Run all three via `Rscript analysis/06_evidence_layers.R`. Each layer independently
-skips itself with an explanatory message if its data isn't available -- the script
-never fails outright just because, say, no HPT manifest has been filled in yet.
+Run the CMS/HPT/MEPS layers via `Rscript analysis/06_evidence_layers.R`. Each layer
+independently skips itself with an explanatory message if its data isn't available --
+the script never fails outright just because, say, no HPT manifest has been filled in
+yet. Run `Rscript analysis/00_get_public_inputs.R` first to acquire the MEPS files and
+draw the frozen HPT hospital sample (set `RUN_EVIDENCE_LAYERS=true` to chain straight
+into the evidence layers afterward).
+
+**On running the 120-hospital `cms-hpt.txt` resolution step:** `resolve_hpt_manifest()`
+in `R/hpt_hospital_discovery.R` makes one (or two, http/https) request per sampled
+hospital to that hospital's own domain. This is a materially larger and more
+hit-or-miss network footprint than the single-request CMS/MEPS downloads above -- real
+coverage of the CMS "automatic discovery" convention (`https://{domain}/cms-hpt.txt`)
+is currently inconsistent across hospitals (confirmed live: it worked immediately for
+NYU Langone, returning five correctly-parsed hospital locations with contact info and
+MRF URLs, but 404'd for a domain guess against Cleveland Clinic). The pipeline handles
+this correctly -- an unresolvable hospital gets logged to
+`config/hpt_hospital_domains.csv` for manual fill-in rather than silently dropped or
+guessed -- but running all 120 for real is a deliberate action worth doing knowingly,
+not something to trigger as a side effect of routine setup.
 
 ## What was designed, prototyped, and dropped
 
@@ -57,36 +75,65 @@ crosswalk (published annually by CMS as OPPS Addendum B) that has not been obtai
 This is documented in `R/evidence_provenance.R::evidence_layer_catalog()` as
 `hospital_cost_reports`-adjacent future work rather than shipped half-working.
 
-## Three real bugs this review caught (fix it, don't trust it)
+## Real bugs this review caught (fix it, don't trust it)
 
-None of this code had been executed before it was reviewed here. Running it against
-even small synthetic inputs surfaced three genuine correctness bugs:
+None of this code had been executed before it was reviewed here -- both scaffold
+deliveries were static-verified only (no R runtime in the environment that produced
+them). Actually running each one surfaced genuine correctness bugs the author's own
+static checks and, in two cases, the author's own synthetic test fixtures could not
+have caught:
 
-1. **Data-masking name collision** (originally in the now-removed APCD schema code,
-   `sampling_code_vector()` in `R/evidence_codes.R`): `dplyr::filter(.data$concept %in%
-   concept)` had the function argument `concept` colliding with a data column also
+1. **Data-masking name collision** (`sampling_code_vector()` in `R/evidence_codes.R`,
+   and reintroduced in a later delivery of the same file): `dplyr::filter(.data$concept
+   %in% concept)` had the function argument `concept` colliding with a data column also
    named `concept`. dplyr's data-masking resolved the bare `concept` on the right to
    the *column*, not the argument, so every call silently returned every code in the
    codebook regardless of what was asked for. Fixed with `.env$concept` to force
-   argument resolution. A regression test (`sampling_code_vector` returns only the
-   requested concept's codes) exists in the git history from when the APCD layer was
-   present; if that layer is rebuilt, restore an equivalent test.
-2. **Reversed inequality-join columns** (also in the removed APCD episode code):
+   argument resolution.
+2. **Reversed inequality-join columns** (in the removed APCD episode code):
    `dplyr::join_by(rescue_date > service_date, rescue_date <= followup_end)` named
    columns that existed in the *other* table on each side of the comparison, and
    crashed outright rather than silently misjoining. Fixed by swapping to
    `service_date < rescue_date, followup_end >= rescue_date`.
 3. **Silent unfiltered response from the CMS API** (`R/cms_benchmarks.R`): as
    described above under "CMS facility/OPPS benchmarks" -- discovered by checking an
-   implausible row count, not by an error. `cms_query_hcpcs()` now checks that the
+   implausible row count, not by an error. `cms_query_hcpcs()` checks that the
    requested filter field actually exists in the response and raises a loud error if
    not, rather than silently returning an unfiltered dataset that looks like a real
-   answer.
+   answer. Regression test: `validate_cms_filter_field` in
+   `tests/testthat/test-evidence-extras.R`.
+4. **The same data-masking collision, in different code** (`hpt_wide_metric_column()`
+   in `R/hpt_prices.R`): `dplyr::filter(.data$payer_name == payer_name, .data$plan_name
+   == plan_name, .data$metric == metric)` had all three function arguments colliding
+   with same-named data columns. The filter became tautologically true for every row,
+   so the function always returned the *first* matching column regardless of which
+   payer/plan was actually requested -- silently attributing every payer's negotiated
+   price to whichever payer's column happened to come first. This one **was** covered
+   by the author's own test (`"wide HPT parser pivots payer columns"`), which failed
+   on first run once actually executed (`Expected: 140, 110`, `Actual: 140, 140`) --
+   the test was correct, it had just never been run. Fixed the same way as #1,
+   with `.env$` on all three comparisons.
+5. **Real-vs-assumed CMS column name mismatch** (`download_cms_hospital_frame()` in
+   `R/hpt_hospital_discovery.R`): the code expected a normalized column named
+   `citytown`, but the real CMS Hospital General Information file's `"City/Town"`
+   header normalizes (via the same slash-to-underscore rule that correctly handles
+   `"Facility ID"` -> `facility_id`) to `city_town`, not `citytown`. This is the one
+   case in this list where **the author's own synthetic test fixture shared the exact
+   same wrong assumption** (`citytown = "Test City"`, no underscore) as the
+   implementation, so the test passed while being wrong about the real world --
+   internal consistency between code and test is not the same as correctness. Only
+   running `download_cms_hospital_frame()` against a live download (5,419 real
+   hospitals) surfaced it. Fixed by renaming at the ingestion boundary
+   (`normalize_cms_hospital_frame_names()`, extracted as a pure function precisely so
+   this could get an offline regression test:
+   `tests/testthat/test-public-inputs.R`).
 
-The general lesson carried forward: **run every new data-ingestion function against
-real (or realistic synthetic) data and sanity-check the row counts and values before
-trusting it** -- a function that runs without an R error is not the same as a function
-that returns correct data.
+The general lessons carried forward, now formalized in `docs/testing_philosophy.md`:
+**run every new data-ingestion function against real (or realistic synthetic) data and
+sanity-check the row counts and values before trusting it** -- a function that runs
+without an R error is not the same as a function that returns correct data -- and **a
+test sharing the same assumption as the code it tests provides false confidence**; bug
+#5 above is a live example of exactly that failure mode.
 
 ## Evidence tiers
 
