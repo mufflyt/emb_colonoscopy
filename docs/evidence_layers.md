@@ -16,6 +16,7 @@ against real or realistic data, none of them by reading it.
 | Hospital Price Transparency (commercial) | `R/hpt_prices.R` | Hospital-published CMS-format MRFs, listed in a local manifest | Working; requires a real (non-template) `config/hpt_mrf_manifest.csv`; parser handles both CMS v3 tall and wide CSV layouts |
 | MEPS patient/societal burden | `R/meps_burden.R` | 2024 MEPS office-based visit and Jobs public-use files | Working; requires local MEPS `.xlsx` files (large, downloaded separately, never committed) |
 | Public-input acquisition | `R/meps_download.R`, `R/hpt_hospital_discovery.R`, `R/public_input_config.R`, `analysis/00_get_public_inputs.R` | Live downloads: 2024 MEPS ZIPs, CMS hospital list, each sampled hospital's CMS-mandated `cms-hpt.txt` | MEPS download/extract/validate and the CMS hospital download + fixed-seed 120-hospital stratified sample are verified working against live data; the per-hospital `cms-hpt.txt` resolution step (potentially 100+ requests to real hospital domains) is verified on one hospital but was deliberately not run in bulk as part of this integration -- see below |
+| National colonoscopy-setting analysis | `R/colonoscopy_setting.R`, `analysis/08_colonoscopy_setting.R` | CMS Physician & Other Practitioners PUF, 2019-2024, all 11 diagnostic/screening/therapeutic colonoscopy HCPCS codes | Verified against live 2024 data (CPT 45378, 8,237 rows): correct ASC-vs-professional-facility separation avoiding double-counting, correct place-of-service/RUCA/specialty classification, plausible HHI (0.000236) and a real, named ASC directory. All six years (2019-2024) independently confirmed to resolve to distinct CMS dataset UUIDs. The full 11-code x 6-year pull (66 queries against a single well-behaved government API, some codes likely tens of thousands of rows) was not run end-to-end during integration -- left as a deliberate run via `analysis/08_colonoscopy_setting.R` |
 
 Run the CMS/HPT/MEPS layers via `Rscript analysis/06_evidence_layers.R`. Each layer
 independently skips itself with an explanatory message if its data isn't available --
@@ -134,6 +135,38 @@ sanity-check the row counts and values before trusting it** -- a function that r
 without an R error is not the same as a function that returns correct data -- and **a
 test sharing the same assumption as the code it tests provides false confidence**; bug
 #5 above is a live example of exactly that failure mode.
+
+## National colonoscopy-setting analysis: what it's for
+
+`R/colonoscopy_setting.R` answers a different question from the rest of this
+repository: not "what does adding EMB to a colonoscopy cost," but "what fraction of
+U.S. Medicare colonoscopy-coded services occur in facility settings (ASC or hospital
+outpatient) where a coordinated, sedated EMB would even be structurally feasible?"
+It is a national-feasibility complement to the cost model, not part of the
+cost-minimization engine itself -- nothing in `R/strategy_costs.R` depends on it.
+
+Two things worth knowing about its numbers:
+- It reports **colonoscopy-coded services**, not **colonoscopies** -- a single
+  colonoscopy encounter can generate more than one billed line (e.g. a therapeutic
+  code alongside another procedure code), so service counts overstate encounter
+  counts. `summarize_base_code_place()` provides a more conservative check restricted
+  to the three base/screening codes (45378, G0105, G0121), using
+  `Tot_Bene_Day_Srvcs` (CMS's own beneficiary-day service count, which reduces
+  within-day line-service duplication) where available.
+- It does **not** double-count ASC facility billing into the "professional facility"
+  total: ASC organizational NPIs and physician/supplier NPIs are classified
+  separately (`claim_role`), and the residual "other facility" category (unidentified
+  as ASC -- likely mostly hospital outpatient, but the public PUF only distinguishes
+  facility (`F`) vs. nonfacility (`O`), not HOPD specifically) is reported as exactly
+  that: a residual, not an assumption.
+
+One live finding worth flagging as a sanity check rather than a headline result: in
+2024 data for CPT 45378, the office/nonfacility weighted-mean Medicare allowed amount
+($305.70) was *higher* than the facility-setting amount ($170.70) -- consistent with
+Medicare's well-known site-of-service payment differential (physicians are paid more
+in nonfacility settings because they bear the facility overhead themselves), and a
+reassuring signal that the place-of-service classification is being interpreted
+correctly rather than backwards.
 
 ## Evidence tiers
 

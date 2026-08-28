@@ -64,7 +64,10 @@ source_files <- c(
   # sha256_file() helpers.
   "meps_download.R",
   "hpt_hospital_discovery.R",
-  "public_input_config.R"
+  "public_input_config.R",
+  # national colonoscopy-setting analysis -- see docs/evidence_layers.md.
+  # Depends on cms_find_dataset_uuid()/cms_query_hcpcs() from cms_benchmarks.R.
+  "colonoscopy_setting.R"
 )
 
 for (source_file in source_files) {

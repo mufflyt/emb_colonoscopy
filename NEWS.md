@@ -3,6 +3,17 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (national colonoscopy-setting analysis)
+
+**A new national feasibility analysis, complementary to the cost model.** Beyond
+what EMB-with-colonoscopy costs, `analysis/08_colonoscopy_setting.R` asks a related
+question at national scale: what share of U.S. Medicare colonoscopy-coded services
+actually happen in facility settings (ASC or hospital outpatient) where a coordinated
+sedated biopsy would be structurally possible? Verified against real 2019-2024 CMS
+data during integration -- and this was the first externally-generated delivery this
+session that needed no bug fixes after full live verification. See
+[`docs/evidence_layers.md`](docs/evidence_layers.md).
+
 ## 2026-08-28 (public-input acquisition)
 
 **Public inputs can now be acquired reproducibly.** `analysis/00_get_public_inputs.R`

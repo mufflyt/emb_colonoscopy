@@ -109,6 +109,7 @@ Rscript analysis/04_threshold_analysis.R         # threshold analyses + sweep pl
 Rscript analysis/05_scenario_analysis.R          # Medicaid/commercial/historical scenarios (Figure 5)
 Rscript analysis/00_get_public_inputs.R          # acquire MEPS files + a frozen 120-hospital HPT sample
 Rscript analysis/06_evidence_layers.R            # CMS/HPT/MEPS public-data benchmarks
+Rscript analysis/08_colonoscopy_setting.R        # national colonoscopy facility-setting/ASC analysis (2019-2024)
 Rscript analysis/07_manuscript_outputs.R         # consolidated Tables 1-9
 ```
 
@@ -158,6 +159,14 @@ larger, hospital-by-hospital network operation with genuinely spotty real-world
 coverage (verified against one hospital's live file; not run in bulk as part of this
 integration) -- so that step is left for a deliberate, separate run rather than
 folded into routine setup.
+
+`R/colonoscopy_setting.R` adds a complementary national analysis, orthogonal to the
+cost model: what fraction of U.S. Medicare colonoscopy-coded services occur in
+facility settings (ASC or hospital outpatient) where a coordinated, sedated EMB would
+be structurally feasible in the first place, with correct ASC-vs-professional
+separation to avoid double-counting facility billing. Verified against real 2024 data
+and all six claimed years (2019-2024); see
+[`docs/evidence_layers.md`](docs/evidence_layers.md).
 
 Every parameter also carries an `evidence_tier` (A = Lynch-specific direct data, B =
 contemporary public cost data, C = general/adjacent literature, D = provisional

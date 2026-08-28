@@ -17,6 +17,7 @@ config/hpt_mrf_manifest.csv
 data-raw/meps/
 data-raw/cms/
 data-raw/hpt/
+data-raw/cms_colonoscopy/
 
 # Machine-specific generated config (absolute local file paths) -- never
 # committed. Real .Renviron with actual paths stays local too.

@@ -5,6 +5,43 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (national colonoscopy-setting analysis)
+
+### Added
+- `R/colonoscopy_setting.R`, `analysis/08_colonoscopy_setting.R`: a national analysis,
+  complementary to the cost model, of what fraction of U.S. Medicare colonoscopy-coded
+  services occur in facility settings where coordinated sedated EMB is structurally
+  feasible. Queries CMS for 2019-2024 across all 11 diagnostic/screening/therapeutic
+  colonoscopy HCPCS codes, with per-year timestamped caching
+  (`data-raw/cms_colonoscopy/`). Reports facility vs. nonfacility share by year/state/
+  RUCA/specialty, HCPCS code mix, Medicare allowed amounts by setting, provider
+  concentration (HHI), a named ASC directory, a conservative base/screening-code
+  encounter-proxy sensitivity check (using CMS's beneficiary-day service counts to
+  reduce within-day line-service duplication), and a dynamically-generated trend
+  sentence with a fitted linear trend and p-value.
+- Correctly separates ASC organizational billing from physician/supplier "facility"
+  billing (`claim_role`) so the two are never summed into a double-counted facility
+  total; the unidentified residual is reported as "other facility residual," not
+  assumed to be hospital outpatient.
+- `tests/testthat/test-colonoscopy-setting.R`: 8 test blocks, all passing on first run
+  with no fixes needed -- the first externally-generated delivery this session that
+  required no bug fixes after full live verification.
+
+### Verified against live data during this integration
+- All six years (2019-2024) independently confirmed to resolve to distinct CMS
+  dataset UUIDs via the already-verified `cms_find_dataset_uuid()`.
+- Full standardization -> ASC/professional separation -> place-of-service/RUCA/
+  specialty classification -> facility-type-share/HHI/ASC-directory chain run
+  end-to-end against real 2024 data for CPT 45378 (8,237 rows): 94.1% facility share,
+  43.7% ASC share of facility services, HHI 0.000236 (6,815 unique providers), a
+  real named ASC directory (verified plausible facility names/addresses), and a
+  nonfacility/facility Medicare-payment differential ($305.70 vs. $170.70) consistent
+  with Medicare's known site-of-service payment policy -- a strong signal the
+  place-of-service classification is correct, not inverted.
+- The full 11-code x 6-year pull (66 queries) was not run end-to-end during
+  integration (some codes likely return tens of thousands of rows per year); left as
+  a deliberate run via `analysis/08_colonoscopy_setting.R`.
+
 ## 2026-08-28 (public-input acquisition)
 
 ### Added
