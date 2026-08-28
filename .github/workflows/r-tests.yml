@@ -1,0 +1,43 @@
+name: R tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install R package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::readr
+            any::dplyr
+            any::tibble
+            any::tidyr
+            any::purrr
+            any::ggplot2
+            any::scales
+            any::forcats
+            any::rlang
+            any::duckplyr
+            any::httr2
+            any::readxl
+            any::stringr
+            any::testthat
+
+      - name: Run test suite
+        run: Rscript tests/testthat.R

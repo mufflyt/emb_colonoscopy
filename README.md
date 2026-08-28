@@ -1,5 +1,7 @@
 # emb_colonoscopy
 
+[![R tests](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml/badge.svg)](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml)
+
 A reproducible health-economic (cost-minimization) model comparing three ways to obtain an
 endometrial tissue sample in patients with Lynch syndrome: standalone office endometrial biopsy
 (EMB), operative dilation and curettage (D&C), and EMB performed during an already-scheduled
