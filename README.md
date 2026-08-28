@@ -170,6 +170,18 @@ one-way sensitivity/tornado pattern, plotting theme, and CSV-first table convent
 structure for this three-strategy comparison. See [`docs/reuse_mapping.md`](docs/reuse_mapping.md)
 for the full component-by-component mapping of what was reused, adapted, or newly built.
 
+## Documentation
+
+- [`CHANGELOG.md`](CHANGELOG.md) -- exhaustive technical log of every addition, change, fix, and removal
+- [`NEWS.md`](NEWS.md) -- the same history, user-facing highlights only
+- [`docs/appendix.md`](docs/appendix.md) -- documentation index, bug-reproduction record, CI workflow notes
+- [`docs/reuse_mapping.md`](docs/reuse_mapping.md), [`docs/data_sources.md`](docs/data_sources.md),
+  [`docs/methods_notes.md`](docs/methods_notes.md), [`docs/validation_notes.md`](docs/validation_notes.md),
+  [`docs/evidence_layers.md`](docs/evidence_layers.md)
+
+Continuous integration ([![R tests](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml/badge.svg)](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml))
+runs the full test suite on every push and pull request to `main`.
+
 ## License
 
 MIT -- see [`LICENSE`](LICENSE).
