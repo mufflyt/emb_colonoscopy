@@ -60,6 +60,24 @@ test_that("combined EMB arm never includes the colonoscopy baseline anesthesia c
   expect_false(any(grepl("colonoscopy", combined_result$components$component)))
 })
 
+test_that("D&C arm never includes a separate recovery-room component (already packaged into the facility fee)", {
+  # Per MedPAC's ASC payment-basics documentation, recovery-room/PACU time
+  # is packaged into the ASC/OPPS facility payment already captured in
+  # dnc_facility_or_asc_fee. dnc_recovery_room_cost is kept in
+  # config/model_parameters.csv only as a documented, excluded reference
+  # value -- summing it separately would double-count.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  dnc_result <- compute_dnc_strategy_cost(model_parameters, price_index_table, 2026)
+
+  dnc_recovery_room_cost <- get_parameter_value(
+    model_parameters, "dnc_recovery_room_cost"
+  )
+
+  expect_false("recovery_room" %in% dnc_result$components$component)
+  expect_false(dnc_recovery_room_cost %in% dnc_result$components$amount)
+})
+
 test_that("combined EMB initial cost scales with combined_emb_added_minutes", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

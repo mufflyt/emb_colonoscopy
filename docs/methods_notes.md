@@ -85,53 +85,59 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$540.26** per patient
-- Office EMB: **$875.26** per patient
-- Operative D&C: **$4,101.64** per patient
-- Combined EMB is **$335.01 (38.3%) cheaper** than office EMB
+- Combined EMB: **$530.37** per patient
+- Office EMB: **$816.40** per patient
+- Operative D&C: **$3,827.04** per patient
+- Combined EMB is **$286.03 (35.0%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~15.0 minutes** -- comfortably above the entire observed 1-12 minute range from
-  Huang et al. 2011, not just its upper end
+  stays below **~13.6 minutes** -- still comfortably above the entire observed 1-12 minute range from
+  Huang et al. 2011, though the margin has narrowed as D&C-arm cost inflation from placeholders was
+  corrected (see below)
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **93.9%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **90.2%** of 1,000 probabilistic-sensitivity draws
 
-(Updated 2026-08-28, in three steps: `dnc_facility_or_asc_fee` and `dnc_anesthesia_cost` replaced with
-real CMS values, then `coordination_cost`'s wage component replaced with a real BLS/O*NET wage --
-see the caveats below. Net effect: the minutes threshold rose from ~11.2 to ~15.0 minutes, and PSA
-cost-saving frequency rose from 85.8% to 93.9%.)
+(Updated 2026-08-28 across five steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
+`coordination_cost`'s wage component, and `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were
+each replaced with real data, and `dnc_recovery_room_cost` was removed from the D&C arm entirely
+after confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee` -- see the
+caveats below. Net effect on the headline numbers has gone in **both directions**: some fixes raised
+the combined arm's advantage, this last correction (removing a genuine double-count) shrank it --
+evidence this process is following the data, not steering toward a preferred conclusion. Minutes
+threshold moved from ~11.2 to ~13.6; PSA cost-saving frequency moved from 85.8% to 90.2%.)
 
-**On `coordination_cost` ($22.08):** the wage half is now real (O*NET/BLS OEWS median wage for SOC
+**On `coordination_cost` ($22.08):** the wage half is real (O*NET/BLS OEWS median wage for SOC
 43-6013, $22.08/hr); the time half (2 schedulers x 30 min each) is a practitioner estimate from the
 PI's own institutional experience (Denver Health), not an independently published source. This is a
 genuinely different kind of "provisional" than an unfounded guess -- it reflects real workflow
 knowledge -- but is kept flagged `provisional = TRUE` until a formal micro-costing study of
 coordination time exists. See `docs/data_sources.md`.
 
-**Caveat on the D&C-dominance finding:** two of the D&C arm's four non-professional/pathology cost
-components are now real, sourced values rather than assumptions:
-- `dnc_facility_or_asc_fee` (the largest single component, ~80% of the arm's total): the CMS OPPS
-  (hospital outpatient) facility payment for CPT 58120, $3,307.24 (July 2026 Addendum B), with the
-  real CMS ASC facility payment ($1,738.07, July 2026 Addendum AA) as the low sensitivity bound.
-- `dnc_anesthesia_cost`: the real, CMS PUF-derived anesthesia professional-service cost for CPT 00952
-  (the ASA crosswalk code for 58120), $114.50 -- notably far below the $400 placeholder it replaced,
-  which had been *inflating* the dominance gap rather than deflating it (the finding is now more
-  conservative, not less, than when this component was an unfounded guess).
-
-Two smaller D&C-arm components (`dnc_preop_clinic_visit_cost`, `dnc_recovery_room_cost`) remain
-provisional placeholders. The dominance finding is therefore now substantially more defensible than
-when all four components were assumed, but is not yet a fully empirical claim until those two
-remaining parameters are also replaced with real data (see `docs/data_sources.md`'s priority list).
+**Milestone: the D&C-dominance finding is now fully empirical, not partly provisional.** Every
+component of the D&C arm that participates in the "dominated even at $0 facility fee" check --
+`dc_professional_cost`, `emb_pathology_cost`, `dnc_preop_clinic_visit_cost`, and `dnc_anesthesia_cost`
+-- is now a real, CMS-sourced value. `dnc_recovery_room_cost` was removed from the D&C cost function
+entirely (not sourced, but deliberately excluded): per MedPAC's payment-basics documentation of the
+ASC payment system, recovery-room/PACU time is packaged into the facility payment
+(`dnc_facility_or_asc_fee`) under OPPS/ASC methodology, so summing it separately would have
+double-counted it. `dnc_facility_or_asc_fee` itself (the CMS OPPS/ASC facility rate) is also real, but
+is set to $0 for this specific check by construction (that's the point of the check -- does D&C still
+lose even giving it the most generous possible facility-fee assumption). At current values, D&C's
+cost at $0 facility fee is $519.80 -- entirely the sum of real, sourced components -- against a $411.30
+maximum among the alternatives. This is a materially stronger evidentiary basis than the placeholder
+stack this finding rested on earlier in the day.
 
 This specific finding is capable of changing the study's frame (it says D&C isn't
 merely more expensive but strictly dominated even in a best case), so per
 `docs/testing_philosophy.md`'s independent-confirmation rule it has been re-derived
 via a second, independent arithmetic path
 (`tests/testthat/test-independent-confirmation.R`) that never calls the pipeline
-functions that originally produced it. Both paths agree: the D&C-vs-alternatives gap
-at zero facility fee (the three still-provisional components alone) is a correct
-consequence of the current parameter values -- not a pipeline bug. The caveat above
-about those three values still being provisional stands regardless.
+functions that originally produced it, and re-verified (mutation-tested: a planted
+double-count defect was confirmed to make both this test and
+`test-strategy-costs.R`'s exclusion test fail, then confirmed to pass again on
+revert) after the `dnc_recovery_room_cost` removal. Both paths agree: the D&C-vs-
+alternatives gap at zero facility fee is a correct consequence of the current
+parameter values -- not a pipeline bug.
 
 ## Simplifying assumptions not yet relaxed
 

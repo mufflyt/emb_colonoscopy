@@ -2,10 +2,9 @@ strategy,component,amount
 dnc,professional_fee,209.76
 dnc,pathology,70.14
 dnc,facility_fee,3307.24
-dnc,preop_clinic_visit,150
-dnc,recovery_room,250
+dnc,preop_clinic_visit,125.4
 dnc,anesthesia,114.5
-office_emb,office_visit,110
+office_emb,office_visit,88.76
 office_emb,professional_fee,98.2
 office_emb,pathology,70.14
 office_emb,supplies,35

@@ -5,6 +5,47 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (D&C arm fully empirical; real E/M costs; recovery-room double-count removed)
+
+### Changed
+- `dnc_preop_clinic_visit_cost` replaced with a real, sourced value: CMS PUF 2024, CPT 99214
+  (established patient, moderate complexity), filtered to `Rndrng_Prvdr_Type = 'Obstetrics &
+  Gynecology'` specifically (7,642 real provider-service rows, 515,741 observed services),
+  **$125.40** (service-weighted mean; low/high are the real p25/p75). Before pricing this, checked
+  whether it might already be bundled: CMS's 90-day global-surgery period bundles the preoperative
+  day into a major procedure's own payment, which would make a separate line item a double-count.
+  Verified directly against the live CMS PFS Relative Value File (RVU26C, no AMA license gate) that
+  CPT 58120's `GLOB DAYS` field is **010**, not 090 -- a minor-procedure period where the 1-day-before
+  bundling rule does not apply, so this cost is genuinely separate.
+- `office_visit_em_cost` replaced with a real, sourced value: CMS PUF 2024, CPT 99213, same OB/GYN
+  filter (12,739 rows, 686,012 observed services), **$88.76**, replacing the earlier unverified $110
+  national-all-specialty guess.
+- `dnc_recovery_room_cost` **removed** from `compute_dnc_strategy_cost()` entirely (not priced --
+  excluded). Per MedPAC's Ambulatory Surgical Center Services Payment System documentation: "Medicare
+  pays for facility services provided in ASCs -- such as nursing, recovery care, anesthetics, drugs,
+  and other supplies -- using a payment system that is primarily linked to [OPPS]... Within each APC,
+  CMS packages most ancillary items and services with the primary service." Recovery-room/PACU time
+  was already inside `dnc_facility_or_asc_fee`; summing it separately was a genuine double-count that
+  had been inflating the D&C arm (and therefore inflating the combined-vs-office savings estimate) by
+  ~$250 per patient. `dnc_recovery_room_cost` is kept in the parameter table only as a documented,
+  explicitly-excluded reference value, matching the `colonoscopy_anesthesia_episode_cost` pattern.
+- New regression test (`test-strategy-costs.R`) enforces the exclusion; mutation-tested (planted the
+  double-count back in, confirmed both this test and `test-independent-confirmation.R` fail, reverted,
+  confirmed both pass again).
+- `test-independent-confirmation.R`'s hand-derived arithmetic updated to match the corrected D&C
+  structure (it had gone stale relative to the pipeline after the recovery-room removal, which is
+  exactly the kind of divergence that test exists to catch).
+- **Milestone:** every component feeding the "D&C dominated even at $0 facility fee" finding
+  (`dc_professional_cost`, `emb_pathology_cost`, `dnc_preop_clinic_visit_cost`,
+  `dnc_anesthesia_cost`) is now a real, CMS-sourced value -- this finding no longer rests on any
+  provisional placeholder.
+- Base case updated: combined EMB $530.37 (was $540.26), office EMB $816.40 (was $875.26), D&C
+  $3,827.04 (was $4,101.64). Combined EMB is 35.0% cheaper than office EMB (was 38.3%); minutes
+  threshold ~13.6 (was ~15.0, still comfortably above Huang et al.'s entire 1-12 minute range); PSA
+  cost-saving frequency 90.2% (was 93.9%). This is the first fix this session to *narrow* rather than
+  widen the combined arm's advantage -- expected, since it corrected a double-count that had been
+  inflating D&C's cost, not filled a gap that happened to favor one arm.
+
 ## 2026-08-28 (real coordination-cost wage component)
 
 ### Changed

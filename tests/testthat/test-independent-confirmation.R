@@ -21,12 +21,15 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
   reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
 
   # -- D&C cost at zero facility fee, summed directly from raw parameters --
+  # dnc_recovery_room_cost is deliberately excluded: it is packaged into
+  # dnc_facility_or_asc_fee under OPPS/ASC payment methodology (MedPAC,
+  # ASC payment basics), so compute_dnc_strategy_cost() no longer sums it
+  # -- see R/strategy_costs.R and tests/testthat/test-strategy-costs.R.
   independent_dnc_cost_at_zero_fee <-
     get_parameter_value(model_parameters, "dc_professional_cost") +
     get_parameter_value(model_parameters, "emb_pathology_cost") +
     0 + # dnc_facility_or_asc_fee set to zero for this check
     get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost") +
-    get_parameter_value(model_parameters, "dnc_recovery_room_cost") +
     get_parameter_value(model_parameters, "dnc_anesthesia_cost")
 
   # -- office EMB expected cost, summed directly from raw parameters --

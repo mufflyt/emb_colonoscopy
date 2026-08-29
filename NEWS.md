@@ -3,6 +3,23 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (D&C arm now fully empirical)
+
+**The D&C arm's headline finding no longer rests on any placeholder.** Filled the last two D&C-arm
+gaps with real CMS data -- the preop visit ($125.40, CPT 99214, OB/GYN-specific claims) and, as a
+bonus using the same query, the office-EMB visit cost too ($88.76, was an unverified $110 guess). But
+the more important fix was a subtraction, not an addition: `dnc_recovery_room_cost` ($250) turned out
+to already be included inside the facility fee sourced earlier this session -- CMS packages recovery
+room/PACU time into the ASC/OPPS facility payment by design (confirmed via MedPAC's official payment
+documentation) -- so charging it separately was double-counting. Removed it, with a new regression
+test (mutation-tested) enforcing the exclusion going forward.
+
+Net effect: every input behind "D&C is dominated by both alternatives even at $0 facility fee" is now
+real, sourced data -- and, honestly, this fix *narrowed* the combined arm's advantage rather than
+widening it (35.0% vs. 38.3% before), which is exactly what should happen when a real double-count
+gets corrected rather than a real gap gets filled in a favorable direction. Base case: combined EMB
+$530.37, office EMB $816.40, D&C $3,827.04.
+
 ## 2026-08-28 (real coordination-cost wage)
 
 **Coordination cost is now half-real, half-asked.** The wage component of `coordination_cost` --

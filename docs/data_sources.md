@@ -15,6 +15,8 @@ mining, in the order it was identified during model design.
 | `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
 | `dnc_anesthesia_cost` | $114.50 | CMS PUF 2024, CPT 00952 (ASA crosswalk code for CPT 58120), service-weighted mean across 118 real provider-service rows, 1,936 observed services; low/high are the real p25/p75 |
 | `scheduler_hourly_wage_onet_2025` | $22.08/hr | O*NET OnLine, median wage report for SOC 43-6013 Medical Secretaries and Administrative Assistants, 2025 (BLS OEWS data; bls.gov itself blocks automated retrieval, so this real number was retrieved via O*NET OnLine, the DOL/BLS-funded site republishing the same data) |
+| `office_visit_em_cost` | $88.76 | CMS PUF 2024, CPT 99213, filtered to `Rndrng_Prvdr_Type = 'Obstetrics & Gynecology'` (12,739 real provider-service rows, 686,012 observed services); service-weighted mean, low/high = real p25/p75. Replaces the earlier unverified $110 national-all-specialty guess |
+| `dnc_preop_clinic_visit_cost` | $125.40 | CMS PUF 2024, CPT 99214, same OB/GYN filter (7,642 rows, 515,741 observed services); service-weighted mean, low/high = real p25/p75. See the global-period note below for why this is genuinely separately payable, not bundled |
 | `combined_emb_added_minutes` | 5 (1-12) | Huang et al. 2011, PMC3014510 |
 | `combined_emb_anesthesia_drug_increment_cost` | $0 | Huang et al. 2011, PMC3014510 |
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
@@ -34,6 +36,30 @@ redirects through) returns the real zip. The July 2026 files used here also had 
 matches) -- use `grep -a` or open in R with `readr::read_csv()` rather than trusting an unqualified
 `grep` "not found" result. To refresh: replace `july-2026` in the two slugs above with the current
 quarter and re-run the same lookup for CPT 58120.
+
+**Why the D&C preop visit is real cost, not double-counted:** before pricing
+`dnc_preop_clinic_visit_cost`, its global-surgery status was checked, since CMS's 90-day (major
+procedure) global period bundles the preoperative day into the procedure's own RVU-based payment,
+which would make a separate preop-visit cost a double-count exactly like the recovery-room case
+above. Checked against the live CMS PFS Relative Value File (`RVU26C`, `PPRRVU2026_Jul_nonQPP.csv`,
+downloaded directly from `cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files`
+-- no AMA license gate on this file): **CPT 58120's `GLOB DAYS` field is `010`**, a minor-procedure
+10-day global period, not 090. The 1-day-before bundling rule is specific to 090-day major
+procedures, so a preop visit on a separate calendar day from the D&C is genuinely separately
+payable. Priced as CPT 99214 (established patient, moderate complexity -- chosen to reflect surgical
+consent/risk discussion), filtered to real OB/GYN-specialty billing via the CMS Physician &
+Other Practitioners PUF (the same live query mechanism already used elsewhere), not a national
+all-specialty average.
+
+**Note on the OB/GYN specialty filter for E/M codes:** unlike the procedure-specific codes queried
+elsewhere in this repo (which have low enough national row counts to pull in full), common E/M codes
+like 99213/99214 are billed by nearly every physician in the country and can return 500,000+ rows,
+making an unfiltered national pull impractical. `cms_query_hcpcs()` only supports a single filter
+condition; the OB/GYN-specific queries here were run with a second `Rndrng_Prvdr_Type` filter
+condition added manually (value: `"Obstetrics & Gynecology"`, confirmed from CPT 58120's own billing
+data -- CMS's exact provider-type string uses an ampersand, not `Obstetrics/Gynecology`). If this
+kind of specialty-filtered E/M lookup is needed again, consider adding an optional second-filter
+parameter to `cms_query_hcpcs()` rather than hand-writing the httr2 call each time.
 
 ## Real values kept deliberately separate from the base-case engine (reference/validation only)
 
@@ -94,12 +120,19 @@ anything.
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
 | `emb_disposable_supply_cost` | $35 | Pipelle device + tray + prep supply cost (hospital supply chain or CMS supply fee schedule) |
-| `office_visit_em_cost` | $110 | Confirmed CMS PFS value for the applicable E/M code (currently a rough CPT 99213 anchor) |
 | `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
-| `dnc_preop_clinic_visit_cost` | $150 | Source needed |
-| `dnc_recovery_room_cost` | $250 | Source needed (could be re-modeled as recovery-minutes x a per-minute rate) |
 | `office_to_dnc_escalation_fraction` | 100% | Lynch-specific data on how often a failed office attempt is repeated in-office vs. escalated |
 | `combined_requires_preop_office_visit` | FALSE | Structural scenario assumption, not a literature parameter |
+
+**`dnc_recovery_room_cost` was removed from this list, not filled in.** Per MedPAC's Ambulatory
+Surgical Center Services Payment System documentation (payment basics, rev. Nov 2021): "Medicare pays
+for facility services provided in ASCs -- such as nursing, recovery care, anesthetics, drugs, and
+other supplies -- using a payment system that is primarily linked to [OPPS]... Within each APC, CMS
+packages most ancillary items and services with the primary service." Recovery-room/PACU time is
+therefore already inside `dnc_facility_or_asc_fee`; `compute_dnc_strategy_cost()` no longer sums it
+separately (as of 2026-08-28), and `dnc_recovery_room_cost` is kept in the parameter table only as a
+documented, explicitly-excluded reference value with a regression test
+(`tests/testthat/test-strategy-costs.R`) enforcing the exclusion.
 
 ## Next literature to mine, in priority order
 

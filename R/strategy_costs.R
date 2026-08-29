@@ -55,6 +55,21 @@ get_adjusted_cost_parameter <- function(
 
 #' Compute the D&C (operative) strategy cost
 #'
+#' Recovery-room/PACU time is deliberately NOT a separate component here.
+#' Per MedPAC's payment-basics documentation of the ASC payment system
+#' (methodologically linked to OPPS): "Medicare pays for facility
+#' services provided in ASCs -- such as nursing, recovery care,
+#' anesthetics, drugs, and other supplies -- using a payment system that
+#' is primarily linked to [OPPS]... Within each APC, CMS packages most
+#' ancillary items and services with the primary service." Recovery-room
+#' cost is therefore already inside `dnc_facility_or_asc_fee`; adding a
+#' separate `dnc_recovery_room_cost` component would double-count it.
+#' `dnc_recovery_room_cost` is kept in `config/model_parameters.csv` only
+#' as a documented, explicitly-excluded reference value (same pattern as
+#' `colonoscopy_anesthesia_episode_cost` for the combined arm) -- see
+#' `tests/testthat/test-strategy-costs.R` for the regression test that
+#' enforces this.
+#'
 #' @inheritParams get_adjusted_cost_parameter
 #' @return A list with `components` (tibble) and `expected_total_cost`
 #'   (numeric scalar; identical to `initial_cost` since D&C has no
@@ -73,7 +88,6 @@ compute_dnc_strategy_cost <- function(
       "pathology",
       "facility_fee",
       "preop_clinic_visit",
-      "recovery_room",
       "anesthesia"
     ),
     amount = c(
@@ -81,7 +95,6 @@ compute_dnc_strategy_cost <- function(
       get_parameter_value(model_parameters, "emb_pathology_cost"),
       get_parameter_value(model_parameters, "dnc_facility_or_asc_fee"),
       get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost"),
-      get_parameter_value(model_parameters, "dnc_recovery_room_cost"),
       get_parameter_value(model_parameters, "dnc_anesthesia_cost")
     )
   )
