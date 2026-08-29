@@ -3,6 +3,27 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-28 (supply-cost double-count found and fixed; combined arm now uses the right facility rate)
+
+**Two real problems, found the same way: check CMS's own primary data before trusting a shared
+parameter.** `emb_office_professional_cost` (CPT 58100's professional fee) was being charged,
+unmodified, to both the office_emb arm (correct -- it happens in the physician's office) and the
+combined_emb arm (a setting mismatch -- that EMB happens in the facility/endoscopy suite where the
+colonoscopy itself takes place). And `emb_disposable_supply_cost` -- a $35 unsourced placeholder --
+was being summed into *both* arms alongside it.
+
+CMS's own Direct Practice Expense Inputs file settled both questions at once: it itemizes the exact
+supplies (including the Pipelle device itself) priced into CPT 58100's *nonfacility* rate, and shows
+they are explicitly excluded from the *facility* rate. That confirmed the supply cost was
+double-counted for office_emb, and pointed to the fix for combined_emb: a live CMS claims query found
+the real facility rate ($60.05) is ~38% lower than the nonfacility rate ($97.03) for this code.
+Removed the double-counted supply line from office_emb; added a new facility-rate parameter for
+combined_emb; replaced the $35 supply placeholder with the real CMS-itemized total ($28.79, kept for
+combined_emb only, since the facility rate doesn't price supplies in).
+
+Net effect: combined EMB $486.01 (was $530.37), office EMB $780.23 (was $816.40), still 37.7% cheaper
+than office EMB (was 35.0%). Provisional-parameter count dropped to 6 of 41 (was 7 of 40).
+
 ## 2026-08-28 (D&C arm now fully empirical)
 
 **The D&C arm's headline finding no longer rests on any placeholder.** Filled the last two D&C-arm

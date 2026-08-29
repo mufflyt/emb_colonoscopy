@@ -33,11 +33,14 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
     get_parameter_value(model_parameters, "dnc_anesthesia_cost")
 
   # -- office EMB expected cost, summed directly from raw parameters --
+  # emb_disposable_supply_cost is deliberately excluded: CMS's Direct PE
+  # Inputs file (CMS-1832-F) shows these supplies (incl. the Pipelle) are
+  # already priced into emb_office_professional_cost's nonfacility PE RVU
+  # -- see R/strategy_costs.R and tests/testthat/test-strategy-costs.R.
   independent_office_initial_cost <-
     get_parameter_value(model_parameters, "office_visit_em_cost") +
     get_parameter_value(model_parameters, "emb_office_professional_cost") +
-    get_parameter_value(model_parameters, "emb_pathology_cost") +
-    get_parameter_value(model_parameters, "emb_disposable_supply_cost")
+    get_parameter_value(model_parameters, "emb_pathology_cost")
   independent_office_escalation_probability <-
     get_parameter_value(model_parameters, "emb_failure_lynch") *
     get_parameter_value(model_parameters, "office_to_dnc_escalation_fraction")
@@ -58,7 +61,7 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
     get_parameter_value(model_parameters, "anesthesia_cost_per_minute") * inflation_multiplier
 
   independent_combined_initial_cost <-
-    get_parameter_value(model_parameters, "emb_office_professional_cost") +
+    get_parameter_value(model_parameters, "emb_office_professional_cost_facility") +
     get_parameter_value(model_parameters, "emb_pathology_cost") +
     get_parameter_value(model_parameters, "emb_disposable_supply_cost") +
     independent_room_cost +

@@ -114,6 +114,16 @@ compute_dnc_strategy_cost <- function(
 
 #' Compute the standalone office EMB strategy cost
 #'
+#' Disposable supplies (Pipelle curette, pelvic exam pack, tenaculum, etc.)
+#' are deliberately NOT a separate component here. CMS's CY2026 Direct PE
+#' Inputs file (CMS-1832-F) itemizes these exact supplies as inputs to CPT
+#' 58100's *nonfacility* practice-expense RVU (`nf_quantity = 1` for every
+#' item), which is exactly the setting `emb_office_professional_cost`
+#' prices. Adding `emb_disposable_supply_cost` here would double-count
+#' supplies already inside the professional fee. See
+#' `tests/testthat/test-strategy-costs.R` for the regression test that
+#' enforces this, and `docs/data_sources.md` for the itemized supply list.
+#'
 #' @inheritParams get_adjusted_cost_parameter
 #' @param dnc_expected_cost Numeric scalar. Expected D&C cost, used as the
 #'   rescue-procedure cost for failed office EMB attempts.
@@ -132,14 +142,12 @@ compute_office_emb_strategy_cost <- function(
     component = c(
       "office_visit",
       "professional_fee",
-      "pathology",
-      "supplies"
+      "pathology"
     ),
     amount = c(
       get_parameter_value(model_parameters, "office_visit_em_cost"),
       get_parameter_value(model_parameters, "emb_office_professional_cost"),
-      get_parameter_value(model_parameters, "emb_pathology_cost"),
-      get_parameter_value(model_parameters, "emb_disposable_supply_cost")
+      get_parameter_value(model_parameters, "emb_pathology_cost")
     )
   )
 
@@ -177,6 +185,20 @@ compute_office_emb_strategy_cost <- function(
 #' (`direct_room_cost_per_minute`, `anesthesia_cost_per_minute`), not the
 #' fully-loaded `procedure_room_cost_per_minute` scenario value.
 #'
+#' The incremental professional fee uses
+#' `emb_office_professional_cost_facility`, NOT
+#' `emb_office_professional_cost` -- the EMB portion of this arm is
+#' performed in the facility/endoscopy-suite setting where the colonoscopy
+#' itself takes place, not the physician's own office, and CMS's live PUF
+#' data show a real ~38% gap between facility ($60.05) and nonfacility
+#' ($97.03) allowed amounts for CPT 58100. `emb_disposable_supply_cost` IS
+#' still charged here (unlike office_emb): CMS's Direct PE Inputs file
+#' shows `f_quantity = 0` for every disposable-supply line item under the
+#' facility-setting PE calculation for CPT 58100, i.e. those supplies are
+#' not priced into the facility-rate professional fee, so they remain a
+#' genuine incremental cost when EMB is added to the colonoscopy. See
+#' `docs/data_sources.md` for the full verification chain.
+#'
 #' @inheritParams compute_office_emb_strategy_cost
 #' @return A list with `components`, `escalation_probability`,
 #'   `escalation_cost`, `initial_cost`, and `expected_total_cost`.
@@ -212,7 +234,7 @@ compute_combined_emb_strategy_cost <- function(
       "coordination"
     ),
     amount = c(
-      get_parameter_value(model_parameters, "emb_office_professional_cost"),
+      get_parameter_value(model_parameters, "emb_office_professional_cost_facility"),
       get_parameter_value(model_parameters, "emb_pathology_cost"),
       get_parameter_value(model_parameters, "emb_disposable_supply_cost"),
       incremental_room_cost,

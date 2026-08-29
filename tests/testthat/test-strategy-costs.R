@@ -78,6 +78,57 @@ test_that("D&C arm never includes a separate recovery-room component (already pa
   expect_false(dnc_recovery_room_cost %in% dnc_result$components$amount)
 })
 
+test_that("office EMB arm never includes a separate supplies component (already packaged into the nonfacility professional fee)", {
+  # Per CMS's CY2026 Direct PE Inputs file (CMS-1832-F), CPT 58100's
+  # disposable supplies (Pipelle curette, pelvic exam pack, tenaculum,
+  # etc.) are priced into the code's nonfacility PE RVU
+  # (nf_quantity = 1 for every supply item), which is exactly what
+  # emb_office_professional_cost prices for the office_emb arm. Summing
+  # emb_disposable_supply_cost separately here would double-count.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  dnc_result <- compute_dnc_strategy_cost(model_parameters, price_index_table, 2026)
+  office_result <- compute_office_emb_strategy_cost(
+    model_parameters, dnc_result$expected_total_cost, price_index_table, 2026
+  )
+
+  emb_disposable_supply_cost <- get_parameter_value(
+    model_parameters, "emb_disposable_supply_cost"
+  )
+
+  expect_false("supplies" %in% office_result$components$component)
+  expect_false(emb_disposable_supply_cost %in% office_result$components$amount)
+})
+
+test_that("combined EMB arm uses the facility-setting professional fee, not the nonfacility office rate", {
+  # The EMB portion of the combined arm is performed in the facility/
+  # endoscopy-suite setting where the colonoscopy itself takes place, not
+  # the physician's own office. CMS's live PUF data show a real ~38% gap
+  # between facility ($60.05) and nonfacility ($97.03) allowed amounts for
+  # CPT 58100, so the combined arm must use
+  # emb_office_professional_cost_facility, not emb_office_professional_cost.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  dnc_result <- compute_dnc_strategy_cost(model_parameters, price_index_table, 2026)
+  combined_result <- compute_combined_emb_strategy_cost(
+    model_parameters, dnc_result$expected_total_cost, price_index_table, 2026
+  )
+
+  emb_office_professional_cost_facility <- get_parameter_value(
+    model_parameters, "emb_office_professional_cost_facility"
+  )
+  emb_office_professional_cost <- get_parameter_value(
+    model_parameters, "emb_office_professional_cost"
+  )
+
+  expect_true(
+    emb_office_professional_cost_facility %in% combined_result$components$amount
+  )
+  expect_false(
+    emb_office_professional_cost %in% combined_result$components$amount
+  )
+})
+
 test_that("combined EMB initial cost scales with combined_emb_added_minutes", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

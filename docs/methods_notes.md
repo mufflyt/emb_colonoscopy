@@ -85,26 +85,64 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$530.37** per patient
-- Office EMB: **$816.40** per patient
+- Combined EMB: **$486.01** per patient
+- Office EMB: **$780.23** per patient
 - Operative D&C: **$3,827.04** per patient
-- Combined EMB is **$286.03 (35.0%) cheaper** than office EMB
+- Combined EMB is **$294.22 (37.7%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~13.6 minutes** -- still comfortably above the entire observed 1-12 minute range from
-  Huang et al. 2011, though the margin has narrowed as D&C-arm cost inflation from placeholders was
-  corrected (see below)
+  stays below **~13.8 minutes** -- still comfortably above the entire observed 1-12 minute range from
+  Huang et al. 2011
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **90.2%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **92.3%** of 1,000 probabilistic-sensitivity draws
 
-(Updated 2026-08-28 across five steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
-`coordination_cost`'s wage component, and `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were
-each replaced with real data, and `dnc_recovery_room_cost` was removed from the D&C arm entirely
-after confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee` -- see the
-caveats below. Net effect on the headline numbers has gone in **both directions**: some fixes raised
-the combined arm's advantage, this last correction (removing a genuine double-count) shrank it --
-evidence this process is following the data, not steering toward a preferred conclusion. Minutes
-threshold moved from ~11.2 to ~13.6; PSA cost-saving frequency moved from 85.8% to 90.2%.)
+(Updated 2026-08-28 across six steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
+`coordination_cost`'s wage component, `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were each
+replaced with real data; `dnc_recovery_room_cost` was removed from the D&C arm entirely after
+confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee`; and, most
+recently, `emb_office_professional_cost` and `emb_disposable_supply_cost` were corrected for a
+double-count/setting-mismatch found in the office and combined arms (see "Supply-cost double-count
+and facility-vs-nonfacility rate correction" below). Net effect on the headline numbers has gone in
+**both directions** across these corrections: some raised the combined arm's advantage, others
+(genuine double-count removals) shrank it -- evidence this process is following the data, not
+steering toward a preferred conclusion. Minutes threshold moved from ~11.2 to ~13.8; PSA cost-saving
+frequency moved from 85.8% to 92.3%.)
+
+### Supply-cost double-count and facility-vs-nonfacility rate correction (2026-08-28)
+
+Prompted by noticing that `emb_office_professional_cost` (CPT 58100's nonfacility professional fee)
+was being charged, unmodified, to *both* the office_emb arm (correct -- EMB happens in the
+physician's own office) and the combined_emb arm (questionable -- EMB happens in the facility/
+endoscopy-suite where the colonoscopy itself takes place), two things were verified against CMS's
+own primary data before changing any code:
+
+1. **Is `emb_disposable_supply_cost` double-counted against the nonfacility professional fee?**
+   CMS's CY2026 Physician Fee Schedule Final Rule Direct Practice Expense (PE) Inputs file
+   (CMS-1832-F, no AMA-license gate) itemizes every supply CMS prices into CPT 58100's practice
+   expense: pelvic exam pack, sterile gloves, needle, syringe, an "endometrial suction curette
+   (Pipelle)," uterine sound, tenaculum, lidocaine, and povidone-iodine swabsticks. Every one of
+   these items carries `nf_quantity = 1` and `f_quantity = 0` -- i.e. CMS prices them into the
+   *nonfacility* PE RVU only. This directly confirms `emb_disposable_supply_cost` was double-counted
+   for the office_emb arm (the Pipelle itself is already inside `emb_office_professional_cost`) and
+   removed from that arm's cost sum.
+2. **Should the combined arm use a facility-setting rate instead?** A live CMS Physician & Other
+   Practitioners PUF query for CPT 58100, split by `Place_Of_Srvc`, found a real, substantial gap:
+   facility-setting allowed amount = **$60.05** (service-volume-weighted mean, 283 services) vs.
+   nonfacility = **$97.03** (4,431 services), 2024 claims data. A new parameter,
+   `emb_office_professional_cost_facility`, now supplies the combined arm's incremental professional
+   fee. Because the Direct PE Inputs file shows `f_quantity = 0` for every supply item in the
+   facility setting -- i.e. those supplies are *not* priced into the facility-rate fee --
+   `emb_disposable_supply_cost` (now summed directly from the itemized CMS supply list, $28.79) was
+   kept as a genuine incremental cost for the combined arm only.
+
+This finding was independently re-derived per the project's meta-rule (an audit result capable of
+changing the study frame requires independent confirmation): the CMS PUF facility/nonfacility split
+was re-queried live a second time from a fresh R session before any code changed, and
+`tests/testthat/test-independent-confirmation.R`'s hand-written formulas (which never call the
+pipeline functions) were updated to match and re-verified against the pipeline's own output. Both new
+regression tests in `tests/testthat/test-strategy-costs.R` were mutation-tested (defect planted,
+confirmed red, reverted, confirmed green) before this change was committed. See
+`docs/data_sources.md` for the full itemized supply list and provenance.
 
 **On `coordination_cost` ($22.08):** the wage half is real (O*NET/BLS OEWS median wage for SOC
 43-6013, $22.08/hr); the time half (2 schedulers x 30 min each) is a practitioner estimate from the

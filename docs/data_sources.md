@@ -9,7 +9,9 @@ mining, in the order it was identified during model design.
 
 | Parameter | Value | Source |
 | --- | --- | --- |
-| `emb_office_professional_cost` | $98.20 | CMS PFS 2026, CPT 58100 national nonfacility allowed amount (third-party aggregator) |
+| `emb_office_professional_cost` | $97.03 | CMS PUF 2024, CPT 58100, `Place_Of_Srvc = O` (nonfacility/office), service-volume-weighted mean across 299 real provider-service rows, 4,431 observed services (live CMS Data API query). Applies to office_emb only |
+| `emb_office_professional_cost_facility` | $60.05 | CMS PUF 2024, CPT 58100, `Place_Of_Srvc = F` (facility), service-volume-weighted mean across 20 real provider-service rows, 283 observed services (live CMS Data API query). Applies to combined_emb only -- see "Supply-cost double-count" note below |
+| `emb_disposable_supply_cost` | $28.79 | CMS CY2026 PFS Final Rule Direct PE Inputs file (CMS-1832-F), CPT 58100 nonfacility supply line items, summed directly (see below). Applies to combined_emb only |
 | `emb_pathology_cost` | $70.14 | CMS PFS 2026, CPT 88305 (third-party aggregator) |
 | `dc_professional_cost` | $209.76 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
 | `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
@@ -88,6 +90,72 @@ with the CMS-2026 track, or because they are pure external benchmarks:
   `future_extension`, for effectiveness/adherence/patient-experience extensions this repository does
   not yet implement.
 
+## Supply-cost double-count and facility-vs-nonfacility rate correction (2026-08-28)
+
+Before this correction, `emb_office_professional_cost` (CPT 58100's nonfacility professional fee)
+was charged, unmodified, to both the office_emb arm and the combined_emb arm, and
+`emb_disposable_supply_cost` was an unsourced $35 placeholder summed into both arms as well. Two
+questions were checked against CMS's own primary data before changing anything (per this project's
+meta-rule that a study-frame-changing finding requires independent confirmation before acting on it):
+
+**1. Is the disposable-supply cost already priced into the professional fee?** CMS's CY2026
+Physician Fee Schedule Final Rule Direct Practice Expense (PE) Inputs file (`CMS-1832-F`, from the
+`cms.gov/medicare/payment/fee-schedules/physician/federal-regulation-notices/cms-1832-f` regulation
+page -- no AMA-license gate, unlike the OPPS/ASC addenda) itemizes every clinical-labor/supply/
+equipment input CMS uses to compute a code's practice-expense RVU. Extracting the zip and grepping
+`CMS-1832-F_PUF_Supply_508.txt` for HCPCS `58100` returns:
+
+| Supply | CMS code | Unit price | `nf_quantity` | `f_quantity` |
+| --- | --- | --- | --- | --- |
+| Pack, pelvic exam | SA051 | $14.38 | 1 | 0 |
+| Gloves, sterile | SB024 | $0.91 | 1 | 0 |
+| Needle, 18-27g | SC029 | $0.04 | 1 | 0 |
+| Syringe 10-12ml | SC051 | $0.21 | 1 | 0 |
+| Curette, suction, endometrial (Pipelle) | SD039 | $5.75 | 1 | 0 |
+| Uterine sound | SD329 | $3.17 | 1 | 0 |
+| Tenaculum | SD330 | $3.77 | 1 | 0 |
+| Lidocaine 1% w-epi inj (Xylocaine w-epi) | SH046 | $0.08/ml | 1 | 0 |
+| Povidone swabsticks (3 pack) | SJ043 | $0.48 | 1 | 0 |
+| **Total** | | **$28.79** | | |
+
+Every single item -- including the Pipelle device itself -- carries `nf_quantity = 1` (priced into
+the *nonfacility* PE RVU, i.e. already inside `emb_office_professional_cost`) and `f_quantity = 0`
+(explicitly excluded from the facility-setting PE calculation). This directly confirms
+`emb_disposable_supply_cost` was double-counted against `emb_office_professional_cost` for the
+office_emb arm, and it was removed from that arm's cost sum accordingly (see
+`R/strategy_costs.R::compute_office_emb_strategy_cost()`).
+
+**2. Should the combined arm use a facility-setting rate?** The EMB portion of the combined arm is
+performed in the facility/endoscopy-suite setting where the surveillance colonoscopy itself takes
+place, not the physician's own office -- so charging it the *nonfacility* rate was a setting
+mismatch. A live query against the CMS Physician & Other Practitioners by Provider and Service PUF
+(`cms_query_hcpcs()` in `R/cms_benchmarks.R`) for CPT 58100, split by `Place_Of_Srvc`, found:
+
+- Facility (`F`): service-volume-weighted mean `Avg_Mdcr_Alowd_Amt` = **$60.05** (20 provider rows,
+  283 total services, 2024 claims data)
+- Nonfacility (`O`): service-volume-weighted mean = **$97.03** (299 provider rows, 4,431 total
+  services, 2024 claims data)
+
+This ~38% gap is real and reproducible (re-run: `cms_query_hcpcs(cms_find_dataset_uuid("Medicare
+Physician.*Provider and Service", data_year = 2024L), "58100")`, then group by `Place_Of_Srvc` and
+compute the `Tot_Srvcs`-weighted mean of `Avg_Mdcr_Alowd_Amt`). A new parameter,
+`emb_office_professional_cost_facility` ($60.05), now supplies the combined arm's
+`incremental_professional_fee` component. Because the Direct PE Inputs file shows `f_quantity = 0`
+for every one of the nine supply items above in the facility setting, those supplies are *not*
+priced into the facility-rate fee -- so `emb_disposable_supply_cost`, now summed directly from the
+itemized CMS supply list above ($28.79, replacing the old $35 placeholder), was kept as a genuine
+incremental cost for the combined arm specifically (it is never charged to office_emb, and the
+colonoscopy facility itself is never separately charged to the combined arm under the
+incremental-cost principle, so nothing else prices these supplies in for this arm).
+
+Both parameter-value changes (`emb_office_professional_cost` switched from a 2026 fee-schedule
+aggregator to the live 2024 PUF nonfacility figure, for methodological consistency with the new
+facility-rate parameter) and the two structural code changes above were mutation-tested per the
+project's meta-rule: the double-count defect was replanted in `R/strategy_costs.R`, confirmed to
+fail `tests/testthat/test-strategy-costs.R` and `tests/testthat/test-independent-confirmation.R`,
+then reverted and confirmed green, for both the office-arm and combined-arm corrections
+independently.
+
 ## The real BLS CPI-U Medical Care anchors (`data/cpi_medical_care.csv`)
 
 Two real, literature-sourced index values are in place: **2010 = 388.436** and **2026 = 593.781**
@@ -119,7 +187,6 @@ anything.
 
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
-| `emb_disposable_supply_cost` | $35 | Pipelle device + tray + prep supply cost (hospital supply chain or CMS supply fee schedule) |
 | `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
 | `office_to_dnc_escalation_fraction` | 100% | Lynch-specific data on how often a failed office attempt is repeated in-office vs. escalated |
 | `combined_requires_preop_office_visit` | FALSE | Structural scenario assumption, not a literature parameter |

@@ -5,6 +5,46 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-28 (supply-cost double-count and facility-vs-nonfacility rate correction)
+
+### Changed
+- Investigated whether `emb_disposable_supply_cost` ($35 placeholder) was double-counted against
+  `emb_office_professional_cost` (CPT 58100's nonfacility professional fee, charged unmodified to
+  both office_emb and combined_emb), and whether the combined_emb arm should use a facility-rate
+  professional fee instead, since the EMB portion of that arm is performed in the facility/
+  endoscopy-suite setting where the colonoscopy itself takes place, not the physician's own office.
+- Confirmed via CMS's CY2026 Physician Fee Schedule Final Rule Direct Practice Expense (PE) Inputs
+  file (CMS-1832-F, no AMA-license gate): every disposable-supply line item CMS prices into CPT
+  58100 -- pelvic exam pack, sterile gloves, needle, syringe, an "endometrial suction curette
+  (Pipelle)," uterine sound, tenaculum, lidocaine, povidone swabsticks -- carries `nf_quantity = 1`
+  (priced into the nonfacility PE RVU) and `f_quantity = 0` (excluded from the facility-setting PE
+  calculation). This confirms `emb_disposable_supply_cost` was double-counted for office_emb (the
+  Pipelle itself is already inside `emb_office_professional_cost`) and that the facility setting
+  does not price these supplies in at all.
+- Confirmed via a live CMS Physician & Other Practitioners PUF query for CPT 58100, split by
+  `Place_Of_Srvc`: facility allowed amount = **$60.05** (283 services, 2024) vs. nonfacility =
+  **$97.03** (4,431 services, 2024), a real ~38% gap.
+- **`emb_disposable_supply_cost` removed from `compute_office_emb_strategy_cost()`** (double-count).
+- **New parameter `emb_office_professional_cost_facility` ($60.05)** added and wired into
+  `compute_combined_emb_strategy_cost()`'s `incremental_professional_fee` component, replacing
+  `emb_office_professional_cost`. `emb_disposable_supply_cost` remains in the combined arm (genuine
+  incremental cost there, since the facility-rate fee does not price supplies in) and its value was
+  replaced with the real CMS-itemized sum, **$28.79** (was the $35 placeholder).
+- `emb_office_professional_cost` itself switched from a 2026 fee-schedule-aggregator source to the
+  live 2024 PUF nonfacility figure ($97.03, was $98.20), for methodological consistency with the new
+  facility-rate parameter (both now come from the identical query/methodology).
+- Two new regression tests added to `test-strategy-costs.R` (office_emb never includes a supplies
+  component; combined_emb uses the facility rate, never the nonfacility rate); both mutation-tested
+  (planted each defect back in, confirmed the relevant tests in `test-strategy-costs.R` and
+  `test-independent-confirmation.R` fail, reverted, confirmed all pass again).
+- `test-independent-confirmation.R`'s hand-derived arithmetic updated to match (removed the supply
+  term from the office formula, switched the combined formula to the facility-rate parameter).
+- Base case updated: combined EMB **$486.01** (was $530.37), office EMB **$780.23** (was $816.40),
+  D&C unchanged at $3,827.04. Combined EMB is **37.7%** cheaper than office EMB (was 35.0%); minutes
+  threshold **~13.8** (was ~13.6); PSA cost-saving frequency **92.3%** (was 90.2%). Provisional count
+  dropped to 6 of 41 parameters (was 7 of 40) -- `emb_disposable_supply_cost` is no longer a
+  placeholder.
+
 ## 2026-08-28 (D&C arm fully empirical; real E/M costs; recovery-room double-count removed)
 
 ### Changed

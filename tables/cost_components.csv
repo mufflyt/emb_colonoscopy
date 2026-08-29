@@ -5,12 +5,11 @@ dnc,facility_fee,3307.24
 dnc,preop_clinic_visit,125.4
 dnc,anesthesia,114.5
 office_emb,office_visit,88.76
-office_emb,professional_fee,98.2
+office_emb,professional_fee,97.03
 office_emb,pathology,70.14
-office_emb,supplies,35
-combined_emb,incremental_professional_fee,98.2
+combined_emb,incremental_professional_fee,60.05
 combined_emb,pathology,70.14
-combined_emb,supplies,35
+combined_emb,supplies,28.79
 combined_emb,incremental_room_time,143.66778073628151
 combined_emb,incremental_anesthesia_time,23.509273211391527
 combined_emb,incremental_anesthesia_drug,0
