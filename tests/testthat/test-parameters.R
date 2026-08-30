@@ -31,7 +31,7 @@ test_that("get_parameter_value parses the boolean structural parameter", {
     model_parameters, "combined_requires_preop_office_visit", as_numeric = FALSE
   )
   expect_type(requires_visit, "logical")
-  expect_false(requires_visit)
+  expect_true(requires_visit)
 })
 
 test_that("override_model_parameters replaces a base value without mutating the source", {

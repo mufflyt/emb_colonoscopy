@@ -5,6 +5,27 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-30 (combined_requires_preop_office_visit flipped to TRUE -- base case changes)
+
+### Changed
+- Per the model owner's clinical practice (Tyler Muffly, MD, Denver Health): the combined strategy's
+  protocol includes a separate preoperative office visit before the colonoscopy date, for consent and
+  risk assessment specific to adding EMB. `combined_requires_preop_office_visit` flipped from `FALSE`
+  to `TRUE`, `provisional` cleared, re-tiered from D to `structural` (matches `reference_dollar_year`
+  -- a modeling convention, not a literature-evidence claim).
+- This adds `office_visit_em_cost` ($88.76) to the combined arm's cost via the `preop_office_visit`
+  component in `compute_combined_emb_strategy_cost()`. Scenario analysis can still set this back to
+  `FALSE` to model consent/risk assessment folded into existing care (the prior base-case assumption).
+- Three tests updated for the new default: `test-parameters.R`'s boolean-parsing test now expects
+  `TRUE`; `test-strategy-costs.R`'s preop-visit test rewritten to explicitly compare FALSE vs. TRUE
+  overrides rather than relying on the (now-changed) default, and now also asserts the
+  `preop_office_visit` component's presence/absence directly; `test-independent-confirmation.R`'s
+  hand-derived combined-arm formula updated to include the preop visit cost when the toggle is TRUE.
+- Base case updated: combined EMB **$574.77** (was $486.01), office EMB unchanged at $780.23, D&C
+  unchanged at $3,827.04. Combined EMB is **26.3%** cheaper than office EMB (was 37.7%); minutes
+  threshold **~11.1** (was ~13.8); PSA cost-saving frequency **79.7%** (was 92.3%). Provisional count
+  down to 4 of 41 (was 5 of 41).
+
 ## 2026-08-30 (office_to_dnc_escalation_fraction grounded with an analogous real citation)
 
 ### Changed

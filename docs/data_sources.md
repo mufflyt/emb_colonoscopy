@@ -266,13 +266,27 @@ Lynch-surveillance evidence); the base value stays at 100% and `provisional` sta
 study of the standalone-office population itself was found. This is a genuine, currently-unresolvable
 literature gap given the paywall barrier on the four candidate primary studies, not an unsearched one.
 
+## `combined_requires_preop_office_visit` confirmed by the model owner (2026-08-30)
+
+Per the model owner's clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's
+protocol includes a separate preoperative office visit before the colonoscopy date, for consent and
+risk assessment specific to adding EMB to the procedure. `combined_requires_preop_office_visit` was
+flipped from `FALSE` to `TRUE` and its `provisional` flag cleared. This is a structural modeling
+decision, not a literature-evidence claim -- it is re-tiered from D (unfounded placeholder) to
+`structural`, the same tier used for `reference_dollar_year`, since it reflects a protocol/scenario
+decision rather than a data point to be graded A-D. The base case now includes `office_visit_em_cost`
+($88.76) as the combined arm's `preop_office_visit` component; scenario analysis can still set this
+back to `FALSE` to model consent/risk assessment folded into existing care (the prior base-case
+assumption). This narrowed the combined-vs-office margin from $294.22 (37.7%) to $205.46 (26.3%) and
+the minutes threshold from ~13.8 to ~11.1 -- see `docs/methods_notes.md` for the full base-case
+history.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
 | `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
 | `office_to_dnc_escalation_fraction` | 100% | No study of standalone office EMB reports this split; the four candidate Lynch EMB-failure studies are confirmed paywalled (see below). Nebgen et al. 2014's explicit protocol quote now grounds the 100% assumption in an analogous (combined-arm) Lynch-surveillance context, but a standalone-office-EMB-specific citation is still needed to fully resolve this |
-| `combined_requires_preop_office_visit` | FALSE | Structural scenario assumption, not a literature parameter |
 
 **`dnc_recovery_room_cost` was removed from this list, not filled in.** Per MedPAC's Ambulatory
 Surgical Center Services Payment System documentation (payment basics, rev. Nov 2021): "Medicare pays

@@ -60,6 +60,15 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
   independent_anesthesia_time_cost <- added_minutes *
     get_parameter_value(model_parameters, "anesthesia_cost_per_minute") * inflation_multiplier
 
+  independent_requires_preop_visit <- get_parameter_value(
+    model_parameters, "combined_requires_preop_office_visit", as_numeric = FALSE
+  )
+  independent_preop_visit_cost <- if (isTRUE(independent_requires_preop_visit)) {
+    get_parameter_value(model_parameters, "office_visit_em_cost")
+  } else {
+    0
+  }
+
   independent_combined_initial_cost <-
     get_parameter_value(model_parameters, "emb_office_professional_cost_facility") +
     get_parameter_value(model_parameters, "emb_pathology_cost") +
@@ -67,7 +76,8 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
     independent_room_cost +
     independent_anesthesia_time_cost +
     get_parameter_value(model_parameters, "combined_emb_anesthesia_drug_increment_cost") +
-    get_parameter_value(model_parameters, "coordination_cost")
+    get_parameter_value(model_parameters, "coordination_cost") +
+    independent_preop_visit_cost
   independent_combined_escalation_probability <-
     get_parameter_value(model_parameters, "combined_to_dnc_probability")
   independent_combined_cost <- independent_combined_initial_cost +

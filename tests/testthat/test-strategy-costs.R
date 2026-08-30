@@ -155,21 +155,26 @@ test_that("combined EMB adds the preop office visit cost only when the scenario 
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()
 
-  baseline_result <- compute_combined_emb_strategy_cost(
-    model_parameters, 1000, price_index_table, 2026
+  off_parameters <- override_model_parameters(
+    model_parameters, list(combined_requires_preop_office_visit = "FALSE")
   )
-  toggled_parameters <- override_model_parameters(
+  off_result <- compute_combined_emb_strategy_cost(
+    off_parameters, 1000, price_index_table, 2026
+  )
+  on_parameters <- override_model_parameters(
     model_parameters, list(combined_requires_preop_office_visit = "TRUE")
   )
-  toggled_result <- compute_combined_emb_strategy_cost(
-    toggled_parameters, 1000, price_index_table, 2026
+  on_result <- compute_combined_emb_strategy_cost(
+    on_parameters, 1000, price_index_table, 2026
   )
 
   office_visit_cost <- get_parameter_value(model_parameters, "office_visit_em_cost")
 
+  expect_false("preop_office_visit" %in% off_result$components$component)
+  expect_true("preop_office_visit" %in% on_result$components$component)
   expect_equal(
-    toggled_result$initial_cost,
-    baseline_result$initial_cost + office_visit_cost
+    on_result$initial_cost,
+    off_result$initial_cost + office_visit_cost
   )
 })
 

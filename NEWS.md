@@ -3,6 +3,23 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-30 (the combined arm now includes a preop office visit -- base case moves)
+
+**A scenario toggle became a confirmed clinical-practice decision.** The model previously assumed, by
+default, that the combined strategy needs no separate preoperative office visit -- consent and risk
+assessment were assumed folded into existing care. Per the model owner's own clinical practice
+(Tyler Muffly, MD, Denver Health), that's not how the combined protocol actually works: it does
+require a separate preop visit before the colonoscopy date. Flipped the toggle to `TRUE`, cleared its
+provisional flag (this is a protocol decision, not a literature claim, so it gets the same
+"structural" designation as the model's dollar-year convention rather than an evidence grade), and
+added the office-visit cost ($88.76) to the combined arm.
+
+This is an honest cost increase, not a correction of an error -- the combined arm's advantage over
+office EMB narrows from 37.7% to 26.3%, and the minutes threshold tightens from ~13.8 to ~11.1
+minutes (still within, but closer to the edge of, the observed 1-12 minute range from the literature).
+Three tests were updated to match the new default, including one that now explicitly compares the
+toggle both ways instead of quietly depending on which state happened to be the default.
+
 ## 2026-08-30 (a placeholder gets real, if incomplete, grounding)
 
 **`office_to_dnc_escalation_fraction`'s 100% assumption is no longer just an unfounded default.**

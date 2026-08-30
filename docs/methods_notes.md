@@ -90,28 +90,42 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$486.01** per patient
+- Combined EMB: **$574.77** per patient
 - Office EMB: **$780.23** per patient
 - Operative D&C: **$3,827.04** per patient
-- Combined EMB is **$294.22 (37.7%) cheaper** than office EMB
+- Combined EMB is **$205.46 (26.3%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~13.8 minutes** -- still comfortably above the entire observed 1-12 minute range from
-  Huang et al. 2011
+  stays below **~11.1 minutes** -- within, but near the upper end of, the observed 1-12 minute range
+  from Huang et al. 2011 (see the preop-visit note below for why this margin narrowed)
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **92.3%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **79.7%** of 1,000 probabilistic-sensitivity draws
 
 (Updated 2026-08-28 across six steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
 `coordination_cost`'s wage component, `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were each
 replaced with real data; `dnc_recovery_room_cost` was removed from the D&C arm entirely after
-confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee`; and, most
-recently, `emb_office_professional_cost` and `emb_disposable_supply_cost` were corrected for a
+confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee`; and
+`emb_office_professional_cost` and `emb_disposable_supply_cost` were corrected for a
 double-count/setting-mismatch found in the office and combined arms (see "Supply-cost double-count
-and facility-vs-nonfacility rate correction" below). Net effect on the headline numbers has gone in
-**both directions** across these corrections: some raised the combined arm's advantage, others
-(genuine double-count removals) shrank it -- evidence this process is following the data, not
-steering toward a preferred conclusion. Minutes threshold moved from ~11.2 to ~13.8; PSA cost-saving
-frequency moved from 85.8% to 92.3%.)
+and facility-vs-nonfacility rate correction" below). Then, 2026-08-30,
+`combined_requires_preop_office_visit` was flipped from FALSE to TRUE (see below), adding
+`office_visit_em_cost` ($88.76) to the combined arm and narrowing its advantage further. Net effect
+on the headline numbers has gone in **both directions** across these corrections: some raised the
+combined arm's advantage, others (genuine double-count removals, and now a confirmed clinical-practice
+requirement) shrank it -- evidence this process is following the data, not steering toward a
+preferred conclusion. Minutes threshold moved from ~11.2 to ~13.8 to ~11.1; PSA cost-saving frequency
+moved from 85.8% to 92.3% to 79.7%.)
+
+**`combined_requires_preop_office_visit` flipped to TRUE (2026-08-30):** per the model owner's
+clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's protocol includes a
+separate preoperative office visit before the colonoscopy date, for consent and risk assessment
+specific to adding EMB. This is a structural modeling decision, not a literature-evidence claim (see
+`reference_dollar_year` for the same convention), so it is tiered `structural` rather than A-D and no
+longer flagged provisional. It adds `office_visit_em_cost` ($88.76) to the combined arm's cost via the
+`preop_office_visit` component, which is why the combined-vs-office margin narrowed from $294.22
+(37.7%) to $205.46 (26.3%) and the minutes threshold tightened from ~13.8 to ~11.1. Scenario analysis
+can set this back to FALSE to model consent/risk assessment folded into existing care instead (the
+prior base-case assumption).
 
 ### Supply-cost double-count and facility-vs-nonfacility rate correction (2026-08-28)
 
