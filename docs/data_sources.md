@@ -23,7 +23,7 @@ mining, in the order it was identified during model design.
 | `combined_emb_anesthesia_drug_increment_cost` | $0 | Huang et al. 2011, PMC3014510 |
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
 | `anesthesia_cost_per_minute` | $3.42/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
-| `emb_failure_lynch` | 13.7% (pooled) | Elmasry 6/25, Lecuru 12/116, Rijcken 2/17, Woolderink 5/25 (via NIHR review, NBK606812) |
+| `emb_failure_lynch` | 13.7% (pooled) | Elmasry 6/25, Lecuru 12/116, Rijcken 2/17, Woolderink 5/25 (via NIHR review, NBK606812, Table 11 -- verified 2026-08-30 against the table's exact text, see below) |
 | `combined_to_dnc_probability` | 3.6% (2/55) | Nebgen et al. 2014, PMC4389779 |
 
 **Retrieving the CMS OPPS/ASC addenda:** these are the official CMS payment addenda, updated
@@ -200,6 +200,42 @@ tier B. It remains unwired into any strategy cost function -- this is still a re
 parameter only, for a not-yet-implemented hysteroscopy-guided D&C comparator arm (see
 `hysteroscopy_failure_rate_lynch_range`), so this fix does not change the base case.
 
+## RESOLVED citation concern: `emb_failure_lynch`'s "Elmasry 6/25" (2026-08-30)
+
+While researching `office_to_dnc_escalation_fraction` (below), a possible citation-mismatch concern
+surfaced: Fam Cancer 2009, volume 8, contains two similarly-themed Lynch-syndrome endometrial
+screening papers back-to-back -- Elmasry K et al., "Strategies for endometrial screening in the Lynch
+syndrome population: a patient acceptability study" (pp. 431-9), and Gerritzen LH et al.,
+"Improvement of endometrial biopsy over transvaginal ultrasound alone for endometrial surveillance in
+women with Lynch syndrome" (pp. 391-7). Elmasry's own PubMed abstract (PMID 19526324) only describes
+a pain/acceptability survey with no mention of a biopsy failure count, raising the question of
+whether the "Elmasry 6/25" figure actually belonged to Gerritzen's paper instead.
+
+This was checked directly against the NIHR review's own Table 11 (NBK606812/table/table11), which
+states, verbatim:
+
+| First Author (Year) | Test | Test Failures n/N (%) |
+| --- | --- | --- |
+| Elmasry et al. 2009 | Pipelle | 6/25 (24.0) |
+| Lecuru et al. 2008 | Pipelle | 12/116 (10.3) |
+| Rijcken et al. 2003 | Pipelle | 2/17 (11.8) |
+| Woolderink et al. 2020 | Pipelle | 5/25 (20.0) |
+
+All four numerators/denominators match `emb_failure_lynch`'s existing sourcing exactly -- **no
+citation error**. The 6/25 figure is genuinely Elmasry's, just reported in the paper's results/table
+rather than headlined in its abstract (unsurprising for a small clinical study whose primary endpoint
+was patient-reported pain, not procedural success). Independent corroboration: a German HTA evidence
+report (Basel, endometrial cancer screening) separately extracted Elmasry 2009's full-text results
+directly and confirmed the same 25-patient cohort had Pipelle-related failures ("in 4 cases with
+endometrial atrophy no material could be obtained via biopsy, and in one case the examination was not
+tolerated" -- 5 of the 6 events explicitly narrated; the 6th is most likely the same postmenopausal
+patient whose uterus could not be visualized on transvaginal ultrasound, who would equally have had no
+successful Pipelle attempt).
+
+All four primary papers (Elmasry, Lecuru, Rijcken, Woolderink) remain hard-paywalled -- this
+verification is against the systematic review's own extraction table and an independent third-party
+evidence report, not the primary full texts directly, since none are freely accessible anywhere found.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |
@@ -238,9 +274,14 @@ these have been extracted into `config/model_parameters.csv` yet.
    cancer treatment, gamma-distribution uncertainty with a ~10% coefficient of variation) have not
    been mined beyond those two probabilities.
 4. **The original Lynch surveillance studies** (Lecuru, Elmasry, Rijcken, Woolderink) -- currently
-   used only via their pooled numerators/denominators (see `emb_failure_lynch`'s notes); reading the
-   primary papers could separate "cannot access the endometrium" from "inadequate specimen" the way
-   Adambekov et al. did for the general population.
+   used only via their pooled numerators/denominators (see `emb_failure_lynch`'s notes). All four are
+   confirmed hard-paywalled with no free full text anywhere (checked 2026-08-30, including PMC, DOI
+   publisher pages, and institutional-repository/PDF searches); the pooled numbers themselves are
+   verified against the NIHR review's own Table 11 (exact match on all four numerators/denominators),
+   but reading the primary papers directly -- to separate "cannot access the endometrium" from
+   "inadequate specimen" the way Adambekov et al. did for the general population, and to look for any
+   reported repeat-office-attempt-vs-D&C-escalation pathway (see `office_to_dnc_escalation_fraction`)
+   -- remains blocked by paywall access, not merely unattempted.
 5. **ONCE 2025** (PMC12351693) and the **Weill Cornell implementation framework**
    (ScienceDirect S1048891X2401017X) -- contemporary workflow and micro-costing detail (mean 42-minute
    combined procedure duration, staffing/scheduling/supply requirements) that could refine

@@ -5,6 +5,26 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-30 (citation-integrity check on emb_failure_lynch, resolved -- no error found)
+
+### Changed
+- While researching `office_to_dnc_escalation_fraction`, flagged a possible citation mismatch on the
+  already-in-the-base-case `emb_failure_lynch` parameter: Fam Cancer 2009 vol. 8 contains two
+  similarly-themed Lynch endometrial-screening papers back-to-back (Elmasry et al., a
+  patient-acceptability study, pp. 431-9; Gerritzen et al., an EMB-vs-TVUS study, pp. 391-7), and
+  Elmasry's own PubMed abstract makes no mention of the "6/25" failure count attributed to it.
+- Checked directly against the NIHR review's own Table 11 (NBK606812/table/table11): confirmed
+  verbatim that all four pooled numerators/denominators (Elmasry 6/25, Lecuru 12/116, Rijcken 2/17,
+  Woolderink 5/25) match `emb_failure_lynch`'s existing sourcing exactly. No citation error --
+  Elmasry's 6/25 is reported in the paper's results, not its abstract. Independently corroborated by
+  a German HTA evidence report's own full-text extraction of Elmasry 2009.
+- `emb_failure_lynch`'s notes updated to document this verification chain and close the "verify
+  against primary studies" open item (verified against the review's authoritative table and a
+  third-party independent extraction; all four primary papers remain hard-paywalled with no free full
+  text found anywhere, so direct primary-source confirmation is still not possible).
+- **No base_value or evidence-tier change** -- this was a provenance-integrity check, not a data
+  update. Base case is unchanged.
+
 ## 2026-08-29 (CPT 58558 data-quality flag resolved)
 
 ### Changed

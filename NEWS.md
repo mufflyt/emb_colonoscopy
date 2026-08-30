@@ -3,6 +3,18 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-30 (a citation scare, resolved -- the numbers were right all along)
+
+**Good news for once: a suspected error turned out not to be one.** While chasing a different lead,
+a possible citation mix-up surfaced on `emb_failure_lynch` (already in the base case): two
+similarly-titled 2009 papers on Lynch endometrial screening sit back-to-back in the same journal
+issue, and the one credited with a "6/25" biopsy failure count has an abstract that never mentions
+it. Checked directly against the systematic review's own data table, which states the number
+verbatim, and against an independent third-party evidence report that separately extracted the same
+paper's results -- both confirm the number is correct, just reported in the paper's results rather
+than its abstract. No change to any value; the parameter's provenance notes now document the
+verification so this doesn't need re-litigating later.
+
 ## 2026-08-29 (CPT 58558 mystery solved)
 
 **A data-quality flag from earlier this session is now resolved.** `hysteroscopy_dc_professional_cost`
