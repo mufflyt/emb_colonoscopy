@@ -63,7 +63,8 @@ transparent model, not a publication-ready result.
 Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 5
 of 41 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
 is now a real BLS/O*NET figure); `office_to_dnc_escalation_fraction` (the assumption that 100% of
-failed office EMB attempts escalate to D&C); `combined_requires_preop_office_visit` (a structural
+failed office EMB attempts escalate to D&C -- now grounded by an analogous MD Anderson protocol
+citation, though no standalone-office-EMB-specific study was found); `combined_requires_preop_office_visit` (a structural
 scenario toggle); and two `reference_only` values kept only as documented exclusions
 (`colonoscopy_anesthesia_episode_cost`, `dnc_recovery_room_cost` -- both deliberately never summed
 into any strategy's cost). All six of the D&C arm's own cost components -- professional fee,

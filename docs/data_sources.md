@@ -236,12 +236,42 @@ All four primary papers (Elmasry, Lecuru, Rijcken, Woolderink) remain hard-paywa
 verification is against the systematic review's own extraction table and an independent third-party
 evidence report, not the primary full texts directly, since none are freely accessible anywhere found.
 
+## Literature search for `office_to_dnc_escalation_fraction` (2026-08-30, partially resolved)
+
+Searched for a Lynch-specific fraction of failed/inadequate standalone office EMB attempts that
+proceed to operative D&C versus a repeat office attempt. Two avenues were checked:
+
+1. **The four Lynch EMB-failure studies underlying `emb_failure_lynch`** (Elmasry 2009, Lecuru 2008,
+   Rijcken 2003, Woolderink 2020) -- all four are confirmed hard-paywalled with no free full text
+   found anywhere (PMC, publisher DOI pages, institutional repositories all checked). This is a
+   genuine access barrier, not an unsearched gap; see the citation-verification section above for
+   what was independently confirmed about these same four studies via the NIHR review's Table 11 and
+   a German HTA evidence report.
+2. **The two MD Anderson combined-screening papers already used elsewhere in this model**: Huang et
+   al. 2011 (PMC3014510) has no mention of biopsy failure or escalation pathways anywhere in its full
+   text (it is a pain/acceptability study only). Nebgen et al. 2014 (PMC4389779) -- already the
+   source of `combined_to_dnc_probability` -- states its protocol explicitly: "If cervical stenosis
+   or insufficient endometrial tissue was encountered, hysteroscopy and dilation and curettage were
+   scheduled," and reports "two women (3.6%) had cervical stenosis and underwent hysteroscopy with
+   dilation and curettage." This is real, quotable evidence that this MD Anderson Lynch-surveillance
+   program's own protocol escalates 100% of EMB failures straight to D&C, with no repeat-office-visit
+   step written into the protocol.
+
+**Why this only partially resolves the parameter:** Nebgen et al. 2014 describes the *combined* arm's
+protocol (EMB fails during an already-sedated colonoscopy encounter), not a standalone office-EMB
+program specifically. It is real, Lynch-specific, and directly analogous, but it is not a direct
+measurement of `office_to_dnc_escalation_fraction`'s target population. The parameter's source/notes
+were updated to cite this quote and re-tiered from D (unfounded placeholder) to C (general/adjacent
+Lynch-surveillance evidence); the base value stays at 100% and `provisional` stays `TRUE`, since no
+study of the standalone-office population itself was found. This is a genuine, currently-unresolvable
+literature gap given the paywall barrier on the four candidate primary studies, not an unsearched one.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
 | `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
-| `office_to_dnc_escalation_fraction` | 100% | Lynch-specific data on how often a failed office attempt is repeated in-office vs. escalated |
+| `office_to_dnc_escalation_fraction` | 100% | No study of standalone office EMB reports this split; the four candidate Lynch EMB-failure studies are confirmed paywalled (see below). Nebgen et al. 2014's explicit protocol quote now grounds the 100% assumption in an analogous (combined-arm) Lynch-surveillance context, but a standalone-office-EMB-specific citation is still needed to fully resolve this |
 | `combined_requires_preop_office_visit` | FALSE | Structural scenario assumption, not a literature parameter |
 
 **`dnc_recovery_room_cost` was removed from this list, not filled in.** Per MedPAC's Ambulatory

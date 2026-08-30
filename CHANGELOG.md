@@ -5,6 +5,26 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-30 (office_to_dnc_escalation_fraction grounded with an analogous real citation)
+
+### Changed
+- Searched for Lynch-specific data on `office_to_dnc_escalation_fraction` (fraction of failed office
+  EMB attempts that proceed to D&C vs. a repeat office attempt), currently a 100% placeholder.
+- The four Lynch EMB-failure studies underlying `emb_failure_lynch` (Elmasry 2009, Lecuru 2008,
+  Rijcken 2003, Woolderink 2020) are all confirmed hard-paywalled with no free full text found
+  anywhere -- a genuine access barrier, not an unsearched gap.
+- Checked the two MD Anderson combined-screening papers already used elsewhere in this model: Huang
+  et al. 2011 has no mention of escalation pathways anywhere in its full text. Nebgen et al. 2014
+  (already the source of `combined_to_dnc_probability`) states its protocol explicitly: "If cervical
+  stenosis or insufficient endometrial tissue was encountered, hysteroscopy and dilation and
+  curettage were scheduled" -- real, quotable evidence that this Lynch-surveillance program's own
+  protocol escalates 100% of EMB failures straight to D&C with no repeat-office step.
+- `office_to_dnc_escalation_fraction`'s source/notes updated to cite this quote; re-tiered from D
+  (unfounded placeholder) to C (general/adjacent Lynch-surveillance evidence). **Base value stays at
+  100% and `provisional` stays `TRUE`** -- Nebgen describes the combined arm's own protocol, not
+  standalone office EMB, so this is real analogous grounding, not a direct measurement of this
+  parameter's target population. Base case is unchanged (no numeric value changed).
+
 ## 2026-08-30 (citation-integrity check on emb_failure_lynch, resolved -- no error found)
 
 ### Changed

@@ -67,9 +67,14 @@ failure rate in this repository), and `hysteroscopy_failure_rate_lynch_range` is
 ## Two escalation probabilities, and why they are not the same parameter
 
 - **Office arm:** `emb_failure_lynch` (a pooled 13.7% estimate across four Lynch-specific
-  surveillance studies) is multiplied by `office_to_dnc_escalation_fraction` (a **provisional**
-  placeholder currently fixed at 100%, i.e. every failed office attempt is assumed to escalate to
-  D&C rather than, say, a repeat office attempt).
+  surveillance studies) is multiplied by `office_to_dnc_escalation_fraction` (**provisional**,
+  fixed at 100%, i.e. every failed office attempt is assumed to escalate to D&C rather than, say, a
+  repeat office attempt). No study of standalone office EMB reports this split directly, and the four
+  Lynch EMB-failure studies are confirmed hard-paywalled (checked 2026-08-30). Nebgen et al. 2014's
+  MD Anderson combined-screening protocol grounds the 100% assumption in an analogous context -- its
+  written protocol escalates every EMB failure straight to D&C with no repeat-office step -- but that
+  describes the combined arm, not standalone office EMB, so this remains a placeholder for this
+  parameter's actual target population. See `docs/data_sources.md` for the full search.
 - **Combined arm:** `combined_to_dnc_probability` (3.6%, i.e. 2/55) is Nebgen et al.'s *directly
   observed* escalation-to-procedure rate in the combined-screening cohort -- it does not need a
   separate escalation-fraction assumption stacked on top, because it already measures "proceeded to

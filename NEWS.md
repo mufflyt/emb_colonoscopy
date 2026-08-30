@@ -3,6 +3,19 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-30 (a placeholder gets real, if incomplete, grounding)
+
+**`office_to_dnc_escalation_fraction`'s 100% assumption is no longer just an unfounded default.**
+Searched for Lynch-specific data on how often a failed office EMB gets repeated in-office versus
+escalated straight to D&C. The four candidate primary studies are all hard-paywalled with no free
+full text anywhere -- confirmed, not just assumed. But a paper already used elsewhere in this model,
+Nebgen et al. 2014 (MD Anderson's combined colonoscopy+EMB Lynch program), turns out to spell out its
+own protocol in plain language: any EMB failure gets scheduled straight for hysteroscopy and D&C, no
+repeat office visit. That's real, quotable, Lynch-specific support for the 100% assumption -- just
+not from the exact population (it describes the combined arm's protocol, not standalone office EMB).
+Updated the citation, moved this parameter up a tier, left the value and the provisional flag alone.
+Base case unchanged.
+
 ## 2026-08-30 (a citation scare, resolved -- the numbers were right all along)
 
 **Good news for once: a suspected error turned out not to be one.** While chasing a different lead,
