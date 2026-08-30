@@ -5,6 +5,23 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-29 (CPT 58558 data-quality flag resolved)
+
+### Changed
+- Resolved the `hysteroscopy_dc_professional_cost` data-quality flag: the recorded $204.41 and a
+  conflicting $1,269.90 citation for CPT 58558 were both superseded by a live CMS Physician & Other
+  Practitioners PUF query, split by `Place_Of_Srvc`: facility = $796.75 (383 rows, 6,393 services,
+  2024), nonfacility = $1,310.79 (89 rows, 1,752 services, 2024). The $1,269.90 citation turns out to
+  be close to the real nonfacility figure, not a professional-plus-facility bundle as originally
+  suspected.
+- `hysteroscopy_dc_professional_cost` updated to the real facility-setting value **$796.75**
+  (matching its own description), low/high set to the real p25/p75 ($221.61 / $1,460.92), distribution
+  switched from `fixed` to `gamma`, `provisional` set to `FALSE`, evidence tier upgraded from D to B.
+- This parameter is still not wired into any strategy cost function (it is a reference/scenario
+  parameter for a not-yet-implemented hysteroscopy-guided D&C comparator), so **the base case is
+  unchanged** by this fix. Only the evidence-tier distribution shifted: Tier D 6->5, Tier B 17->18.
+- Provisional count down to 5 of 41 parameters (was 6 of 41).
+
 ## 2026-08-28 (supply-cost double-count and facility-vs-nonfacility rate correction)
 
 ### Changed

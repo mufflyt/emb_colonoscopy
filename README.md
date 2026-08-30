@@ -60,18 +60,18 @@ transparent model, not a publication-ready result.
 
 ## Provisional parameters -- read before citing any number from this repository
 
-Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 6
+Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 5
 of 41 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
 is now a real BLS/O*NET figure); `office_to_dnc_escalation_fraction` (the assumption that 100% of
 failed office EMB attempts escalate to D&C); `combined_requires_preop_office_visit` (a structural
-scenario toggle); the CPT 58558 data-quality-flagged `hysteroscopy_dc_professional_cost` (not used in
-the base case); and two `reference_only` values kept only as documented exclusions
+scenario toggle); and two `reference_only` values kept only as documented exclusions
 (`colonoscopy_anesthesia_episode_cost`, `dnc_recovery_room_cost` -- both deliberately never summed
 into any strategy's cost). All six of the D&C arm's own cost components -- professional fee,
 pathology, facility fee, preop visit, and anesthesia -- are now real, sourced CMS values; so is the
-office-EMB arm's E/M visit cost, and `emb_disposable_supply_cost` is now a real CMS-itemized value
-(no longer a placeholder). `docs/data_sources.md` lists what each remaining item still needs.
-**No provisional value should be quoted as a finding.**
+office-EMB arm's E/M visit cost, `emb_disposable_supply_cost` is now a real CMS-itemized value, and
+the once-conflicting CPT 58558 figure (`hysteroscopy_dc_professional_cost`, still unused in the base
+case) has been resolved against a live CMS PUF query. `docs/data_sources.md` lists what each
+remaining item still needs. **No provisional value should be quoted as a finding.**
 
 ## Repository structure
 

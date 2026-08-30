@@ -81,6 +81,10 @@ with the CMS-2026 track, or because they are pure external benchmarks:
   fee is now sourced separately from the arm's other components -- see `cost_hysteroscopy_or_opps_2026`
   ($3,307.24, CPT 58558's own OPPS rate, identical to 58120's since both group into APC 5414) for a
   same-code, same-methodology comparison instead.
+- `hysteroscopy_dc_professional_cost` ($796.75, real CMS PUF 2024 facility-setting value as of
+  2026-08-29 -- see "RESOLVED data-quality flag" below) -- reference/scenario parameter only, for a
+  not-yet-implemented hysteroscopy-guided D&C comparator arm; not consumed by any function in
+  `R/strategy_costs.R`.
 - `emb_failure_general_adambekov_2017` (22.9%, with an 8/201 access-failure vs. 37/201
   inadequate-specimen breakdown) -- a general (non-Lynch) U.S. Pipelle failure-rate study.
 - `emb_failure_general` (11%) and `emb_insufficient_general` (31%) -- a general postmenopausal-bleeding
@@ -173,15 +177,28 @@ inflation multiplier for every 2014-dollar cost in the model (instead of the cor
 caught by `tests/testthat/test-inflation.R`'s implausible-ratio sanity check, not by inspection.
 Anyone editing this file should keep that test passing.
 
-## Open data-quality flag: CPT 58558 (hysteroscopy + D&C)
+## RESOLVED data-quality flag: CPT 58558 (hysteroscopy + D&C) (2026-08-29)
 
-`hysteroscopy_dc_professional_cost` is recorded as **$204.41**, but a separate citation surfaced
-during the same literature search reported **$1,269.90** (Q4 2026, a different fee-schedule
-aggregator) for the same CPT code. This is most likely a professional-only vs.
-professional-plus-facility distinction, but it has **not** been reconciled. The parameter is marked
-`provisional` and is not used in the base case (it is a scenario-only alternative to blind D&C); it
-should be checked against the CMS Physician Fee Schedule Look-Up Tool directly before it is used for
-anything.
+`hysteroscopy_dc_professional_cost` was recorded as $204.41, with a conflicting citation reporting
+$1,269.90 (Q4 2026, a different fee-schedule aggregator) for the same CPT code -- originally
+suspected to be a professional-only vs. professional-plus-facility distinction. A live CMS Physician
+& Other Practitioners PUF query for CPT 58558, split by `Place_Of_Srvc` (the same method used to
+resolve the CPT 58100 facility/nonfacility question above), found:
+
+- Facility (`F`): service-volume-weighted mean allowed amount = **$796.75** (383 provider rows,
+  6,393 total services, 2024 claims data), p25 = $221.61, p75 = $1,460.92
+- Nonfacility (`O`): service-volume-weighted mean = **$1,310.79** (89 provider rows, 1,752 total
+  services), p25 = $1,204.56, p75 = $1,455.15
+
+Neither original figure was right, but the mystery is resolved: the $1,269.90 citation is very close
+to the real *nonfacility* weighted mean ($1,310.79) -- it was very likely reporting the nonfacility
+(physician-office, all-inclusive) allowed amount, not a professional-plus-facility bundle. Since this
+parameter's own description specifies the *facility* setting (paired with a separate facility payment
+such as `cost_hysteroscopy_or_opps_2026`), it was updated to the real facility-setting value,
+**$796.75** (low/high = the real p25/p75), `provisional` set to `FALSE`, and re-tiered to evidence
+tier B. It remains unwired into any strategy cost function -- this is still a reference/scenario
+parameter only, for a not-yet-implemented hysteroscopy-guided D&C comparator arm (see
+`hysteroscopy_failure_rate_lynch_range`), so this fix does not change the base case.
 
 ## Provisional placeholders with no source yet
 

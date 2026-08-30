@@ -3,6 +3,19 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-29 (CPT 58558 mystery solved)
+
+**A data-quality flag from earlier this session is now resolved.** `hysteroscopy_dc_professional_cost`
+(CPT 58558, hysteroscopy + D&C -- not used in the base case, a reference value for a future comparator
+arm) had two conflicting numbers on file: $204.41 and $1,269.90, suspected to be a
+professional-only-vs.-professional-plus-facility mixup. A live CMS claims query, split by place of
+service, found the real answer: facility = $796.75, nonfacility = $1,310.79. Neither original number
+was right, but the mystery makes sense now -- the $1,269.90 citation was very close to the real
+nonfacility rate, not a facility-inclusive bundle. Updated to the real facility-setting value
+($796.75, matching this parameter's own definition) and cleared the provisional flag. The base case
+itself doesn't change (this parameter isn't wired into any cost function yet), but the
+provisional-parameter count drops to 5 of 41.
+
 ## 2026-08-28 (supply-cost double-count found and fixed; combined arm now uses the right facility rate)
 
 **Two real problems, found the same way: check CMS's own primary data before trusting a shared
