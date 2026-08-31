@@ -241,6 +241,20 @@ study's conclusions requires independent re-derivation before being treated as
 established -- see [`docs/testing_philosophy.md`](docs/testing_philosophy.md) for
 both rules and a worked log of five real mutation tests.
 
+**Citations in the code, not just the parameter table.** `config/model_parameters.csv`
+remains the canonical, complete source of provenance for every parameter. As of
+2026-08-31, `R/strategy_costs.R` and `R/diagnostic_yield.R` also carry citation
+comments at each literature-sourced value's actual point of use -- with the exact
+quoted sentence where it was directly verified against primary-source text this
+session (Nebgen et al. 2014, Hefler et al. 2009, ACOG Committee Opinion 800,
+Sakna/Nabhan et al. 2023, Namazov et al. 2017), so a reader doesn't have to
+cross-reference the CSV to see where a number in the cost or clinical-outcome tree
+comes from. Where a parameter's provenance is table/count-derived rather than a
+quotable narrative sentence (Elmasry, Lecuru, and Woolderink's Pipelle-failure
+counts; the general postmenopausal-bleeding meta-analysis behind
+`cancer_or_precancer_after_failed_sample`), the code cites author/year/PMID/table
+instead of fabricating a quote that was never verified.
+
 Continuous integration ([![R tests](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml/badge.svg)](https://github.com/mufflyt/emb_colonoscopy/actions/workflows/r-tests.yml))
 runs the full test suite on every push and pull request to `main`.
 
