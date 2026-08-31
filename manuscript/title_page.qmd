@@ -1,0 +1,65 @@
+---
+title: "Title Page"
+format: docx
+---
+
+<!--
+Per Obstetrics & Gynecology's Instructions for Authors (verified 2026-08-31 at
+https://journals.lww.com/greenjournal/pages/information-for-authors, updated
+April 20, 2026): the title page is submitted as a SEPARATE Word document from
+the manuscript body, because the journal uses double-anonymized peer review
+(reviewers must not see author/institution identity). Render this file
+separately from manuscript.qmd:
+
+  quarto render manuscript/title_page.qmd
+  quarto render manuscript/manuscript.qmd
+
+Title requirement: no more than 100 characters (letters + spaces), not
+declarative, not a question, no abbreviations or commercial names.
+-->
+
+**Title:** [DRAFT -- count characters before finalizing, limit 100 including
+spaces] Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome
+Surveillance: A Decision-Analytic Model
+
+<!-- Character count of the title above (letters + spaces only): fill in before submission. -->
+
+**Author(s):** [To be completed by the corresponding author -- full name(s),
+institutional/corporate/commercial affiliation(s), up to two major degrees per
+author.]
+
+**Corresponding author:** [Name, department and institution name, city,
+state, email address.]
+
+**Disclosure of financial support:** [State any source of financial support
+for the study, including supplies or services from a commercial
+organization, or state "The authors did not report any potential conflicts
+of interest." -- see Instructions for Authors, I.E and I.F.]
+
+**Disclosure of funding received for this work:** [State any funding from
+organizations such as NIH, or state "No funding was received for this
+work."]
+
+**Short title (running foot, ≤45 characters including spaces):**
+[DRAFT] EMB Strategies for Lynch Syndrome
+
+**Acknowledgments:**
+
+- Financial support of the study (grant numbers, industry funding, or "None"):
+  [TO COMPLETE]
+- Manuscript preparation assistance (per authorship policy I.B): This model
+  and the accompanying analysis were developed with the assistance of an AI
+  coding agent (Claude, Anthropic); all parameter values, citations, and
+  conclusions were reviewed and are the responsibility of the named authors.
+  [Author: confirm the exact acknowledgment language required by ACOG's
+  Artificial Intelligence policy, section I.V, before submission -- this was
+  not independently verified in this pass.]
+
+**Prior presentation:** [State whether this work was presented at a meeting
+or posted as a preprint, or state "This work has not been previously
+presented or posted."]
+
+**Data availability:** The model, all parameters with full citations, and the
+complete analysis code are publicly available at
+[github.com/mufflyt/emb_colonoscopy](https://github.com/mufflyt/emb_colonoscopy)
+(tag `analysis-v1.0` for the results reported here).

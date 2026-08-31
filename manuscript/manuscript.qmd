@@ -1,0 +1,404 @@
+---
+title: "Manuscript"
+format: docx
+---
+
+<!--
+Formatted per Obstetrics & Gynecology's (the "Green Journal") Instructions
+for Authors, verified directly 2026-08-31 at
+https://journals.lww.com/greenjournal/pages/information-for-authors
+(version dated April 20, 2026). Key constraints this file was built against:
+
+- Original Research: <=3,000 words of TEXT (Introduction+Methods+Results+
+  Discussion only -- excludes title page, abstract, precis, tables, figures,
+  references, SDC), <=30 references, <=5 figures+tables COMBINED.
+- Structured abstract, headings exactly: Objective / Methods / Results /
+  Conclusion (+ Funding Source only if industry-funded).
+- Body sections: Introduction / Methods / Results / Discussion.
+- References: numbered consecutively in order of first citation in text;
+  superscript preferred. Do NOT cite references in the abstract.
+- Precis: <=25 words, one sentence, states the conclusion, no abbreviations/
+  commercial names, goes on the manuscript's first page above the abstract.
+- "When comparing the cost of two procedures, please express the outcome of
+  the comparison in U.S. dollar amounts" -- followed throughout Results.
+- This file is BLINDED for double-anonymized review: no author names,
+  institution names, or self-citation. Author-identifying content belongs
+  only in title_page.qmd.
+- CHEERS reporting guideline applies (economic evaluation). Two items the
+  journal calls out specifically:
+    Item 15 (choice of model): a FIGURE summarizing the decision-tree model
+      is required. NOT YET CREATED -- see the TODO at the end of this file.
+    Items 16/18 (assumptions): a TABLE of every parameter with its source/
+      justification and range, with rationale. This repository's Table 1
+      (config/model_parameters.csv, rendered as
+      tables/manuscript_table1_parameters.csv) already satisfies this in
+      full; it is one of the 5 tables/figures counted against the combined
+      limit below.
+- No patient-accrual flow diagram: this is a decision-analytic model, not an
+  observational or randomized clinical study, so the flow-diagram
+  requirement for "clinical studies (observational or randomized)" does not
+  apply.
+
+WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
+text only (not this comment block, not the abstract/precis/references/
+tables) before submission -- target <=3,000.
+
+FIGURE/TABLE SELECTION (<=5 combined, all analyses currently available are
+listed under "Figures and Tables" at the end of this file with a
+recommended selection of 5 for the main text and the rest proposed for
+Supplemental Digital Content -- this is an editorial call for the author to
+confirm, not something finalized here).
+-->
+
+Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome
+Surveillance: A Decision-Analytic Model
+
+**Précis:** [DRAFT, count words, limit 25] Combining endometrial biopsy with
+an already-scheduled surveillance colonoscopy costs less than a standalone
+office biopsy or operative dilation and curettage across a wide range of
+assumptions and practice locations.
+
+## Abstract
+
+**Objective:** To estimate and compare the health-system costs of three
+strategies for endometrial cancer surveillance in women with Lynch syndrome:
+standalone office endometrial biopsy, operative dilation and curettage
+(D&C), and endometrial biopsy performed during an already-scheduled
+surveillance colonoscopy.
+
+**Methods:** We built a decision-analytic, cost-minimization model from a
+U.S. health-system/payer perspective, using Medicare-anchored allowed
+amounts (2026 U.S. dollars). Each strategy was modeled as an initial
+sampling attempt that either succeeds or fails and escalates to operative
+D&C; the combined-biopsy strategy included only costs incremental to the
+already-planned colonoscopy. Clinical probabilities were drawn preferentially
+from Lynch-syndrome-specific literature. We conducted deterministic and
+probabilistic sensitivity analyses (1,000 Monte Carlo draws), a threshold
+analysis, a budget-impact analysis, a geographic sensitivity analysis using
+real Medicare Geographic Practice Cost Indices and hospital wage indices
+across four localities, and two supplementary clinical-outcome sensitivity
+analyses testing the model's assumption of equivalent diagnostic
+effectiveness across strategies.
+
+**Results:** In the base case, combined biopsy cost an estimated $505.88 per
+patient, compared with $764.93 for standalone office biopsy and $3,827.04
+for operative D&C. Combined biopsy was $259.04 (33.9%) less expensive than
+standalone office biopsy and was cost-saving in 82.0% of probabilistic
+sensitivity analysis draws. Combined biopsy remained the least expensive
+strategy across all four geographic localities tested, with its advantage
+over standalone office biopsy widening from $209.77 in a low-cost locality
+to $353.14 in a high-cost locality. Clinical-outcome sensitivity analysis
+found combined biopsy carried substantially lower exposure to
+D&C-rescue-driven adverse events than standalone office biopsy (mean 0.34
+vs 2.11 events per 1,000 patients).
+
+**Conclusion:** [DRAFT -- directly supported by data, no "further research
+needed" language, per journal requirement] Endometrial biopsy performed
+during an already-scheduled surveillance colonoscopy costs substantially
+less than standalone office biopsy or operative dilation and curettage for
+Lynch syndrome surveillance, and this advantage is robust to parameter
+uncertainty and practice location.
+
+<!-- Abstract word count: count before submission (no fixed limit found in
+the current Instructions for Authors' Table 1 for Original Research beyond
+the overall structure; verify current abstract word limit at submission
+time, as some LWW journals cap structured abstracts at 300-350 words). -->
+
+## Introduction
+
+[NOT YET DRAFTED. Per the journal's guidance: orient the reader to the
+problem, preferably in one page or less, and clearly state the hypothesis
+or objective; avoid a detailed literature review. This section should
+establish: (1) Lynch syndrome's endometrial cancer risk and the rationale
+for biopsy-based surveillance, (2) the clinical and logistical burden of
+standalone office biopsy (pain, a dedicated visit) that motivates
+considering a combined-procedure alternative, (3) the gap this model fills
+-- no prior published cost comparison of these three specific strategies
+for this specific population -- and (4) the study objective, matching the
+abstract's Objective statement. Ask the author for the clinical framing and
+guideline context (e.g., current NCCN/ACOG surveillance recommendations)
+this section should cite.]
+
+## Methods
+
+We conducted a cost-minimization analysis comparing three strategies for
+endometrial cancer surveillance in women with Lynch syndrome: standalone
+office endometrial biopsy, operative dilation and curettage (D&C), and
+endometrial biopsy performed during an already-scheduled surveillance
+colonoscopy (combined biopsy). The analysis took a U.S. health-system/payer
+perspective, using Medicare-anchored allowed amounts (the Physician Fee
+Schedule and the Physician & Other Practitioners by Provider and Service
+Public Use Files) rather than hospital charges.^6^ All costs are reported in
+2026 U.S. dollars; costs originally reported in an earlier year were
+inflation-adjusted using the Bureau of Labor Statistics Consumer Price Index
+for Medical Care.
+
+A cost-minimization design assumes equivalent clinical effectiveness across
+strategies -- specifically, that an adequate endometrial specimen provides
+equivalent diagnostic information regardless of which strategy obtained it.
+We did not extend the base case to a full cost-effectiveness or
+cost-utility analysis (no quality-adjusted life-year axis, willingness-to-pay
+threshold, or efficiency frontier). Instead, we conducted two supplementary
+clinical-outcome sensitivity analyses that directly test, rather than merely
+assume, this equivalence (described below).
+
+Each strategy was modeled as a one-step decision tree: an initial sampling
+attempt, which either succeeds or fails and escalates to operative D&C. D&C
+itself was modeled as a deterministic reference arm with no escalation
+branch of its own in the base case. The combined-biopsy arm was modeled
+under an incremental-cost principle: because the patient is assumed to be
+undergoing the surveillance colonoscopy regardless of whether biopsy is
+added, no colonoscopy base cost, gastroenterology professional fee, or
+baseline procedural sedation cost was charged to this arm; only costs
+incremental to the already-planned colonoscopy were included.
+
+Clinical probabilities were drawn preferentially from Lynch-syndrome-specific
+literature. The office biopsy failure probability was pooled from three
+studies confirmed genuinely specific to the Pipelle device by direct
+full-text verification (22 of 166 attempts, 13.3%).^1-3^ The combined-arm
+probability of escalation to D&C was the directly observed rate from a
+10.5-year, 111-visit combined-screening cohort (2 of 111 visits, 1.8%).^4^
+The combined arm's incremental procedure time (median 5 minutes, range 1-12
+minutes) and incremental anesthesia requirement (no increase in dosing) were
+drawn from a prospective feasibility study of the combined procedure.^5^
+
+We conducted five complementary sensitivity analyses. First, deterministic
+one-way sensitivity analysis varied each of ten parameters individually
+across its low/high bound while holding all others at base case. Second,
+probabilistic sensitivity analysis drew 1,000 Monte Carlo samples, with each
+parameter sampled from a distribution matched to its evidence type (beta for
+probabilities, gamma for costs, triangular for parameters whose uncertainty
+is a structural or plausibility range rather than a formal confidence
+interval). Third, threshold analysis solved for the parameter value at which
+the combined strategy's cost advantage over office biopsy would be lost.
+Fourth, scenario analysis modeled illustrative Medicaid and commercial
+reimbursement and an alternative structural assumption about the combined
+arm's preoperative visit. Fifth, budget-impact analysis projected annualized
+savings across illustrative cohort sizes.
+
+To test whether the base-case conclusion depends on national-average
+Medicare pricing, we re-priced all three strategies at four localities: the
+national average, a mid-cost state, a low-cost locality, and a high-cost
+locality. Professional-fee components were adjusted using the Medicare
+Geographic Practice Cost Index for the relevant procedure code and setting,
+applying the standard relative-value formula (work relative-value units x
+work index + practice-expense relative-value units x practice-expense index
++ malpractice relative-value units x malpractice index, divided by the
+unadjusted total).^6^ The D&C facility fee was adjusted using the real
+Hospital Outpatient Prospective Payment System wage index for the relevant
+core-based statistical area,^7^ applying the labor-related-share formula
+(labor share x wage index + [1 - labor share]) with the actual 60%
+labor-related share finalized for the payment year.^8^ This geographic
+analysis was kept deterministic rather than folded into the probabilistic
+sensitivity analysis, since geographic variation is a question of whether
+the conclusion generalizes to a different practice location rather than a
+source of parameter uncertainty.
+
+We conducted two clinical-outcome sensitivity analyses, computed from the
+same probabilistic-sensitivity draws as the cost outputs. First, we
+estimated each strategy's exposure to D&C-related adverse events (a
+composite of uterine perforation, cervical false passage, and severe
+hemorrhage, pooled from a cohort of 5,359 nonobstetric D&Cs)^9^ as a
+function of that strategy's probability of ultimately requiring D&C, either
+as the primary procedure or as a rescue procedure after a failed sampling
+attempt. Second, for the office-biopsy arm, we estimated the probability of
+a failed sampling attempt that is not rescued to D&C, combined with the
+probability of cancer or precancer among women with a failed or insufficient
+sample, drawn from a general (non-Lynch) postmenopausal-bleeding
+meta-analysis.^10^ We were unable to construct a symmetric estimate for the
+combined-biopsy arm, because the available combined-screening literature
+reports a directly observed escalation-to-D&C probability but does not
+separately report the fraction of combined-biopsy failures, if any, that go
+unresolved without follow-up sampling; this limitation is addressed in the
+Discussion.
+
+We compared the model's cost estimates against three independently
+published analyses as a validation check: a historical office-biopsy cost
+anchor,^11^ a Medicare-payer-perspective decision-tree comparing Pipelle
+sampling and D&C,^12^ and an independent U.S. economic model of office
+versus institutional hysteroscopic surgery.^13^
+
+All analyses were implemented in R (R Foundation for Statistical Computing,
+Vienna, Austria) and are publicly available, with every model parameter
+individually cited to its source. [Author: confirm final phrasing for a
+double-anonymized submission -- the public repository URL and any
+institution-identifying detail belong on the title page, not here.]
+
+## Results
+
+In the base case, combined biopsy cost an estimated $505.88 per patient,
+compared with $764.93 for standalone office biopsy and $3,827.04 for
+operative D&C. Combined biopsy was $259.04 (33.9%) less expensive than
+office biopsy, and both office-based strategies were substantially less
+expensive than D&C, which was more costly than both alternatives at every
+facility fee tested, including a facility fee of $0.
+
+The combined-vs-office cost difference was most sensitive to the office
+biopsy failure probability (range -$144.23 to -$515.45 across its 10.3%-20.0%
+bound) and the combined arm's incremental procedure time (range -$392.78 to
+-$24.99 across its observed 1-12 minute range). At the upper end of the
+observed time range, the combined arm's advantage over office biopsy
+narrowed to $24.99 but did not reverse.
+
+Across 1,000 probabilistic-sensitivity draws, combined biopsy had a mean
+cost of $536.50 (SD $113.50) and office biopsy a mean cost of $678.20 (SD
+$114.50). Combined biopsy was the least expensive strategy in 82.0% of
+draws; D&C was never the least expensive strategy in any draw. Combined
+biopsy remained the least expensive strategy as long as the incremental
+colonoscopy-suite time stayed below approximately 12.7 minutes and as long
+as the office biopsy failure probability stayed above approximately 6.5%.
+At illustrative cohort sizes of 10 to 1,000 patients screened annually,
+adopting combined biopsy over standalone office biopsy was projected to
+save $2,590 to $259,043 per year.
+
+Combined biopsy remained the least expensive strategy in all four localities
+tested. Its advantage over office biopsy ranged from $209.77 per patient in
+the low-cost locality to $274.33 in the mid-cost locality to $353.14 per
+patient in the high-cost locality -- that is, the combined-arm cost
+advantage widened, rather than narrowed or reversed, at the high-cost
+extreme.
+
+D&C-rescue-driven major-adverse-event exposure was substantially lower for
+combined biopsy (mean 0.34 events per 1,000 patients) than for office
+biopsy (mean 2.11 per 1,000), reflecting the combined arm's lower
+probability of ultimately requiring D&C. D&C itself carried a mean
+adverse-event exposure of 19.16 per 1,000. The office-biopsy arm's estimated
+delayed-neoplasia risk (a failed sample not rescued to D&C that represents
+cancer or precancer) had a mean of 1.52 per 1,000 patients. The
+combined-biopsy arm's estimated delayed-neoplasia risk was 0.00 in all 1,000
+draws by construction, not because the underlying risk is known to be zero
+(see Discussion); we therefore report this as an exploratory,
+office-arm-specific finding rather than a head-to-head comparison.
+
+## Discussion
+
+[NOT YET DRAFTED. Per the journal's guidance: begin with what the study
+found in relation to the stated objective, then address: (1) clinical and
+policy significance of the finding that combined biopsy is both less
+costly AND less exposed to procedural adverse events; (2) the principal
+limitation, stated plainly: the model's assumption of equivalent diagnostic
+effectiveness is tested but not fully validated -- the delayed-neoplasia
+metric is structurally asymmetric (zero for the combined arm by construction,
+not by evidence), because no published study reports the fraction of failed
+combined-biopsy attempts that go unresolved without follow-up sampling; (3)
+other limitations: the office-arm escalation-to-D&C fraction remains a
+100% provisional assumption; D&C's own failure/escalation risk is not
+modeled; adverse-event costs are not monetized; several clinical
+probabilities are drawn from general rather than Lynch-specific populations;
+(4) comparison with existing literature/guidelines; (5) what evidence would
+resolve the principal limitation (e.g., aggregate counts from existing
+combined-screening cohorts of total attempts, insufficient-tissue
+specimens, and follow-up pathway); (6) conclusion, directly supported by
+data, without "further research is needed" framing per the journal's
+explicit instruction. Ask the author for the clinical/policy framing this
+section should take.]
+
+## References
+
+<!-- Numbered in order of first citation in the Methods section above.
+Superscript citation markers in the text use Quarto's `^n^` syntax.
+Citations marked [VERIFY] were not independently re-confirmed against the
+primary source in this session and should be checked before submission --
+all others were confirmed directly against the primary source text. -->
+
+1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
+   surgery in a family with hereditary non-polyposis colorectal cancer
+   syndrome. Fam Cancer 2009;8:431-439.
+2. Lecuru F, Le Frere Belda MA, Bats AS, et al. Performance of office
+   hysteroscopy and endometrial biopsy for detecting endometrial disease in
+   women at risk of human non-polyposis colon cancer: a prospective study.
+   Int J Gynecol Cancer 2008;18:1326-1331.
+3. Woolderink JM, De Bock GH, Zeeman GG, et al. Follow-up of Lynch syndrome
+   women without endometrial cancer surveillance. BMC Womens Health
+   2020;20:54.
+4. Nebgen DR, Lu KH, Rimes S, Keeler E, Broaddus R, Munsell MF, Lynch PM.
+   Combined colonoscopy and endometrial biopsy cancer screening results in
+   women with Lynch syndrome. Gynecol Oncol 2014;135:85-89.
+5. Huang M, Sun C, Boyd-Rogers S, et al. Prospective study of combined colon
+   and endometrial cancer screening in women with Lynch syndrome: a
+   patient-centered approach. J Oncol Pract 2011;7:43-47.
+6. Centers for Medicare & Medicaid Services. Physician Fee Schedule.
+   Available at:
+   https://www.cms.gov/medicare/payment/fee-schedules/physician. Accessed
+   August 31, 2026.
+7. Centers for Medicare & Medicaid Services. Hospital Outpatient Prospective
+   Payment System. Available at:
+   https://www.cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient.
+   Accessed August 31, 2026.
+8. Medicare Program: Hospital Outpatient Prospective Payment and Ambulatory
+   Surgical Center Payment Systems; Quality Reporting Programs; Overall
+   Hospital Quality Star Rating; Hospital Price Transparency; and Notice of
+   Closure of a Teaching Hospital and Opportunity To Apply for Available
+   Slots. Fed Regist 2025;90 (Nov 25, 2025) [document 2025-20907].
+9. Hefler L, Lemach A, Seebacher V, Polterauer S, Tempfer C, Reinthaller A.
+   The intraoperative complication rate of nonobstetric dilation and
+   curettage. Obstet Gynecol 2009;113:1268-1271.
+10. van Hanegem N, Prins MMC, Bongers MY, et al. The accuracy of endometrial
+    sampling in women with postmenopausal bleeding: a systematic review and
+    meta-analysis. Eur J Obstet Gynecol Reprod Biol 2016;197:147-155.
+11. Ladabaum U, Wang G, Terdiman J, et al. Strategies to identify the Lynch
+    syndrome among patients with colorectal cancer: a cost-effectiveness
+    analysis. Ann Intern Med 2011;155:69-79. [VERIFY exact page range]
+12. Yi Y, Lu Y, Wu J. Cost-effectiveness analysis of biopsy strategies for
+    endometrial cancer diagnosis in women with postmenopausal bleeding:
+    Pipelle sampling curette versus dilatation & curettage. Gynecol Oncol
+    2018;150:112-118.
+13. Munro MG, Kasiewicz JL, Desai VB. Office versus institutional operative
+    hysteroscopy: an economic model. J Minim Invasive Gynecol
+    2022;29:535-548.
+
+<!-- Additional references cited only in the clinical-outcome sensitivity
+methods paragraph but not yet numbered above (ACOG Committee Opinion 800,
+Sakna/Nabhan 2023, Namazov 2017, Childers/Maggard-Gibbons, the CMS RVU/GPCI
+file itself): add these as references 14-19 if the corresponding
+sensitivity-analysis detail is retained in the final Methods text. Full
+citation strings for all of these are already compiled in
+docs/data_sources.md and config/model_parameters.csv. -->
+
+## Figures and Tables
+
+<!--
+The journal caps Original Research at 5 figures+tables COMBINED. This
+repository currently has far more than 5 analysis outputs. The selection
+below is a suggested starting point, not a final decision -- confirm with
+the author which 5 best serve the paper's argument, and move the rest to
+Supplemental Digital Content (explicitly exempted from the combined-count
+limit per the Instructions for Authors).
+
+RECOMMENDED for main text (5):
+  1. Table -- base-case strategy comparison + full parameter/assumption
+     table with sources and ranges (satisfies CHEERS items 16/18).
+     Source: tables/manuscript_table1_parameters.csv +
+     tables/manuscript_table3_strategy_comparison.csv (may need combining
+     or picking one).
+  2. Figure -- DECISION-TREE MODEL DIAGRAM. NOT YET CREATED. Required by
+     CHEERS item 15 ("a figure showing a summary of the model... clearly
+     show how the various factors or processes lead to the outcome of
+     interest"). This is the single most important missing piece for
+     journal compliance -- ask me to build this next (e.g., a schematic
+     decision tree, not one of the existing bar/histogram figures).
+  3. Figure -- figures/figure4_psa_incremental_cost.jpeg (probabilistic
+     sensitivity analysis).
+  4. Figure -- figures/figure6_geographic_sensitivity.jpeg (geographic
+     sensitivity).
+  5. Table or figure -- clinical-outcome sensitivity summary (adverse-event
+     and delayed-neoplasia comparison). NOT YET RENDERED AS A STANDALONE
+     TABLE/FIGURE -- currently only reported in prose and the raw PSA
+     draws CSV; would need a small new table/figure built from
+     tables/probabilistic_sensitivity_draws.csv's clinical-outcome columns.
+
+PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (not counted against the limit):
+  - figures/figure1_strategy_cost_comparison.jpeg
+  - figures/figure2_tornado.jpeg (one-way sensitivity)
+  - figures/figure3a_threshold_minutes.jpeg,
+    figures/figure3b_threshold_office_failure.jpeg
+  - figures/figure5_scenario_comparison.jpeg
+  - tables/manuscript_table2_cost_components.csv
+  - tables/manuscript_table4_one_way_sensitivity.csv
+  - tables/manuscript_table6_thresholds.csv
+  - tables/manuscript_table7_budget_impact.csv
+  - tables/manuscript_table8_evidence_tiers.csv
+  - tables/manuscript_table9_validation_status.csv
+  - tables/geographic_strategy_costs.csv,
+    tables/geographic_adjustment_audit.csv
+-->
