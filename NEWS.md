@@ -3,6 +3,17 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (CI had actually been red for two pushes -- a hardcoded package list drifted)
+
+Worth flagging: continuous integration on `main` had been failing since the decision-tree figure
+work landed, because the GitHub Actions workflow keeps its own hardcoded copy of the package list
+instead of reading it from the same place the code does, and that copy never got the new packages
+(`DiagrammeR`, `DiagrammeRsvg`, `rsvg`, and earlier `openssl`). It went unnoticed because running
+tests locally always works -- the local R library already had everything installed. Fixed by
+syncing the two lists; a real reminder that "tests pass on my machine" and "CI is green" are
+different claims, and only checking the CI status page (not just local runs) catches the gap
+between them.
+
 ## 2026-08-31 (README caught up to the model, and a verification script got a permanent home)
 
 Two things here. First, the README's headline result was stale -- it still quoted $574.77 as the

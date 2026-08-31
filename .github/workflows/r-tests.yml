@@ -37,6 +37,10 @@ jobs:
             any::httr2
             any::readxl
             any::stringr
+            any::openssl
+            any::DiagrammeR
+            any::DiagrammeRsvg
+            any::rsvg
             any::testthat
 
       - name: Run test suite

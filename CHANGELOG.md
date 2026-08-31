@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (fixed broken CI: workflow's hardcoded package list drifted from required_packages)
+
+### Fixed
+- `.github/workflows/r-tests.yml`: CI had been failing on `main` for the last two pushes
+  ("Required packages not installed: DiagrammeR, DiagrammeRsvg, rsvg") because the workflow's
+  `Install R package dependencies` step hardcodes its own package list rather than reading
+  `R/00_source_all.R`'s `required_packages`, and that list was never updated when `openssl`
+  (evidence-layer work) and `DiagrammeR`/`DiagrammeRsvg`/`rsvg` (decision-tree figure work) were
+  added there. Local `Rscript tests/testthat.R` runs never caught this because the local R library
+  already had those packages installed from working on the features that needed them. Added all
+  four missing packages to the workflow's list; the two now match.
+
 ## 2026-08-31 (README refresh, independent PSA verification script formalized, appendix updates)
 
 ### Added
