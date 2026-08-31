@@ -5,6 +5,32 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (documented a structural asymmetry the PSA output demonstrated -- no code changed)
+
+### Added
+- `docs/methods_notes.md`: new "Interpretation of delayed-neoplasia outcomes" subsection.
+  `combined_emb_neoplasia_delayed_per_1000` was found to be exactly 0.000 (SD 0) across all 1,000
+  draws of `analysis/03_probabilistic_sensitivity.R`'s saved PSA output -- not by construction at the
+  base case only, but structurally: the combined arm has no modeled "failed and not escalated"
+  pathway at all (`combined_to_dnc_probability` is a directly-observed escalation rate, not a raw
+  failure probability paired with a separately estimated escalation fraction the way the office arm
+  is). Documents that the resulting "combined EMB had no greater delayed-neoplasia risk than office
+  EMB in 100% of draws" finding is a structural artifact, not evidence of diagnostic superiority or
+  equivalence, and that the joint "cheaper AND no greater delayed-neoplasia risk" probability (69.3%)
+  is therefore mathematically identical to the cost-only "cheaper" probability and adds no independent
+  information. Identifies the genuine, non-degenerate clinical-risk comparison from the same PSA run
+  instead: combined EMB's no-greater-major-AE-exposure probability (97.8%, not 100%, reflecting real
+  overlap in the escalation-probability distributions rather than a structural zero).
+- `docs/data_sources.md`: companion evidence-gap note under "Diagnostic-yield and clinical-outcome
+  extension" -- what data would be needed to build a symmetric combined-arm unresolved-failure branch
+  (an overall combined-EMB failure probability, and the fraction of those failures that never receive
+  definitive follow-up sampling), currently absent from the evidence base.
+
+No model code or parameter values changed in this entry -- purely documentation, written before this
+finding could leak into a manuscript table or claim as though it were evidence. See the prior session
+turn's independent verification (computed directly from `tables/probabilistic_sensitivity_draws.csv`,
+not by calling any repository function) for the full numeric analysis this documents.
+
 ## 2026-08-31 (Table 5's cheapest-strategy probabilities were NA; extracted and fixed)
 
 ### Fixed

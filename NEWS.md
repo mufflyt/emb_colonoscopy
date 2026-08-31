@@ -3,6 +3,25 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a clean result that turned out to be too clean, caught before it went anywhere)
+
+Digging into the new clinical-outcome PSA numbers surfaced something that looked great at first
+glance: combined EMB had no greater delayed-cancer/precancer risk than office EMB in 100% of 1,000
+simulated draws. That's the kind of sentence that ends up in an abstract.
+
+It shouldn't. The 100% wasn't a finding -- it was a mechanical certainty. The model currently has no
+way for a failed combined-EMB attempt to go unresolved (unlike the office arm, which does model that
+pathway), so its delayed-diagnosis rate is exactly zero in every single draw by construction, not by
+evidence. Once that's true, "combined is cheaper AND no worse on this metric" collapses to exactly
+"combined is cheaper" -- the same 69.3% wearing a second label, adding nothing.
+
+Documented this plainly in the methods notes and data sources before it could get cited as a real
+result. The genuine clinical-risk finding from the same analysis survives the scrutiny: combined EMB's
+exposure to rescue-D&C-driven adverse events was no worse than office EMB's in 97.8% of draws --
+notably not 100%, which is exactly what makes it a real comparison rather than a structural one. No
+model code changed; this was a documentation-only pass, on purpose, so a genuinely uncertain question
+doesn't quietly read as settled.
+
 ## 2026-08-31 (a second bug found the same way: run it, read the output, don't trust it)
 
 Same lesson as the PSA distribution fix earlier today, one script over. Running the manuscript-tables

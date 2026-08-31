@@ -477,6 +477,20 @@ against "fabricating structure to hit a known target" applies with equal force t
 to inventing a probability -- see the two GTN-model anchors above for what a real, disclosed-as-weak
 alternative looks like instead.
 
+**Combined-EMB unresolved-failure probability: evidence gap.** The current model cannot estimate
+delayed cancer or precancer after combined EMB in a manner directly comparable with standalone office
+EMB. The available combined-screening evidence provides a directly observed probability of escalation
+to hysteroscopy/D&C (`combined_to_dnc_probability`) but does not separately report (1) the overall
+probability of an inadequate or failed combined EMB and (2) the fraction of those failures that never
+receive definitive follow-up sampling. The model therefore has no evidence-based unresolved-failure
+branch for combined EMB. Its modeled delayed-neoplasia rate is consequently zero by construction and
+must not be interpreted as evidence that combined EMB eliminates delayed diagnosis. Demonstrated
+empirically 2026-08-31: `combined_emb_neoplasia_delayed_per_1000` was exactly 0.000 (SD 0) across all
+1,000 draws of `analysis/03_probabilistic_sensitivity.R`'s PSA output, while office EMB's equivalent
+column varied with a mean of 1.60 per 1,000 -- see `docs/methods_notes.md`'s "Interpretation of
+delayed-neoplasia outcomes" section for the full write-up and why the resulting "cheaper AND no
+greater delayed-neoplasia risk" joint probability should not be reported as a distinct finding.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |

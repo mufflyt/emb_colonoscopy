@@ -42,6 +42,42 @@ Yi et al. 2018 could not be reproduced by this repository's cost-only engine) th
 "does the higher inadequate-sampling probability of office EMB create enough downstream diagnostic
 risk to invalidate pure cost minimization?" question `compute_strategy_clinical_outcomes()` answers.
 
+### Interpretation of delayed-neoplasia outcomes
+
+**2026-08-31, demonstrated empirically via `analysis/03_probabilistic_sensitivity.R`'s 1,000-draw
+output:** the delayed-neoplasia outcome is informative for the standalone office-EMB arm but is not
+currently symmetric across strategies.
+
+For office EMB, the model permits a failed or inadequate sample to remain unresolved when the sampled
+`office_to_dnc_escalation_fraction` is less than 1.0; these unresolved failures are then combined with
+the probability of cancer or precancer after an inadequate sample to estimate potentially delayed
+neoplasia.
+
+The combined-EMB arm has no analogous unresolved-failure branch. `combined_to_dnc_probability` is a
+directly observed probability of proceeding to hysteroscopy/D&C after unsuccessful combined sampling
+and is modeled as an escalation probability rather than as a raw sampling-failure probability followed
+by a separately estimated escalation fraction. Consequently, the current model assigns zero unresolved
+combined-arm sampling failures and therefore zero delayed-neoplasia events to that strategy by
+construction.
+
+Accordingly, the finding that combined EMB had no greater delayed-neoplasia risk than office EMB in
+100% of probabilistic-sensitivity draws should not be interpreted as evidence of diagnostic
+superiority or equivalence. The result reflects an asymmetry in available evidence and model
+structure. A symmetric comparison would require data on the probability of combined EMB failure and,
+conditional on failure, the probability that the patient does not receive definitive follow-up
+sampling.
+
+The delayed-neoplasia outcome is therefore retained as an exploratory measure of the consequences of
+incomplete follow-up after failed office EMB, but it is not used as a comparative effectiveness
+endpoint between office and combined EMB in the primary analysis. The joint "combined EMB is cheaper
+AND has no greater delayed-neoplasia risk" probability (69.3% in the 1,000-draw run above) is
+mathematically identical to the cost-only "combined EMB is cheaper" probability for exactly this
+reason -- it adds no independent information and should not be reported as a distinct finding. The
+genuine, non-degenerate clinical-risk comparison from that same run is the major-adverse-event one:
+combined EMB had no greater D&C-rescue-driven major-AE exposure than office EMB in 97.8% of draws
+(mean 0.67 vs. 2.12 events per 1,000), which is not true by construction and does reflect real overlap
+in the underlying escalation-probability distributions.
+
 ## The incremental-cost principle
 
 The central conceptual choice in this model is that patients with Lynch syndrome are assumed to be
