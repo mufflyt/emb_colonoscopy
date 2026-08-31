@@ -3,6 +3,24 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a citation we'd already used turned out to have been misread -- half the model's key)
+
+A collaborator asked us to double-check something before changing anything: was `combined_to_dnc_probability`
+(2 out of 55 patients, 3.6%) actually measuring what the model uses it for? The model prices a single
+office visit, not a patient's whole multi-year screening history -- so a rate describing "2 of 55
+patients, ever" isn't the same quantity as "how often does one combined-screening visit end in a
+rescue D&C."
+
+Reading the original paper's own sentence settled it: "3.6%" sits right next to the paper's patient
+demographics (age, race, parity), computed over its 55 patients -- while the paper's own per-visit
+statistics elsewhere use its 111-visit count. Recomputed against that visit count, the same two events
+are 1.8%, not 3.6%.
+
+That's a real, meaningful change: it roughly halves the combined arm's expected rescue-D&C cost,
+widening its advantage over office EMB from about 25% to 34% cheaper. Worth sitting with for a moment
+-- this is exactly the kind of quiet unit-mismatch that's easy to miss on a first read and easy to
+propagate for a long time once it's in a spreadsheet.
+
 ## 2026-08-31 (a clean result that turned out to be too clean, caught before it went anywhere)
 
 Digging into the new clinical-outcome PSA numbers surfaced something that looked great at first

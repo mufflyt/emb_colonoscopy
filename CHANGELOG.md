@@ -5,6 +5,30 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (corrected combined_to_dnc_probability's denominator: 2/55 -> 2/111; base case changes)
+
+### Changed
+- `combined_to_dnc_probability` corrected from 3.6% (2/55, patient-level) to 1.8% (2/111,
+  per-encounter), after a collaborator flagged the possible mismatch and it was audited directly
+  against Nebgen et al. 2014's primary text before changing anything (per this project's
+  independent-confirmation meta-rule). Confirmed: "Two women (3.6%) had cervical stenosis..." sits
+  among unambiguously patient-level percentages in the paper's Demographics section (2/55 = 3.636%,
+  matching "3.6%" exactly; the same paper uses its 111-visit denominator explicitly elsewhere, for
+  encounter-level rates). `compute_combined_emb_strategy_cost()` consumes this parameter as a
+  per-encounter escalation probability, so the patient-level prevalence was the wrong denominator.
+  `low_value`/`high_value` also updated to the exact binomial 95% CI for 2/111 (0.0022-0.0636),
+  replacing an unsourced 0.01-0.10 band.
+- Base case: combined EMB **$505.88** (was $574.77), combined-vs-office margin **$259.04 (33.9%)**
+  (was $190.16, 24.9%), minutes threshold **~12.7** (was ~10.7). PSA cost-saving frequency now ~82%
+  (rerun, unseeded). All `analysis/01`-`05` and `07` outputs regenerated.
+- Two documentation updates carried this correction: `docs/data_sources.md`'s new "CORRECTED:
+  combined_to_dnc_probability's denominator" section (full audit writeup, including what this does
+  NOT resolve -- the paper reports no separate insufficient-tissue count and no unresolved-failure
+  data), and `docs/methods_notes.md`'s "Two escalation probabilities" and "What the base-case run
+  actually found" sections.
+- `tests/testthat/test-model-identity.R`: updated a stale comment (0.036 -> 0.018); no test logic
+  changed, since existing tests read the parameter dynamically via `get_parameter_value()`.
+
 ## 2026-08-31 (documented a structural asymmetry the PSA output demonstrated -- no code changed)
 
 ### Added

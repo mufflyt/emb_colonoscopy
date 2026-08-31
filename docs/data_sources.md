@@ -24,7 +24,7 @@ mining, in the order it was identified during model design.
 | `direct_room_cost_per_minute` | $20.90/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
 | `anesthesia_cost_per_minute` | $3.42/min (2014) | Childers & Maggard-Gibbons, JAMA Surgery |
 | `emb_failure_lynch` | 13.3% (pooled) | Elmasry 5/25, Lecuru 12/116, Woolderink 5/25 -- all three confirmed genuinely Pipelle-specific via direct primary-source full-text verification, 2026-08-31 (Rijcken 2003 excluded, not a Pipelle-specific study; see below) |
-| `combined_to_dnc_probability` | 3.6% (2/55) | Nebgen et al. 2014, PMC4389779 |
+| `combined_to_dnc_probability` | 1.8% (2/111) | Nebgen et al. 2014, PMC4389779 -- corrected 2026-08-31 from 3.6% (2/55), a patient-level-vs-per-encounter denominator mismatch; see below |
 
 **Retrieving the CMS OPPS/ASC addenda:** these are the official CMS payment addenda, updated
 quarterly, at `cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient-pps/
@@ -278,6 +278,53 @@ Lecuru, Woolderink), each individually confirmed genuinely Pipelle-specific by r
 text, with Rijcken excluded as a category error rather than merely a wrong number. New pooled value:
 (5+12+5)/(25+116+25) = 22/166 = **13.3%** (was 13.7%). See `config/model_parameters.csv`'s
 `emb_failure_lynch` row for the full citation and `docs/methods_notes.md` for the base-case impact.
+
+## CORRECTED: `combined_to_dnc_probability`'s denominator (2026-08-31)
+
+A collaborator flagged a possible denominator mismatch and asked for it to be audited against the
+primary text before anything was changed, per this project's independent-confirmation meta-rule
+(`docs/testing_philosophy.md`). Confirmed by reading the primary source directly (not the secondary
+summary that raised the question):
+
+Nebgen et al. 2014's "Demographics" section states: **"Two women (3.6%) had cervical stenosis and
+underwent hysteroscopy with dilation and curettage."** This sentence sits directly among other
+unambiguously patient-level statistics in the same paragraph -- "The mean age at enrollment was 39.5
+years... The majority were Caucasian (85%)... Eighty-five percent were pre-menopausal... The majority,
+78% were multiparous..." -- all computed over the paper's n=55 patients, not its 111 screening visits.
+2/55 = 3.636%, matching "3.6%" exactly; 2/111 would round to "1.8%," which the paper does not use here.
+The same paper explicitly uses the 111-visit denominator elsewhere, for encounter-level rates: "EMBx
+in our study detected endometrial cancer in 0.9% (1/111) of surveillance visits, and premalignant
+hyperplasia in 3.6% (4/111) of screening visits" -- so the authors themselves consistently distinguish
+patient-level from visit-level percentages, and placed the cervical-stenosis figure in the
+patient-level block.
+
+`combined_to_dnc_probability` is consumed by `compute_combined_emb_strategy_cost()` as a
+**per-encounter** `escalation_probability` -- `compute_strategy_costs()` prices a single combined-
+screening visit, not a patient's multi-year screening history. Using the patient-level 2/55 (a
+10.5-year cumulative prevalence: "what fraction of these patients ever had this happen across all
+their visits") as a per-encounter probability was therefore the wrong denominator for how this
+parameter is actually used in the cost engine. Re-denominated to the encounter-level rate the same two
+events are counted against elsewhere in the same paper: **2/111 = 1.8%**.
+
+**What this correction does NOT resolve.** The paper's protocol statement -- "If cervical stenosis or
+insufficient endometrial tissue was encountered, hysteroscopy and dilation and curettage were
+scheduled" -- covers two failure modes, but the paper reports a count for only one of them (the 2
+cervical-stenosis cases). No separate insufficient-tissue count is given, so 2/111 is a **floor** on
+total combined-EMB escalations, not necessarily a complete count. The paper also reports no data on
+what fraction of combined-EMB failures, if any, went unresolved (no rescue procedure) -- this is the
+same evidence gap already documented in `docs/methods_notes.md`'s "Interpretation of delayed-neoplasia
+outcomes" section, and remains open. A collaborator has proposed contacting the Nebgen and/or ONCE
+(Frissora et al. 2025) investigators for the underlying aggregate counts (total combined-EMB attempts,
+adequate/insufficient specimens, cervical stenosis, repeat EMB, hysteroscopy/D&C, no follow-up
+sampling) -- this would let `office_failed_emb_further_workup_fraction`-style math be built for the
+combined arm the way it already exists (indirectly) for the office arm. Not yet pursued.
+
+**Effect on the base case:** `low_value`/`high_value` also updated, from an unsourced 0.01-0.10
+sensitivity band to the exact binomial 95% CI for 2/111 (`stats::binom.test()`: 0.0022-0.0636).
+Combined EMB's expected cost dropped from $574.77 to $505.88 (its escalation-cost component roughly
+halved along with the escalation probability); the combined-vs-office margin widened from $190.16
+(24.9%) to $259.04 (33.9%); the minutes threshold widened from ~10.7 to ~12.7. See
+`docs/methods_notes.md` for the full base-case history.
 
 ## Literature search for `office_to_dnc_escalation_fraction` (2026-08-30, partially resolved)
 

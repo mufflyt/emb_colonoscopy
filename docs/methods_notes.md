@@ -140,10 +140,16 @@ failure rate in this repository), and `hysteroscopy_failure_rate_lynch_range` is
   written protocol escalates every EMB failure straight to D&C with no repeat-office step -- but that
   describes the combined arm, not standalone office EMB, so this remains a placeholder for this
   parameter's actual target population. See `docs/data_sources.md` for the full search.
-- **Combined arm:** `combined_to_dnc_probability` (3.6%, i.e. 2/55) is Nebgen et al.'s *directly
+- **Combined arm:** `combined_to_dnc_probability` (1.8%, i.e. 2/111) is Nebgen et al.'s *directly
   observed* escalation-to-procedure rate in the combined-screening cohort -- it does not need a
   separate escalation-fraction assumption stacked on top, because it already measures "proceeded to
-  D&C," not just "failed."
+  D&C," not just "failed." **Corrected 2026-08-31** from an earlier 3.6% (2/55): the paper's "Two
+  women (3.6%) had cervical stenosis..." sentence sits among unambiguously patient-level percentages
+  (mean age, race, parity, weight, all computed over the 55 patients), not the paper's own 111-visit
+  denominator it uses elsewhere for encounter-level rates. Since `compute_combined_emb_strategy_cost()`
+  prices a single encounter, not a patient's multi-year screening history, 2/55 was the wrong
+  denominator; 2/111 is the per-encounter rate the paper's own events are actually counted against.
+  See `docs/data_sources.md` for the full audit.
 
 These two probabilities are evidence of genuinely different quality (a pooled multi-study rate with
 an assumed 100% escalation fraction, vs. a single cohort's directly observed escalation rate), and
@@ -155,16 +161,20 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$574.77** per patient
+- Combined EMB: **$505.88** per patient
 - Office EMB: **$764.93** per patient
 - Operative D&C: **$3,827.04** per patient
-- Combined EMB is **$190.16 (24.9%) cheaper** than office EMB
+- Combined EMB is **$259.04 (33.9%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~10.7 minutes** -- within, but near the upper end of, the observed 1-12 minute range
-  from Huang et al. 2011
+  stays below **~12.7 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
+  meaning the base case's own room-time assumption is now comfortably inside the threshold rather
+  than close to its edge
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **83.5%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **~82%** of 1,000 probabilistic-sensitivity draws
+  (`Rscript analysis/03_probabilistic_sensitivity.R`; this figure moves a few points run to run since
+  the script is unseeded, consistent with `office_to_dnc_escalation_fraction` and
+  `combined_to_dnc_probability` both genuinely varying in PSA -- see their correction notes below)
 
 (Updated 2026-08-28 across six steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
 `coordination_cost`'s wage component, `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were each
@@ -178,12 +188,14 @@ and facility-vs-nonfacility rate correction" below). Then, 2026-08-30,
 2026-08-31, `emb_failure_lynch` was corrected from 13.7% to 13.3% after direct primary-source
 verification found two errors in the secondary review it had relied on (see "emb_failure_lynch
 correction" below), raising the office arm's own expected cost slightly and narrowing the margin a
-little further. Net effect on the headline numbers has gone in **both directions** across these
-corrections: some raised the combined arm's advantage, others (genuine double-count removals, a
-confirmed clinical-practice requirement, and a citation-accuracy fix) shrank it -- evidence this
-process is following the data, not steering toward a preferred conclusion. Minutes threshold moved
-from ~11.2 to ~13.8 to ~11.1 to ~10.7; PSA cost-saving frequency moved from 85.8% to 92.3% to 79.7%
-to 83.5%.)
+little further. Then, still 2026-08-31, `combined_to_dnc_probability` was corrected from 3.6% (2/55,
+a patient-level prevalence) to 1.8% (2/111, the per-encounter rate matching how this parameter is
+actually consumed) -- see the correction note above -- which widened the combined arm's advantage
+again, more than offsetting the `emb_failure_lynch` narrowing. Net effect on the headline numbers has
+gone in **both directions** across these corrections: some raised the combined arm's advantage,
+others (genuine double-count removals, a confirmed clinical-practice requirement) shrank it -- evidence
+this process is following the data, not steering toward a preferred conclusion. Minutes threshold
+moved from ~11.2 to ~13.8 to ~11.1 to ~10.7 to ~12.7.)
 
 **`combined_requires_preop_office_visit` flipped to TRUE (2026-08-30):** per the model owner's
 clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's protocol includes a

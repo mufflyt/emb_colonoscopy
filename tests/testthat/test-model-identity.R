@@ -72,7 +72,7 @@ test_that("raising dnc_facility_or_asc_fee increases all three strategies' costs
 })
 
 test_that("combined_emb cost rises less than dnc cost as dnc_facility_or_asc_fee rises (lower escalation probability)", {
-  # combined_to_dnc_probability (0.036) < emb_failure_lynch * escalation_fraction (~0.137),
+  # combined_to_dnc_probability (0.018) < emb_failure_lynch * escalation_fraction (~0.133),
   # so a $1 increase in the D&C facility fee should pass through less to the
   # combined arm than to the office arm.
   model_parameters <- test_model_parameters()
