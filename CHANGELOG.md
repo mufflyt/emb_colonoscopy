@@ -26,6 +26,38 @@ grouped by date.
   threshold **~11.1** (was ~13.8); PSA cost-saving frequency **79.7%** (was 92.3%). Provisional count
   down to 4 of 41 (was 5 of 41).
 
+## 2026-08-31 (Yi et al. 2018 full text obtained; validation target confirmed non-viable, real findings extracted anyway)
+
+### Changed
+- Obtained full-text access to Yi et al. 2018 (Gynecol Oncol 150:112-118, PubMed 29747864) via
+  institutional login (Wayback Machine access to the Pitt MPH thesis version remained down; PubMed's
+  own proxy parameter did not carry authentication to Elsevier automatically, but manual institutional
+  SSO login through "Access through your institution" succeeded).
+- Extracted Yi et al.'s complete Table 1 parameter set (16 parameters: sampling success/failure
+  probabilities, Pipelle/D&C sensitivity/specificity, EC prevalence, life expectancy by outcome,
+  procedure/treatment costs) into `docs/validation_notes.md`.
+- **Confirmed this is not a viable numeric-replication target**, and documented why: Yi et al.'s
+  decision tree models diagnostic sensitivity/specificity, disease prevalence, treatment cost, and
+  life-expectancy effectiveness, none of which `compute_strategy_costs()` implements (this repository
+  is a cost-only resource model, not a full cost-effectiveness model of EC diagnosis). Plugging Yi's
+  inputs into this repository's engine would not reproduce $1,897.80/$2,999.11 -- not from a missing
+  parameter, but from a genuine scope mismatch. Forcing a match would require fabricating ad hoc
+  structure, which the project's standing instructions prohibit.
+- `literature_replication_status()`'s Yi et al. row updated from `pending_parameter_extraction` to
+  `extracted_structurally_incomparable`; `test-evidence-extras.R` updated to match (still enforces
+  Yi/Havrilesky are never marked "reproduced").
+- Two real procedure-level cost anchors added as reference-only values:
+  `cost_pipelle_yi2018` ($244.41, 2017) and `cost_dc_yi2018` ($2,310.47, 2017), for cross-checking
+  against this repository's own CMS-sourced procedure costs (not a close match currently -- gap
+  documented honestly in `docs/validation_notes.md`, not resolved).
+- **Bonus finding**: Yi et al.'s Table 1 reports "P (moving to D&C if 1st attempted Pipelle failed) =
+  0.95 (range 0.94-1)," based on the authors' own expert clinical estimation for a general (non-Lynch)
+  PMB population -- a second real, converging citation for `office_to_dnc_escalation_fraction`,
+  alongside the existing Nebgen et al. 2014 protocol citation. Added to the parameter's source; value
+  (100%) and tier (C) unchanged, since neither citation directly measures the standalone-office Lynch
+  population.
+- Base case unchanged (no wired-in parameter values changed).
+
 ## 2026-08-30 (office_to_dnc_escalation_fraction grounded with an analogous real citation)
 
 ### Changed

@@ -20,6 +20,26 @@ minutes (still within, but closer to the edge of, the observed 1-12 minute range
 Three tests were updated to match the new default, including one that now explicitly compares the
 toggle both ways instead of quietly depending on which state happened to be the default.
 
+## 2026-08-31 (Yi et al. 2018, finally read in full -- and it doesn't say what we needed it to)
+
+**The top-priority validation target for months turned out not to be a validation target at all --
+and that's a useful thing to know.** After the Wayback Machine's own outage blocked one access route,
+the model owner logged into PubMed with institutional credentials and pulled the full Gynecologic
+Oncology paper directly. It's a genuinely excellent decision-tree study, with every internal
+parameter now documented in this repository -- but reading the actual Methods section revealed that
+Yi et al.'s model measures something different from what this repository measures: they build in
+diagnostic test accuracy, disease prevalence, downstream cancer-treatment costs, and life-expectancy
+effectiveness, none of which this repository's cost-only engine implements. Plugging their numbers
+into our formula would never have reproduced their $1,897.80/$2,999.11, no matter how carefully the
+parameters were transcribed -- the two models answer related but genuinely different questions.
+
+That's not a failed validation; it's real information about the scope of this repository's model,
+obtained by actually reading the primary source instead of assuming compatibility from the abstract.
+Two real, useful things came out of it anyway: two procedure-level cost anchors for a partial
+cross-check (not a close match yet, reported honestly), and a second independent citation supporting
+`office_to_dnc_escalation_fraction`'s 100% assumption (Yi's own model estimates 95% for a comparable,
+non-Lynch population).
+
 ## 2026-08-30 (a placeholder gets real, if incomplete, grounding)
 
 **`office_to_dnc_escalation_fraction`'s 100% assumption is no longer just an unfounded default.**

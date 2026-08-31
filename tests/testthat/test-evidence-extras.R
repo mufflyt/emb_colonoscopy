@@ -105,8 +105,10 @@ test_that("literature_replication_status never claims Yi or Havrilesky are repro
   yi_row <- status_tbl[grepl("Yi et al", status_tbl$study), ]
   havrilesky_row <- status_tbl[grepl("Havrilesky", status_tbl$study), ]
 
-  expect_equal(yi_row$status, "pending_parameter_extraction")
+  expect_equal(yi_row$status, "extracted_structurally_incomparable")
   expect_equal(havrilesky_row$status, "pending_parameter_extraction")
+  expect_false(yi_row$status %in% c("reproduced", "validated"))
+  expect_false(havrilesky_row$status %in% c("reproduced", "validated"))
 })
 
 test_that("summarize_evidence_tiers accounts for every parameter exactly once", {

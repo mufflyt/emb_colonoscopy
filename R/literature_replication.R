@@ -73,12 +73,15 @@ validate_against_published_model <- function(
 #' @return A tibble documenting each candidate published model, whether
 #'   its internal parameters have been extracted into this repository,
 #'   and what is still needed. Deliberately does NOT attempt to reproduce
-#'   Yi et al. 2018 or Havrilesky et al. 2009's results, because their
-#'   internal parameters (test performance, failure/repeat-sampling
-#'   probabilities, era-specific costs) have not been extracted from the
-#'   primary sources -- only their headline outputs are known, and
-#'   fabricating internal parameters to hit a known output would not be a
-#'   real validation. See docs/validation_notes.md.
+#'   Yi et al. 2018 or Havrilesky et al. 2009's results. Havrilesky's
+#'   internal parameters have not been extracted from the primary source.
+#'   Yi et al. 2018's have (2026-08-31), but their decision tree models
+#'   diagnostic sensitivity/specificity, disease prevalence, treatment
+#'   cost, and life-expectancy effectiveness that this repository's
+#'   cost-only compute_strategy_costs() engine does not implement --
+#'   fabricating internal parameters, or bolting on ad hoc adjustment
+#'   factors, to force a numeric match to either study's known output
+#'   would not be a real validation. See docs/validation_notes.md.
 literature_replication_status <- function() {
   base::message("Building literature-replication status table.")
 
@@ -90,8 +93,8 @@ literature_replication_status <- function() {
     "Not a decision-tree output to replicate -- it is a single cost input. This repository cross-checks its own inflation-adjustment machinery by reproducing the ~1.529x multiplier (2010->2026 real BLS CPI-U Medical Care) in the office_cost_ladabaum_historical scenario (R/scenarios.R) and tests/testthat/test-model-identity.R. That is a unit-level cross-check, not an external validation of the three-strategy model.",
     "Yi et al. 2018 (PubMed 29747864)",
     "Pipelle $1,897.80 vs. D&C $2,999.11 (2017 Medicare dollars)",
-    "pending_parameter_extraction",
-    "The paper's internal parameters (test sensitivity/specificity, Pipelle/D&C failure probabilities, repeat-sampling cost, 2017-era component costs) have not been extracted. This is the top-priority next data-acquisition task -- see docs/data_sources.md. Do not fabricate these parameters to force a match.",
+    "extracted_structurally_incomparable",
+    "Full internal parameter set extracted 2026-08-31 from the primary source (Table 1: sampling success probabilities, Pipelle/D&C sensitivity/specificity, EC prevalence, life expectancy by outcome, procedure/treatment costs). NOT numerically reproduced, and this has been confirmed to be a structural mismatch rather than a missing-data problem: Yi et al.'s decision tree models diagnostic sensitivity/specificity, EC prevalence, treatment cost (hysterectomy), and life-expectancy effectiveness with an explicit repeat-Pipelle-then-D&C branch; this repository's compute_strategy_costs() is a cost-only engine with no diagnostic-accuracy or effectiveness machinery. Plugging Yi's cost inputs into this repository's simpler formula would not reproduce their output and would not constitute real validation -- see docs/validation_notes.md for the full comparison and the convergent cost-only cross-check performed instead. Do not attempt to force a numeric match by adding ad hoc adjustment factors.",
     "Havrilesky et al. 2009",
     "Cost-effectiveness of annual endometrial cancer screening strategies",
     "pending_parameter_extraction",

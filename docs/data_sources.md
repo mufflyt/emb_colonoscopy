@@ -266,6 +266,16 @@ Lynch-surveillance evidence); the base value stays at 100% and `provisional` sta
 study of the standalone-office population itself was found. This is a genuine, currently-unresolvable
 literature gap given the paywall barrier on the four candidate primary studies, not an unsearched one.
 
+**Update (2026-08-31):** a second, independent, real citation was found while extracting Yi et al.
+2018's full text for the validation exercise below. Yi et al.'s Table 1 reports "P (moving to D&C if
+1st attempted Pipelle failed) = 0.95 (range 0.94-1)" for a general (non-Lynch) postmenopausal-bleeding
+Medicare cohort -- i.e. only 5% of failed Pipelle attempts get a repeat office attempt, the rest move
+straight to D&C. The paper's own footnote states this is "based on expert clinical estimation," not a
+directly measured rate, but it is a real, peer-reviewed, published number, and it converges closely
+with both the existing Nebgen et al. 2014 citation and this parameter's 100% base case. Added to the
+parameter's source; value and tier unchanged (100%, still tier C, still provisional) since neither
+citation is a direct measurement of the standalone-office Lynch population.
+
 ## `combined_requires_preop_office_visit` confirmed by the model owner (2026-08-30)
 
 Per the model owner's clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's
@@ -300,15 +310,16 @@ documented, explicitly-excluded reference value with a regression test
 
 ## Next literature to mine, in priority order
 
-This list reflects the priority ranking developed during model design, highest-yield first. None of
-these have been extracted into `config/model_parameters.csv` yet.
+This list reflects the priority ranking developed during model design, highest-yield first.
 
-1. **Yi et al. 2018** (Gynecologic Oncology, PubMed 29747864) -- a U.S. Medicare-payer-perspective
-   decision tree comparing Pipelle vs. D&C, reporting $1,897.80 vs. $2,999.11 per patient and
-   explicitly modeling sampling failure. This is the single highest-value external validation
-   target for this repository's office/D&C arms -- see `docs/validation_notes.md` for why its
-   internal parameters (not just its top-line output) need to be extracted before it can be used as
-   a real replication check.
+1. ~~Yi et al. 2018~~ **DONE (2026-08-31)** -- full-text obtained via institutional access; Table 1's
+   complete parameter set extracted and documented in `docs/validation_notes.md`. Turned out not to
+   be a viable numeric-replication target (its decision tree models diagnostic accuracy and
+   life-expectancy effectiveness that this repository's cost-only engine doesn't implement) -- see
+   `docs/validation_notes.md` for the full comparison and the two real cost anchors it did yield
+   (`cost_pipelle_yi2018`, `cost_dc_yi2018`), plus a real supporting citation for
+   `office_to_dnc_escalation_fraction` (95% of failed Pipelle attempts move to D&C, per Yi et al.'s
+   own Table 1).
 2. **Munro et al. 2022** (ScienceDirect S1553465021013261) -- office vs. institutional operative
    hysteroscopy economic model; already contributes the three reference values above, but its full
    cost decomposition (instrumentation, supplies, staffing) has not yet been extracted.
