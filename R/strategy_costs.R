@@ -153,7 +153,26 @@ compute_office_emb_strategy_cost <- function(
 
   initial_cost <- base::sum(components$amount)
 
+  # emb_failure_lynch: pooled 13.3% (22/166) across three Lynch-specific,
+  # confirmed genuinely Pipelle-specific surveillance studies -- Elmasry et
+  # al. 2009 (Fam Cancer 8:431-439, PMID 19526324) 5/25, from Table 3's
+  # "Pipelle done" column; Lecuru et al. 2008 (Int J Gynecol Cancer
+  # 18:1326-1331, PMID 18217965) 12/116; Woolderink et al. 2020 (BMC Womens
+  # Health 20:54, PMID 32183830, open access) 5/25, from Table 2. See
+  # config/model_parameters.csv's own row and docs/data_sources.md's "Full
+  # primary-source verification" section for the complete per-study
+  # breakdown -- these are table-derived counts, not a single quotable
+  # narrative sentence in any of the three papers.
   failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
+  # office_to_dnc_escalation_fraction: PROVISIONAL, no direct study of the
+  # standalone office population found. Grounded by two adjacent citations
+  # (see config/model_parameters.csv): Nebgen et al. 2014 (PMC4389779), a
+  # different (combined-arm) population, states its protocol verbatim: "If
+  # cervical stenosis or insufficient endometrial tissue was encountered,
+  # hysteroscopy and dilation and curettage were scheduled" -- i.e. no
+  # repeat-office step. Yi et al. 2018 (Gynecol Oncol 150:112-118, PubMed
+  # 29747864), Table 1, reports: "P (moving to D&C if 1st attempted Pipelle
+  # failed) = 0.95 (range 0.94-1)" for a general (non-Lynch) population.
   escalation_fraction <- get_parameter_value(
     model_parameters, "office_to_dnc_escalation_fraction"
   )
@@ -210,8 +229,18 @@ compute_combined_emb_strategy_cost <- function(
 ) {
   base::message("Computing colonoscopy-combined EMB strategy cost.")
 
+  # combined_emb_added_minutes: Huang et al. 2011 (PMC3014510), an MD
+  # Anderson feasibility study, n=42. Quoted directly in Nebgen et al. 2014
+  # (PMC4389779), which cites this same figure: "the EMBx added a median
+  # time of 5 minutes (range, 1-12 minutes)."
   added_minutes <- get_parameter_value(model_parameters, "combined_emb_added_minutes")
 
+  # direct_room_cost_per_minute / anesthesia_cost_per_minute: Childers CP,
+  # Maggard-Gibbons M. Understanding Costs of Care in the Operating Room.
+  # JAMA Surg 2014 -- a U.S. ambulatory-OR cost-accounting study (FY2014
+  # dollars, inflation-adjusted below). Not colonoscopy-suite-specific
+  # (flagged tier C in config/model_parameters.csv); used as a marginal/
+  # direct per-minute cost proxy for this arm's incremental minutes.
   direct_room_cost_per_minute <- get_adjusted_cost_parameter(
     model_parameters, "direct_room_cost_per_minute", price_index_table, reference_year
   )
@@ -239,6 +268,10 @@ compute_combined_emb_strategy_cost <- function(
       get_parameter_value(model_parameters, "emb_disposable_supply_cost"),
       incremental_room_cost,
       incremental_anesthesia_time_cost,
+      # combined_emb_anesthesia_drug_increment_cost: base case $0, per
+      # Nebgen et al. 2014 (PMC4389779): "No increases in anesthetic
+      # medication dosing or change in type of sedation offered were
+      # necessitated by the addition of the EMBx."
       get_parameter_value(
         model_parameters, "combined_emb_anesthesia_drug_increment_cost"
       ),
@@ -262,6 +295,18 @@ compute_combined_emb_strategy_cost <- function(
 
   initial_cost <- base::sum(components$amount)
 
+  # combined_to_dnc_probability: 1.8% (2/111), a directly-observed
+  # per-encounter escalation rate -- Nebgen et al. 2014 (PMC4389779).
+  # CORRECTED 2026-08-31 from an earlier 3.6% (2/55), a denominator
+  # mismatch: the paper's own text -- "Two women (3.6%) had cervical
+  # stenosis and underwent hysteroscopy with dilation and curettage" --
+  # sits among unambiguously patient-level percentages (age, race, parity,
+  # all computed over its 55 patients), not its own 111-visit denominator
+  # used elsewhere in the same paper for encounter-level rates ("EMBx...
+  # detected endometrial cancer in 0.9% (1/111) of surveillance visits").
+  # This function prices a single encounter, so 2/111 is the correct
+  # denominator. See docs/data_sources.md's "CORRECTED:
+  # combined_to_dnc_probability's denominator" section for the full audit.
   escalation_probability <- get_parameter_value(
     model_parameters, "combined_to_dnc_probability"
   )

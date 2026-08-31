@@ -116,6 +116,11 @@
 compute_strategy_clinical_outcomes <- function(model_parameters) {
   base::message("Computing strategy clinical outcomes.")
 
+  # emb_failure_lynch, office_to_dnc_escalation_fraction: same parameters
+  # compute_office_emb_strategy_cost() uses -- see R/strategy_costs.R for
+  # full citations (Elmasry/Lecuru/Woolderink; Nebgen 2014's protocol
+  # quote and Yi et al. 2018's Table 1 estimate). Reused verbatim here
+  # rather than re-derived, per this file's escalation-consistency design.
   office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
   office_escalation_fraction <- get_parameter_value(
     model_parameters, "office_to_dnc_escalation_fraction"
@@ -123,16 +128,31 @@ compute_strategy_clinical_outcomes <- function(model_parameters) {
   office_rescue_probability <- office_failure_probability * office_escalation_fraction
   office_unresolved_probability <- office_failure_probability * (1 - office_escalation_fraction)
 
+  # cancer_or_precancer_after_failed_sample: 7% -- a general (non-Lynch)
+  # postmenopausal-bleeding meta-analysis (PubMed 26748390), the same
+  # source as emb_failure_general/emb_insufficient_general elsewhere in
+  # config/model_parameters.csv. Indirect evidence: not Lynch-specific,
+  # and no verbatim sentence from this source has been directly re-verified
+  # in this repository's current session (see config/model_parameters.csv's
+  # own row for the full citation trail).
   neoplasia_after_failed_sample <- get_parameter_value(
     model_parameters, "cancer_or_precancer_after_failed_sample"
   )
   office_neoplasia_delayed_probability <-
     office_unresolved_probability * neoplasia_after_failed_sample
 
+  # combined_to_dnc_probability: see R/strategy_costs.R for the full
+  # citation and the 2/55 -> 2/111 denominator correction (2026-08-31).
   combined_rescue_probability <- get_parameter_value(
     model_parameters, "combined_to_dnc_probability"
   )
 
+  # dnc_overall_complication_probability: 1.92% (103/5,359) -- Hefler L et
+  # al. The intraoperative complication rate of nonobstetric dilation and
+  # curettage. Obstet Gynecol 2009;113(6):1268-1271 (PMID 19461421).
+  # Verified directly from the PubMed abstract: "A total of 103 (1.9%)
+  # intraoperative complications were noted." Non-Lynch general D&C
+  # population (2,542 premenopausal + 2,817 postmenopausal patients).
   dnc_overall_ae_probability <- get_parameter_value(
     model_parameters, "dnc_overall_complication_probability"
   )
@@ -197,6 +217,21 @@ compute_diagnostic_yield <- function(
 
   base::message("Computing diagnostic yield for disease type: ", disease)
 
+  # office_emb_cancer_sensitivity 0.774 [0.565-0.900], dnc_cancer_sensitivity
+  # 0.880 [0.281-0.993] -- Sakna NA et al. Diagnostic accuracy of
+  # endometrial sampling tests for detecting endometrial cancer: a
+  # systematic review and meta-analysis. BMJ Open 2023;13:e072124 (open
+  # access). Verified directly from the full text: "The sensitivity,
+  # specificity, positive likelihood ratio and negative likelihood ratio
+  # (95% CIs) for Pipelle were 0.774 (0.565 to 0.900), 0.985 (0.927 to
+  # 0.997), 97.000 (14.000 to 349.000) and 0.241 (0.101 to 0.442) and for
+  # conventional D&C were 0.880 (0.281 to 0.993), 0.984 (0.956 to 0.995),
+  # 59.300 (14.200 to 153.000) and 0.194 (0.007 to 0.732), respectively."
+  # office_emb_precancer_sensitivity 0.74 / dnc_precancer_sensitivity 0.80
+  # are the same meta-analysis's AEH subgroup point estimates (no CI
+  # reported in the source's main text for that subgroup). Symptomatic,
+  # non-Lynch population -- indirect evidence for this repository's
+  # asymptomatic Lynch surveillance population, not a direct measurement.
   office_sensitivity <- get_parameter_value(
     model_parameters, base::paste0("office_emb_", disease, "_sensitivity")
   )
@@ -204,6 +239,8 @@ compute_diagnostic_yield <- function(
     model_parameters, base::paste0("dnc_", disease, "_sensitivity")
   )
 
+  # emb_failure_lynch, office_to_dnc_escalation_fraction,
+  # combined_to_dnc_probability: see R/strategy_costs.R for full citations.
   office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
   office_escalation_fraction <- get_parameter_value(
     model_parameters, "office_to_dnc_escalation_fraction"
