@@ -45,6 +45,9 @@ source_files <- c(
   "comparison.R",
   "sensitivity_deterministic.R",
   "sensitivity_probabilistic.R",
+  # diagnostic_yield.R reuses draw_parameter_set() from
+  # sensitivity_probabilistic.R, so it must come after it.
+  "diagnostic_yield.R",
   "threshold_analysis.R",
   "scenarios.R",
   "budget_impact.R",

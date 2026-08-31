@@ -15,6 +15,33 @@ would become a true cost-effectiveness analysis at that point -- the repository'
 (parameters separated from functions, `future_extension`-tagged rows already sitting in
 `config/model_parameters.csv`) is intended to make that extension additive rather than a rewrite.
 
+**2026-08-31 update: that extension's first piece now exists, additively.**
+`R/diagnostic_yield.R::compute_strategy_clinical_outcomes()` directly tests, rather than assumes,
+the equivalent-effectiveness assumption above, using the `cancer_or_precancer_after_failed_sample`
+parameter that had been sitting unused in `config/model_parameters.csv` since before this extension
+existed: it computes each strategy's probability of an *unresolved* sampling failure (a failure that
+does not get rescued to D&C) and the resulting delayed-cancer/precancer-diagnosis probability, plus
+each strategy's D&C-rescue-driven adverse-event exposure (using newly added, real-cited D&C/
+hysteroscopy complication probabilities -- Hefler et al. 2009, ACOG Committee Opinion 800). At the
+current base case (`office_to_dnc_escalation_fraction = 1.0`, i.e. 100% of failures are assumed
+rescued), the delayed-diagnosis probability is exactly zero for every strategy by construction --
+this metric only becomes informative under a sensitivity/scenario override of that escalation
+fraction, which is precisely the point: it quantifies what the 100% assumption is actually protecting
+against, rather than asserting equivalence outright. `run_probabilistic_sensitivity()` now carries
+these clinical-outcome columns alongside every cost draw, so a finding like "combined EMB remained
+less costly while exposing fewer patients to D&C-rescue-driven adverse-event risk" can be made from
+the same Monte Carlo realizations as the cost finding, not a separately-drawn parallel analysis.
+
+This is still not a full cost-effectiveness analysis: `R/diagnostic_yield.R` also contains
+`compute_diagnostic_yield()`, a broader Pipelle-vs-D&C sensitivity/specificity-based detection-
+probability function (Sakna/Nabhan et al. 2023, BMJ Open), but it is deliberately not built out
+further (no PSA wiring, no equivalence-margin testing) -- reproducing a full diagnostic-accuracy
+decision tree with prevalence, sensitivity/specificity, and a true/false-positive/negative branching
+structure is a substantially larger undertaking (see `docs/validation_notes.md`'s discussion of why
+Yi et al. 2018 could not be reproduced by this repository's cost-only engine) than the narrower
+"does the higher inadequate-sampling probability of office EMB create enough downstream diagnostic
+risk to invalidate pure cost minimization?" question `compute_strategy_clinical_outcomes()` answers.
+
 ## The incremental-cost principle
 
 The central conceptual choice in this model is that patients with Lynch syndrome are assumed to be
@@ -227,3 +254,14 @@ parameter values -- not a pipeline bug.
 - `office_to_dnc_escalation_fraction`'s 100% base case is conservative in one direction (it assumes
   no repeat office attempts) but its effect on the model's conclusion has not been separately
   quantified -- it is included in the one-way sensitivity set precisely so this can be checked.
+  `compute_strategy_clinical_outcomes()` (see the section above) now gives that check a clinical
+  consequence, not just a cost delta: below 100%, it quantifies a nonzero delayed-diagnosis
+  probability rather than leaving the risk of the conservative assumption unstated.
+- D&C's own inadequate-sampling risk is still not modeled (no escalation branch of its own, same
+  gap noted above); `hysteroscopy_failure_rate_lynch_range` (`future_extension`) remains the
+  candidate parameter for whoever adds it. The new adverse-event probabilities
+  (`dnc_perforation_probability`, `hysteroscopy_diagnostic_complication_probability`, etc.) have no
+  companion dollar costs -- `docs/data_sources.md` documents two indirect, doubly-inherited cost
+  anchors from an unrelated gestational-trophoblastic-neoplasia model
+  (`cost_uterine_perforation_gtn_model_2020`, `cost_hemorrhage_gtn_model_2020`) kept only as a
+  documented starting point, explicitly not treated as sufficient evidence to wire in.

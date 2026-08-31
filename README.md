@@ -60,21 +60,42 @@ transparent model, not a publication-ready result.
 
 ## Provisional parameters -- read before citing any number from this repository
 
-Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 4
-of 45 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
+Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 7
+of 62 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
 is now a real BLS/O*NET figure); `office_to_dnc_escalation_fraction` (the assumption that 100% of
 failed office EMB attempts escalate to D&C -- now grounded by an analogous MD Anderson protocol
-citation, though no standalone-office-EMB-specific study was found); and two `reference_only` values
+citation, though no standalone-office-EMB-specific study was found); two `reference_only` values
 kept only as documented exclusions (`colonoscopy_anesthesia_episode_cost`, `dnc_recovery_room_cost`
--- both deliberately never summed into any strategy's cost). `combined_requires_preop_office_visit`
-is now a confirmed clinical-practice decision (base case includes a separate preop office visit for
-the combined arm), no longer flagged provisional. All six of the D&C arm's own cost components --
+-- both deliberately never summed into any strategy's cost); `office_emb_serious_infection_probability`
+(base value 0, reflecting the total absence of incidence data rather than a claim of zero risk -- see
+"Diagnostic-yield and clinical-outcome extension" below); and two `reference_only` adverse-event cost
+anchors (`cost_uterine_perforation_gtn_model_2020`, `cost_hemorrhage_gtn_model_2020`) borrowed,
+doubly-inherited and clearly flagged as such, from an unrelated gestational-trophoblastic-neoplasia
+cost-effectiveness model, kept only as a documented starting point for a future real costing exercise.
+`combined_requires_preop_office_visit` is now a confirmed clinical-practice decision (base case
+includes a separate preop office visit for the combined arm), no longer flagged provisional. All six
+of the D&C arm's own cost components --
 professional fee,
 pathology, facility fee, preop visit, and anesthesia -- are now real, sourced CMS values; so is the
 office-EMB arm's E/M visit cost, `emb_disposable_supply_cost` is now a real CMS-itemized value, and
 the once-conflicting CPT 58558 figure (`hysteroscopy_dc_professional_cost`, still unused in the base
 case) has been resolved against a live CMS PUF query. `docs/data_sources.md` lists what each
 remaining item still needs. **No provisional value should be quoted as a finding.**
+
+## Diagnostic-yield and clinical-outcome extension (additive, not part of the base case)
+
+`R/diagnostic_yield.R` adds two functions that test rather than assume this model's implicit
+equivalent-effectiveness assumption, per the extension `docs/methods_notes.md` explicitly anticipated:
+`compute_strategy_clinical_outcomes()` (the primary, repo-native question -- does office EMB's higher
+inadequate-sampling probability leave a meaningful fraction of patients with a delayed cancer/precancer
+diagnosis, and how much D&C-rescue-driven adverse-event exposure does each strategy imply? -- built
+from parameters already resident in this repository plus newly added, real-cited D&C/hysteroscopy
+adverse-event probabilities) and `compute_diagnostic_yield()` (a secondary, broader Pipelle-vs-D&C
+sensitivity/specificity question, deliberately not yet built out further). Neither changes
+`compute_strategy_costs()`'s output; `run_probabilistic_sensitivity()` now carries the clinical-outcome
+columns alongside cost columns for every draw, so cost and clinical-outcome findings share the same
+Monte Carlo realizations. See `docs/data_sources.md` for the full parameter list and citations, and
+`R/diagnostic_yield.R`'s file-level docblock for why no adverse-event dollar costs are wired in yet.
 
 ## Repository structure
 

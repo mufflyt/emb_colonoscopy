@@ -5,6 +5,54 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (diagnostic-yield/clinical-outcome extension: additive, no base-case cost change)
+
+### Added
+- `R/diagnostic_yield.R` (new file): `compute_strategy_clinical_outcomes()`, the primary addition --
+  uses the previously-unwired `cancer_or_precancer_after_failed_sample` parameter to compute each
+  strategy's unresolved-sampling-failure probability, resulting delayed-cancer/precancer-diagnosis
+  probability, and D&C-rescue-driven adverse-event exposure. At the current base case
+  (`office_to_dnc_escalation_fraction = 1.0`) the delayed-diagnosis probability is exactly 0 by
+  construction for every strategy -- the metric is designed to activate under a sensitivity/scenario
+  override of that escalation fraction, not to change the base case itself. Also adds
+  `compute_diagnostic_yield()`, a secondary Pipelle-vs-D&C sensitivity/specificity-based
+  detection-probability function, deliberately not built out further this round (no PSA wiring).
+- 15 new `future_extension` parameters (D&C/hysteroscopy adverse-event probabilities from Hefler et
+  al. 2009 and ACOG Committee Opinion 800; Pipelle/D&C cancer and precancer sensitivity/specificity
+  from Sakna/Nabhan et al. 2023's BMJ Open meta-analysis; a further-workup-fraction estimate derived
+  from Slaager et al. 2025; a provisional office-EMB serious-infection placeholder documenting the
+  total absence of incidence data) and 2 `reference_only`, `provisional = TRUE` adverse-event
+  dollar-cost anchors borrowed, with an explicit doubly-inherited-and-wrong-population caveat, from an
+  unrelated gestational-trophoblastic-neoplasia cost model (Batman et al. 2020). See
+  `docs/data_sources.md`'s new "Diagnostic-yield and clinical-outcome extension" section for full
+  citations -- every one independently verified against its primary source directly, after an initial
+  AI-generated literature summary supplied by a collaborator turned out to reproduce the exact
+  pre-correction `emb_failure_lynch` error already fixed above.
+- `tests/testthat/test-diagnostic-yield.R`: 13 new tests, including a consistency guard (diagnostic
+  yield and cost engine must use identical escalation probabilities), two monotonicity tests, an
+  INDEPENDENT CONFIRMATION test per `docs/testing_philosophy.md`'s Rule 2, and a mutation-tested
+  blocking-test pair (logged in `docs/testing_philosophy.md`).
+- `run_probabilistic_sensitivity()` (`R/sensitivity_probabilistic.R`) now computes and retains
+  clinical-outcome columns (`*_neoplasia_delayed_per_1000`, `*_major_ae_per_1000` per strategy) from
+  the SAME per-draw sampled parameters used for cost, rather than a separate Monte Carlo loop -- so a
+  cost finding and a clinical-outcome finding can be reported from the same PSA draws. An earlier
+  draft of this extension proposed a fully separate `make_emb_psa_draws()`/`run_emb_psa()` framework;
+  this was deliberately not built, since `draw_parameter_set()` already samples every parameter row
+  generically and a second framework would have decoupled cost and clinical-outcome draws.
+
+### Fixed
+- `R/scenarios.R`: the `base_case_medicare` scenario description and the file's own docblock still
+  said "no separate preop visit for the combined arm," stale since `combined_requires_preop_office_visit`
+  flipped to `TRUE` on 2026-08-30. The `combined_requires_preop_visit` scenario (which had become a
+  no-op restating the new default) was renamed `combined_without_preop_visit` and now represents the
+  FORMER base case instead, so the model's sensitivity to this structural assumption stays checkable.
+
+### Explicitly not added
+- Adverse-event dollar costs invented without citation (an earlier draft proposed
+  $5,000/perforation, $3,000/hemorrhage, $1,000/infection, $1,500/anesthesia-AE placeholders). Per
+  `docs/validation_notes.md`'s norm against fabricating structure to hit a target number, no
+  `expected_adverse_event_cost` component exists yet in any strategy's total.
+
 ## 2026-08-31 (five candidate papers reviewed; two new reference-only benchmarks added)
 
 ### Added

@@ -1,9 +1,12 @@
 #' Scenario analysis
 #'
 #' Distinguishes the base-case analysis (Medicare-anchored CPT allowed
-#' amounts, no preop office visit required for the combined arm) from
-#' named scenario analyses that substitute alternative payer assumptions
-#' or structural choices. Every scenario is expressed as a named list of
+#' amounts; as of 2026-08-30 the combined arm's base case includes a
+#' separate preop office visit, per the model owner's confirmed clinical
+#' practice -- see `combined_requires_preop_office_visit` in
+#' `config/model_parameters.csv` and `docs/methods_notes.md`) from named
+#' scenario analyses that substitute alternative payer assumptions or
+#' structural choices. Every scenario is expressed as a named list of
 #' parameter overrides applied via [override_model_parameters()], so
 #' scenario definitions stay declarative and auditable.
 #'
@@ -60,7 +63,7 @@ build_scenario_definitions <- function(
   list(
     base_case_medicare = list(
       overrides = list(),
-      description = "Base case: CPT-based Medicare national allowed amounts, no separate preop visit for the combined arm.",
+      description = "Base case: CPT-based Medicare national allowed amounts, including the combined arm's separate preop office visit (combined_requires_preop_office_visit = TRUE, per the model owner's confirmed clinical practice).",
       provisional = FALSE
     ),
     medicaid_illustrative = list(
@@ -73,9 +76,15 @@ build_scenario_definitions <- function(
       description = "PROVISIONAL: illustrative commercial reimbursement at 175% of the Medicare rates used in this repository. Not drawn from a specific payer contract.",
       provisional = TRUE
     ),
-    combined_requires_preop_visit = list(
-      overrides = list(combined_requires_preop_office_visit = "TRUE"),
-      description = "Structural scenario: the combined strategy requires a separate preliminary office visit before the day of colonoscopy.",
+    combined_without_preop_visit = list(
+      overrides = list(combined_requires_preop_office_visit = "FALSE"),
+      description = paste0(
+        "Structural scenario (the FORMER base case, superseded 2026-08-30): the combined ",
+        "strategy's consent/risk assessment is folded into existing care rather than requiring ",
+        "a separate preop office visit. Kept so the base case's sensitivity to this structural ",
+        "assumption stays checkable now that the toggle's default is TRUE (see ",
+        "docs/methods_notes.md)."
+      ),
       provisional = FALSE
     ),
     office_cost_ladabaum_historical = list(

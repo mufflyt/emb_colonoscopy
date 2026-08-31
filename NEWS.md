@@ -3,6 +3,38 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (the model can now show its work on whether "equal effectiveness" is safe to assume)
+
+**The single biggest scientific gap in this model has always been the same one:** it compares three
+strategies purely on cost, on the assumption that an adequate sample means the same thing regardless
+of which strategy obtained it. That assumption was stated plainly in the docs, but never tested. It
+now can be.
+
+`compute_strategy_clinical_outcomes()` asks a narrow, answerable question: given office EMB's known
+higher failure rate, and given the current (conservative) assumption that 100% of failures get
+rescued to D&C, how much of that risk would actually reach patients as a delayed cancer or precancer
+diagnosis if that 100% assumption turns out to be optimistic? At the base case, the answer is zero by
+construction -- which is itself informative, since it shows exactly how much weight that single
+assumption is carrying. Dial the assumption down in a sensitivity run, and the model now produces a
+real number instead of silence.
+
+This runs alongside the existing probabilistic sensitivity analysis rather than as a separate
+Monte Carlo exercise -- cost and clinical-outcome findings now come from the same simulated draws, so
+a statement like "combined EMB was cheaper AND exposed fewer patients to D&C-driven complication risk
+in the same simulations" is possible, not just two separately-true facts.
+
+Fifteen new parameters back this: real D&C and hysteroscopy complication rates (uterine perforation,
+hemorrhage, infection), and real Pipelle-vs-D&C diagnostic sensitivity figures from a 2023 meta-
+analysis. One near-miss is worth flagging: an early literature summary for this round (sourced from an
+AI web search) reported "office EMB failure" numbers that turned out to be the exact pre-correction
+error already caught and fixed in `emb_failure_lynch` last week. Every citation in this round was
+re-verified against the actual paper before being trusted, which is what caught it.
+
+What this round explicitly did NOT do: invent dollar costs for any of these adverse events. Two real
+but weak, doubly-borrowed cost figures from an unrelated cancer-treatment cost model are recorded as
+clearly-flagged reference values, not wired into anything -- monetizing these properly is future work,
+not a placeholder to paper over now.
+
 ## 2026-08-31 (a literature-mining round that mostly confirmed what we already had)
 
 **Four candidate papers, one real addition.** Following up on the "next literature to mine" list,

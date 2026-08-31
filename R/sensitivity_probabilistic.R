@@ -142,6 +142,12 @@ run_probabilistic_sensitivity <- function(
     incremental_result <- compare_combined_vs_office(
       strategy_result$strategy_costs
     )
+    # Clinical-outcome columns computed from the SAME per-draw sampled
+    # parameters as the cost columns above, not a separate Monte Carlo loop
+    # -- see R/diagnostic_yield.R's file-level docblock for why a second PSA
+    # framework was deliberately avoided (draws would not otherwise be
+    # paired to the same underlying parameter realization).
+    clinical_outcomes <- compute_strategy_clinical_outcomes(sampled_parameters)
 
     dnc_cost <- strategy_result$strategy_costs$expected_total_cost[
       strategy_result$strategy_costs$strategy == "dnc"
@@ -153,6 +159,10 @@ run_probabilistic_sensitivity <- function(
       dnc = dnc_cost
     )
 
+    outcome_at <- function(strategy_name, column_name) {
+      clinical_outcomes[[column_name]][clinical_outcomes$strategy == strategy_name]
+    }
+
     tibble::tibble(
       draw = draw_index,
       office_emb_cost = incremental_result$office_emb_cost,
@@ -162,7 +172,19 @@ run_probabilistic_sensitivity <- function(
         incremental_result$incremental_cost_combined_vs_office,
       cheapest_strategy = base::names(draw_costs)[
         base::which.min(draw_costs)
-      ]
+      ],
+      office_emb_neoplasia_delayed_per_1000 =
+        outcome_at("office_emb", "neoplasia_delayed_per_1000"),
+      combined_emb_neoplasia_delayed_per_1000 =
+        outcome_at("combined_emb", "neoplasia_delayed_per_1000"),
+      dnc_neoplasia_delayed_per_1000 =
+        outcome_at("dnc", "neoplasia_delayed_per_1000"),
+      office_emb_major_ae_per_1000 =
+        outcome_at("office_emb", "major_ae_per_1000"),
+      combined_emb_major_ae_per_1000 =
+        outcome_at("combined_emb", "major_ae_per_1000"),
+      dnc_major_ae_per_1000 =
+        outcome_at("dnc", "major_ae_per_1000")
     )
   })
 

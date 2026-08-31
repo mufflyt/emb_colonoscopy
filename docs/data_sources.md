@@ -336,6 +336,98 @@ assumption). This narrowed the combined-vs-office margin from $294.22 (37.7%) to
 the minutes threshold from ~13.8 to ~11.1 -- see `docs/methods_notes.md` for the full base-case
 history.
 
+## Diagnostic-yield and clinical-outcome extension (2026-08-31)
+
+`R/diagnostic_yield.R` adds 15 new parameters, all `future_extension` category/strategy (not wired
+into `R/strategy_costs.R`), plus two `reference_only` adverse-event cost anchors. Every citation below
+was independently verified against the primary source directly (PubMed abstract, or full open-access
+text where available), not accepted from a secondary AI-generated literature summary a collaborator
+initially supplied -- that summary's "office EMB failure" figures (6/25, 12/116, 2/17, 5/25 -> 13.7%)
+turned out to reproduce the exact pre-correction error already fixed in `emb_failure_lynch` above,
+which is why every numeric claim here was re-checked against the actual paper before being added.
+
+**D&C adverse-event probabilities** (`dnc_perforation_probability` 0.93%, `dnc_false_passage_probability`
+0.78%, `dnc_severe_hemorrhage_probability` 0.13%, `dnc_overall_complication_probability` 1.92%) --
+Hefler L et al. The intraoperative complication rate of nonobstetric dilation and curettage. Obstet
+Gynecol 2009;113(6):1268-1271 (PMID 19461421). Verified directly from the PubMed abstract: 103/5,359
+(1.9%) intraoperative complications in a retrospective single-center series (2,542 premenopausal +
+2,817 postmenopausal patients, 1995-2006); perforation 50/5,359 (0.9%), false passage 42/5,359 (0.8%),
+severe hemorrhage 7/5,359 (0.1%). 95% CIs for all four values computed via exact binomial test
+(`stats::binom.test()` in R), since the source itself reports point estimates only. Non-Lynch general
+D&C population; the source's own finding that retroverted uterus, postmenopausal status, and
+nulliparity independently predict complications is relevant since Lynch surveillance D&Cs skew toward
+that risk profile.
+
+**Hysteroscopy complication probabilities** (`hysteroscopy_diagnostic_complication_probability` 0.13%,
+`hysteroscopy_operative_complication_probability` 0.95%, `hysteroscopy_postprocedure_infection_probability`
+range 0.01%-1.42%, midpoint 0.72%) -- ACOG Committee Opinion No. 800, The Use of Hysteroscopy for the
+Diagnosis and Treatment of Intrauterine Pathology (2020). Verified by reading the full committee
+opinion text directly (acog.org, open access): "The two largest multicenter studies of 13,600
+diagnostic and operative hysteroscopies and 21,676 operative hysteroscopies found overall complication
+rates of 0.28% and 0.22% respectively... Significantly more complications occurred during operative
+hysteroscopy than during diagnostic hysteroscopy (0.95% versus 0.13%; P<.01)," and "rates of
+postprocedure infection... ranging from 0.01% to 1.42%." The source does not disaggregate which exact
+denominator backs the 0.13%/0.95% split, nor does it report a confidence interval for the infection
+range -- both limitations are carried into the parameter notes rather than papered over.
+
+**Office EMB serious-infection probability** (`office_emb_serious_infection_probability` = 0,
+PROVISIONAL) -- Namazov A et al. Septic Shock and Multiple Organ Failure After Office Endometrial
+Sampling. J Reprod Med 2017;62(1-2):72-74 (PMID 29999294), a case report. Verified directly from the
+PubMed abstract, which states plainly: "No data are available of infectious complications related to
+endometrial biopsy. The incidence is presumed to be negligible." Base value of 0 documents this
+absence of any denominator, not a claim of zero risk.
+
+**Diagnostic sensitivity/specificity for cancer and precancer** (`office_emb_cancer_sensitivity` 0.774
+[0.565-0.900], `dnc_cancer_sensitivity` 0.880 [0.281-0.993], `office_emb_cancer_specificity` 0.985
+[0.927-0.997], `dnc_cancer_specificity` 0.984 [0.956-0.995], `office_emb_precancer_sensitivity` 0.74,
+`dnc_precancer_sensitivity` 0.80) -- Sakna NA et al. Diagnostic accuracy of endometrial sampling tests
+for detecting endometrial cancer: a systematic review and meta-analysis. BMJ Open 2023;13:e072124
+(open access, CC BY-NC 4.0; verified by reading the full text directly, not just the abstract). A
+bivariate diagnostic random-effects meta-analysis of 12 studies (1,607 participants); the Pipelle-EC
+subgroup pools only 3 studies, D&C-EC pools 5 -- D&C's very wide 95% CI (28.1%-99.3%) is a direct
+consequence of that small, heterogeneous pool, not a transcription error. The AEH/precancer subgroup
+values (0.74/0.80) have no confidence interval reported in the source's main text. Population is women
+with clinical suspicion of endometrial carcinoma (mostly postmenopausal bleeding) referred for
+hysterectomy -- indirect evidence for this repository's asymptomatic Lynch surveillance population,
+not a direct measurement of it.
+
+**Further-workup fraction after a benign/insufficient office sample**
+(`office_failed_emb_further_workup_fraction` = 0.695 [0.50-1.00]) -- Slaager FC et al. Diagnostic
+workup of patients with benign or inconclusive reports on office endometrial biopsy after first
+episode of postmenopausal blood loss. Eur J Obstet Gynecol Reprod Biol 2025;310:113991 (PMID
+40294513), a multicenter prospective cohort. Verified directly from the PubMed abstract: of 350
+eligible patients, 197 (56%) underwent further diagnostic procedures (hysteroscopy or saline infusion
+sonography); those patients had more frequent insufficient aspiration samples (20.8% vs. 11.8%,
+p=0.025) than the 153 managed expectantly. The 0.695 base value is NOT the authors' own stated number
+-- it is derived here by back-calculating approximate counts from those percentages (20.8% x 197 ~= 41
+insufficient-sample patients who received further workup, 11.8% x 153 ~= 18 who did not; 41/(41+18) =
+0.695) and is explicitly flagged as such in the parameter's notes. This is a broader, non-D&C-specific
+"further workup" pathway, kept deliberately separate from `office_to_dnc_escalation_fraction` (see
+below) rather than replacing its base-case value.
+
+**Adverse-event dollar-cost anchors, doubly-inherited, tier D**
+(`cost_uterine_perforation_gtn_model_2020` $12,800, `cost_hemorrhage_gtn_model_2020` $4,882, 2018
+dollars) -- Batman S et al. Cost-effectiveness of second curettage for treatment of low-risk
+non-metastatic gestational trophoblastic neoplasia. Gynecol Oncol 2020;157(3):711-715 (PMID 32276791,
+PMC7293571), Table 2. Verified by reading the full text directly. Both figures were themselves
+borrowed by this GTN cost-effectiveness model from two entirely unrelated cost studies (perforation
+cost from Moayeri et al. 2009, a laparoscopy-for-infertility cost-effectiveness study, under the
+assumption every perforation results in a diagnostic laparoscopy; hemorrhage cost from Chung et al.
+2001, a trial-of-labor-after-cesarean cost-effectiveness study), then inflated to 2018 dollars via
+medical CPI. Per this project's explicit prior finding while grounding `office_to_dnc_escalation_fraction`
+and the norm stated in "What should not be conflated" below and in `docs/validation_notes.md`: this is
+disclosed as a weak, doubly-indirect anchor from the wrong clinical population, kept only as a
+documented starting point for a real CMS resource-pathway costing exercise, and explicitly NOT treated
+as sufficient evidence to wire an adverse-event cost into any strategy's total.
+
+**What was deliberately NOT added:** unsourced adverse-event dollar costs of the kind that would let
+`compute_strategy_clinical_outcomes()` produce an `expected_adverse_event_cost` column immediately
+(an earlier draft of this extension proposed $5,000/perforation, $3,000/hemorrhage, $1,000/infection,
+$1,500/anesthesia-AE placeholders with no citation at all). `docs/validation_notes.md`'s explicit norm
+against "fabricating structure to hit a known target" applies with equal force to inventing a cost as
+to inventing a probability -- see the two GTN-model anchors above for what a real, disclosed-as-weak
+alternative looks like instead.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |
