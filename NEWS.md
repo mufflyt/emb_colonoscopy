@@ -3,6 +3,14 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a line in the sand: analysis-v1.0)
+
+Tagged `analysis-v1.0`. After a day of real corrections -- a degenerate PSA distribution, a missing
+join, a delayed-neoplasia number that looked too clean, a denominator that quietly halved a key
+probability -- this is the point to stop tweaking and let the numbers hold still for a moment. The
+tag captures exactly what the model says right now, with every correction this session found already
+folded in, before the next planned addition (geographic sensitivity) moves anything further.
+
 ## 2026-08-31 (a citation we'd already used turned out to have been misread -- half the model's key)
 
 A collaborator asked us to double-check something before changing anything: was `combined_to_dnc_probability`

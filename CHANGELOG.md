@@ -5,6 +5,15 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (tagged analysis-v1.0)
+
+Tagged `analysis-v1.0` (annotated, pushed) at this commit -- the frozen base case ($505.88 combined
+EMB / $764.93 office EMB / $3,827.04 D&C, 33.9% margin, ~12.7-minute threshold) after every
+primary-source-verified correction from this session's literature-mining and audit work. Full test
+suite green (406 assertions). Marks a deliberate stopping point before geographic sensitivity, the
+next planned addition, so the tagged snapshot stays unambiguous. See the tag message for the full
+list of what's frozen and what remaining gaps require new evidence rather than more engineering.
+
 ## 2026-08-31 (corrected combined_to_dnc_probability's denominator: 2/55 -> 2/111; base case changes)
 
 ### Changed
