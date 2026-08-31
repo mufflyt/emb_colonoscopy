@@ -538,6 +538,56 @@ column varied with a mean of 1.60 per 1,000 -- see `docs/methods_notes.md`'s "In
 delayed-neoplasia outcomes" section for the full write-up and why the resulting "cheaper AND no
 greater delayed-neoplasia risk" joint probability should not be reported as a distinct finding.
 
+## Manuscript submission materials (2026-08-31)
+
+`manuscript/title_page.qmd` and `manuscript/manuscript.qmd` are Quarto files formatted for submission
+to *Obstetrics & Gynecology* (the "Green Journal"), split per the journal's double-anonymized peer
+review requirement. Format verified directly against the journal's live Instructions for Authors
+(`journals.lww.com/greenjournal/pages/information-for-authors`, version dated April 20, 2026), not
+assumed from general knowledge -- word/reference/figure limits, structured-abstract headings, body
+section order, citation style, and the two CHEERS reporting-guideline items the journal calls out
+specifically (item 15, a model-summary figure; items 16/18, a full assumption table) were all read
+directly from the live page. Both files render successfully via `quarto render` to real `.docx` files.
+
+Two new analysis scripts support the manuscript's finalized figure/table selection:
+
+- `analysis/10_decision_tree_figure.R` builds `figures/figure7_decision_tree.png` (CHEERS item 15) via
+  `DiagrammeR`/Graphviz, using standard decision-tree notation (squares = decisions, circles = chance
+  nodes, triangles = terminal/payoff nodes). Every probability and dollar figure on the diagram is
+  pulled live from `compute_strategy_costs()`, not hand-typed -- the figure cannot silently drift from
+  the base case. Terminal nodes show the actual cost incurred along that specific path (e.g., the
+  office-EMB-then-D&C terminal shows `initial_cost + dnc_cost`, not the strategy's overall
+  probability-weighted expected cost, which is instead annotated at the chance node) -- an initial
+  version of this figure conflated the two, caught and corrected before use.
+- `analysis/11_manuscript_table10_summary.R` builds `tables/manuscript_table10_summary.csv` (base-case
+  cost + PSA-derived clinical-outcome means, one row per strategy). Deliberately reads the
+  already-saved `tables/probabilistic_sensitivity_draws.csv` rather than calling
+  `run_probabilistic_sensitivity()` again, since that function is unseeded and a fresh call would draw
+  a different 1,000 simulations than the ones the manuscript's Results text was written from --
+  reintroducing the same same-document inconsistency already caught once while drafting
+  `docs/manuscript_methods_results.md` (see that file's git history).
+- `DiagrammeR`, `DiagrammeRsvg`, and `rsvg` were added to `R/00_source_all.R`'s `required_packages`,
+  needed only for the decision-tree figure.
+
+**Reference verification (2026-08-31):** two citations flagged `[VERIFY]` when the manuscript qmd files
+were first drafted were independently confirmed directly against the primary source:
+
+- Ladabaum U et al. Strategies to identify the Lynch syndrome among patients with colorectal cancer: a
+  cost-effectiveness analysis. Confirmed via PMC3793257: *Ann Intern Med. 2011 Jul 19;155(2):69-79.*
+  Exactly as drafted -- no correction needed.
+- Childers CP, Maggard-Gibbons M. Understanding costs of care in the operating room. Confirmed via
+  PubMed 29490366: *JAMA Surg. 2018 Apr 18;153(4):e176233.* Exactly as drafted. The same primary-source
+  read also cross-validated this repository's own `direct_room_cost_per_minute` ($20.90) and
+  `procedure_room_cost_per_minute` ($36.14) parameters: the abstract's reported ambulatory-setting
+  figures -- "$36.14 ($19.53)" total and "$20.90 of $35.39" direct-expense share -- match both
+  parameters' base values exactly.
+
+**Figure/table selection finalized** at 5 of 5 slots (Original Research's combined limit): Table 1
+(parameters/assumptions), Table 2 (base-case cost + clinical-outcome summary, new), Figure 1 (decision
+tree, new), Figure 2 (PSA histogram), Figure 3 (geographic sensitivity). The remaining ~10 existing
+analysis outputs are proposed for Supplemental Digital Content, explicitly exempted from the combined
+limit per the Instructions for Authors.
+
 ## Geographic sensitivity analysis (2026-08-31)
 
 `R/geographic_sensitivity.R` re-prices the base-case strategies at four localities using real CMS

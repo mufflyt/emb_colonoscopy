@@ -3,6 +3,22 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a first complete draft, and a diagram that had to be fixed before it was honest)
+
+Filled in the two sections that were placeholders: Introduction and Discussion. Both are first-pass
+drafts, not final -- the clinical framing needs a human's read -- but the manuscript now has all six
+sections a submission needs.
+
+Built the decision-tree diagram the journal's economic-evaluation checklist requires. First version
+had a real error worth naming: it labeled a branch's outcome with the strategy's overall
+probability-weighted average cost, not the actual dollar amount a patient on that specific branch would
+incur. A diagram is supposed to make the model's logic easier to check at a glance -- one that quietly
+mislabels its own numbers does the opposite. Fixed before it went anywhere.
+
+Also tracked down the two references left unverified last time. Both checked out exactly as drafted --
+and reading one of them again confirmed, as a nice side effect, that this project's own per-minute
+operating-room cost parameters match the source paper's numbers precisely.
+
 ## 2026-08-31 (does this hold up outside the national average? yes -- and more so)
 
 Every number in this model up to now has been a national Medicare average. That's a reasonable

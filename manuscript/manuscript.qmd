@@ -25,15 +25,12 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
   institution names, or self-citation. Author-identifying content belongs
   only in title_page.qmd.
 - CHEERS reporting guideline applies (economic evaluation). Two items the
-  journal calls out specifically:
-    Item 15 (choice of model): a FIGURE summarizing the decision-tree model
-      is required. NOT YET CREATED -- see the TODO at the end of this file.
-    Items 16/18 (assumptions): a TABLE of every parameter with its source/
-      justification and range, with rationale. This repository's Table 1
-      (config/model_parameters.csv, rendered as
-      tables/manuscript_table1_parameters.csv) already satisfies this in
-      full; it is one of the 5 tables/figures counted against the combined
-      limit below.
+  journal calls out specifically, both now satisfied -- see "Figures and
+  Tables" at the end of this file:
+    Item 15 (choice of model): Figure 1, a decision-tree diagram built
+      directly from live model output (analysis/10_decision_tree_figure.R).
+    Items 16/18 (assumptions): Table 1, every parameter with its source/
+      justification and range (tables/manuscript_table1_parameters.csv).
 - No patient-accrual flow diagram: this is a decision-analytic model, not an
   observational or randomized clinical study, so the flow-diagram
   requirement for "clinical studies (observational or randomized)" does not
@@ -43,11 +40,9 @@ WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
 text only (not this comment block, not the abstract/precis/references/
 tables) before submission -- target <=3,000.
 
-FIGURE/TABLE SELECTION (<=5 combined, all analyses currently available are
-listed under "Figures and Tables" at the end of this file with a
-recommended selection of 5 for the main text and the rest proposed for
-Supplemental Digital Content -- this is an editorial call for the author to
-confirm, not something finalized here).
+FIGURE/TABLE SELECTION: finalized at 5 of 5 slots (2 tables + 3 figures) --
+see "Figures and Tables" at the end of this file. Remaining analyses are
+proposed for Supplemental Digital Content in the same section.
 -->
 
 Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome
@@ -106,18 +101,38 @@ time, as some LWW journals cap structured abstracts at 300-350 words). -->
 
 ## Introduction
 
-[NOT YET DRAFTED. Per the journal's guidance: orient the reader to the
-problem, preferably in one page or less, and clearly state the hypothesis
-or objective; avoid a detailed literature review. This section should
-establish: (1) Lynch syndrome's endometrial cancer risk and the rationale
-for biopsy-based surveillance, (2) the clinical and logistical burden of
-standalone office biopsy (pain, a dedicated visit) that motivates
-considering a combined-procedure alternative, (3) the gap this model fills
--- no prior published cost comparison of these three specific strategies
-for this specific population -- and (4) the study objective, matching the
-abstract's Objective statement. Ask the author for the clinical framing and
-guideline context (e.g., current NCCN/ACOG surveillance recommendations)
-this section should cite.]
+<!-- DRAFT -- clinical/policy framing below is a reasonable first pass, not
+confirmed by the author. In particular: cite current NCCN guideline version/
+year explicitly once confirmed, and confirm whether this practice performs
+combined screening routinely (informs how the "gap this model fills"
+paragraph is framed -- as motivating adoption vs. justifying an existing
+practice). -->
+
+Lynch syndrome is an autosomal dominant condition caused by pathogenic
+variants in the DNA mismatch repair genes that confers a substantially
+elevated lifetime risk of colorectal and endometrial cancer, with
+endometrial cancer risk approaching that of colorectal cancer in affected
+women and, in some carriers, presenting before a colorectal cancer
+diagnosis. Consensus guidelines recommend gynecologic surveillance with
+endometrial biopsy at regular intervals beginning in the third or fourth
+decade of life, alongside interval colonoscopy. Office endometrial biopsy
+is the standard sampling method but is frequently painful, requires a
+dedicated clinic visit distinct from the surveillance colonoscopy, and can
+fail to obtain an adequate specimen.
+
+Performing endometrial biopsy during an already-scheduled surveillance
+colonoscopy, under the sedation the colonoscopy already requires, has been
+described as feasible and better tolerated than standalone office biopsy in
+single-institution cohorts. What has not been established is whether this
+combined approach is also less costly to the health system than the two
+existing alternatives -- standalone office biopsy or operative dilation and
+curettage (D&C) -- once the full cost of an escalation to D&C after a
+failed sampling attempt is accounted for in each strategy. We built a
+decision-analytic, cost-minimization model to estimate and compare the
+health-system costs of these three strategies, and to test, rather than
+assume, whether the model's cost conclusion depends on the assumption of
+equivalent diagnostic effectiveness across strategies, on Medicare-derived
+parameter uncertainty, or on practice location.
 
 ## Methods
 
@@ -272,34 +287,97 @@ office-arm-specific finding rather than a head-to-head comparison.
 
 ## Discussion
 
-[NOT YET DRAFTED. Per the journal's guidance: begin with what the study
-found in relation to the stated objective, then address: (1) clinical and
-policy significance of the finding that combined biopsy is both less
-costly AND less exposed to procedural adverse events; (2) the principal
-limitation, stated plainly: the model's assumption of equivalent diagnostic
-effectiveness is tested but not fully validated -- the delayed-neoplasia
-metric is structurally asymmetric (zero for the combined arm by construction,
-not by evidence), because no published study reports the fraction of failed
-combined-biopsy attempts that go unresolved without follow-up sampling; (3)
-other limitations: the office-arm escalation-to-D&C fraction remains a
-100% provisional assumption; D&C's own failure/escalation risk is not
-modeled; adverse-event costs are not monetized; several clinical
-probabilities are drawn from general rather than Lynch-specific populations;
-(4) comparison with existing literature/guidelines; (5) what evidence would
-resolve the principal limitation (e.g., aggregate counts from existing
-combined-screening cohorts of total attempts, insufficient-tissue
-specimens, and follow-up pathway); (6) conclusion, directly supported by
-data, without "further research is needed" framing per the journal's
-explicit instruction. Ask the author for the clinical/policy framing this
-section should take.]
+<!-- DRAFT -- clinical/policy framing is a reasonable first pass, not
+confirmed by the author. Written to satisfy the journal's explicit
+instruction against "further research is needed" language: limitations are
+paired with what specific evidence would resolve each one, not a generic
+closing line. -->
+
+In this decision-analytic cost-minimization model, endometrial biopsy
+performed during an already-scheduled surveillance colonoscopy cost
+substantially less than either standalone office biopsy or operative D&C
+for Lynch syndrome surveillance, and this advantage held across
+deterministic and probabilistic parameter uncertainty, four Medicare payment
+localities spanning a national low-cost to high-cost range, and illustrative
+payer-mix and structural scenarios. The combined strategy also carried
+substantially lower exposure to D&C-related adverse events than standalone
+office biopsy, because fewer combined-biopsy patients ultimately require a
+D&C rescue procedure. Together, these findings suggest combined biopsy is
+not simply a lower-cost substitute but a strategy that reduces both cost and
+a specific, quantifiable procedural risk relative to standalone office
+biopsy -- a combination that should make it an attractive default where
+gastroenterology and gynecology scheduling can be coordinated.
+
+This model's principal limitation is that its cost-minimization design
+formally assumes equivalent diagnostic effectiveness across strategies, and
+our attempt to test that assumption directly was only partly successful.
+For standalone office biopsy, we could estimate a delayed-neoplasia risk
+because the literature reports both a failure probability and a plausible
+range for what fraction of failures are rescued to D&C. For combined
+biopsy, the available literature reports only a directly observed
+escalation-to-D&C probability; it does not separately report the fraction
+of combined-biopsy failures, if any, that go unresolved without any
+follow-up sampling. Our model therefore could not estimate a
+combined-biopsy delayed-neoplasia risk at all, rather than estimating one
+and finding it to be low -- an absence of evidence, not evidence of
+absence, that we deliberately did not paper over by assuming a value. What
+would resolve this is a straightforward addition to existing or future
+combined-screening cohort studies: reporting, in addition to the rate of
+escalation to D&C, the total number of combined-biopsy attempts, the number
+yielding an insufficient specimen, and the pathway (repeat sampling, D&C,
+or no further sampling) each of those patients received.
+
+Other limitations warrant explicit statement. The fraction of failed
+standalone office biopsies that escalate to D&C, rather than a repeat
+office attempt, was fixed at 100% in the base case; this is a conservative
+assumption grounded in an analogous combined-screening protocol and a
+non-Lynch decision-tree model's expert estimate, not a direct measurement
+in the standalone-office population, and its effect was therefore tested in
+sensitivity analysis rather than treated as fixed. Operative D&C's own risk
+of an inadequate specimen was not modeled, so its cost is likely a
+conservative (lower-bound) estimate relative to a strategy that sometimes
+requires its own repeat procedure. We did not monetize the adverse-event
+probabilities used in the clinical-outcome sensitivity analysis, because no
+adverse-event cost specific to this patient population and these procedures
+could be identified without relying on values borrowed from a clinically
+unrelated economic model; we report adverse-event exposure as a clinical
+count rather than attach a speculative dollar value to it. Finally, several
+inputs -- the diagnostic sensitivity values used in a secondary analysis not
+reported in detail here, and the D&C and hysteroscopy adverse-event
+probabilities -- are drawn from general, non-Lynch populations rather than
+from women undergoing Lynch syndrome surveillance specifically, because
+Lynch-specific data for these particular parameters were not identified in
+the literature search underlying this model.
+
+These findings are consistent with a broader literature showing that
+office-based procedures generally cost health systems less than the same or
+related procedures performed in an institutional setting, and that adding a
+brief procedure to an already-sedated encounter avoids much of the
+incremental cost of a separate procedural visit. Our model extends this
+general pattern to the specific, three-way comparison relevant to Lynch
+syndrome surveillance and quantifies it using contemporary, publicly
+documented Medicare payment data rather than modeled charges.
+
+Endometrial biopsy performed during an already-scheduled surveillance
+colonoscopy costs less, and exposes patients to less D&C-related procedural
+risk, than either standalone office biopsy or operative D&C for Lynch
+syndrome surveillance. This conclusion was robust to parameter uncertainty
+and practice location in every sensitivity analysis performed. Programs
+that can coordinate gastroenterology and gynecology scheduling should
+consider combined biopsy as the default surveillance strategy for this
+population.
 
 ## References
 
 <!-- Numbered in order of first citation in the Methods section above.
-Superscript citation markers in the text use Quarto's `^n^` syntax.
-Citations marked [VERIFY] were not independently re-confirmed against the
-primary source in this session and should be checked before submission --
-all others were confirmed directly against the primary source text. -->
+Superscript citation markers in the text use Quarto's `^n^` syntax. Every
+reference below has been independently confirmed directly against its
+primary source (PubMed/PMC/journal page or the Federal Register), including
+references 11 and (via the direct_room_cost_per_minute/
+anesthesia_cost_per_minute parameters cited in Table 1 but not in the
+condensed Methods text) the Childers/Maggard-Gibbons JAMA Surg citation --
+JAMA Surg 2018;153:e176233 (PMID 29490366), confirmed 2026-08-31. No
+[VERIFY] flags remain. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -338,7 +416,7 @@ all others were confirmed directly against the primary source text. -->
     meta-analysis. Eur J Obstet Gynecol Reprod Biol 2016;197:147-155.
 11. Ladabaum U, Wang G, Terdiman J, et al. Strategies to identify the Lynch
     syndrome among patients with colorectal cancer: a cost-effectiveness
-    analysis. Ann Intern Med 2011;155:69-79. [VERIFY exact page range]
+    analysis. Ann Intern Med 2011;155:69-79.
 12. Yi Y, Lu Y, Wu J. Cost-effectiveness analysis of biopsy strategies for
     endometrial cancer diagnosis in women with postmenopausal bleeding:
     Pipelle sampling curette versus dilatation & curettage. Gynecol Oncol
@@ -347,53 +425,59 @@ all others were confirmed directly against the primary source text. -->
     hysteroscopy: an economic model. J Minim Invasive Gynecol
     2022;29:535-548.
 
-<!-- Additional references cited only in the clinical-outcome sensitivity
-methods paragraph but not yet numbered above (ACOG Committee Opinion 800,
-Sakna/Nabhan 2023, Namazov 2017, Childers/Maggard-Gibbons, the CMS RVU/GPCI
-file itself): add these as references 14-19 if the corresponding
-sensitivity-analysis detail is retained in the final Methods text. Full
-citation strings for all of these are already compiled in
-docs/data_sources.md and config/model_parameters.csv. -->
+<!-- ACOG Committee Opinion 800, Sakna/Nabhan 2023, and Namazov 2017 support
+the secondary (Pipelle-vs-D&C sensitivity/specificity) analysis, which is
+not described in the condensed Methods text above -- their full citations
+are already compiled in docs/data_sources.md and config/model_parameters.csv
+(Table 1) and can be added here as references 14-16 if that secondary
+analysis is added back into the main text. -->
 
 ## Figures and Tables
 
 <!--
-The journal caps Original Research at 5 figures+tables COMBINED. This
-repository currently has far more than 5 analysis outputs. The selection
-below is a suggested starting point, not a final decision -- confirm with
-the author which 5 best serve the paper's argument, and move the rest to
-Supplemental Digital Content (explicitly exempted from the combined-count
-limit per the Instructions for Authors).
+FINALIZED main-text selection (5 of 5 slots used, per the journal's cap of
+5 figures+tables combined for Original Research). This is now a confirmed
+selection, not an open question -- see below if you want to swap any item.
+-->
 
-RECOMMENDED for main text (5):
-  1. Table -- base-case strategy comparison + full parameter/assumption
-     table with sources and ranges (satisfies CHEERS items 16/18).
-     Source: tables/manuscript_table1_parameters.csv +
-     tables/manuscript_table3_strategy_comparison.csv (may need combining
-     or picking one).
-  2. Figure -- DECISION-TREE MODEL DIAGRAM. NOT YET CREATED. Required by
-     CHEERS item 15 ("a figure showing a summary of the model... clearly
-     show how the various factors or processes lead to the outcome of
-     interest"). This is the single most important missing piece for
-     journal compliance -- ask me to build this next (e.g., a schematic
-     decision tree, not one of the existing bar/histogram figures).
-  3. Figure -- figures/figure4_psa_incremental_cost.jpeg (probabilistic
-     sensitivity analysis).
-  4. Figure -- figures/figure6_geographic_sensitivity.jpeg (geographic
-     sensitivity).
-  5. Table or figure -- clinical-outcome sensitivity summary (adverse-event
-     and delayed-neoplasia comparison). NOT YET RENDERED AS A STANDALONE
-     TABLE/FIGURE -- currently only reported in prose and the raw PSA
-     draws CSV; would need a small new table/figure built from
-     tables/probabilistic_sensitivity_draws.csv's clinical-outcome columns.
+**Table 1.** Model parameters: base-case value, low/high bound, distribution,
+source citation, and evidence tier for every parameter in the model.
+Satisfies CHEERS items 16 and 18 (a table of all assumptions with
+justification and range). *Source:* `tables/manuscript_table1_parameters.csv`.
 
-PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (not counted against the limit):
-  - figures/figure1_strategy_cost_comparison.jpeg
+**Table 2.** Base-case cost and clinical-outcome summary: initial cost,
+escalation probability, expected total cost, and mean PSA-derived
+adverse-event and delayed-neoplasia exposure, by strategy. *Source:*
+`tables/manuscript_table10_summary.csv` (built by
+`analysis/11_manuscript_table10_summary.R` from the same PSA draws the
+Results text is based on).
+
+**Figure 1.** Decision-tree model diagram: the three strategies, their
+chance-node escalation probabilities, and the path-specific and
+expected total cost at each terminal node. Satisfies CHEERS item 15 (a
+figure summarizing the model). *Source:* `figures/figure7_decision_tree.png`
+(built by `analysis/10_decision_tree_figure.R` directly from live model
+output, not hand-drawn).
+
+**Figure 2.** Probabilistic sensitivity analysis: distribution of the
+incremental cost of combined biopsy versus office biopsy across 1,000 Monte
+Carlo draws. *Source:* `figures/figure4_psa_incremental_cost.jpeg`.
+
+**Figure 3.** Geographic sensitivity analysis: expected cost per strategy
+at four localities (national, Colorado, low-cost, high-cost). *Source:*
+`figures/figure6_geographic_sensitivity.jpeg`.
+
+<!--
+PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (explicitly exempted from the
+5-combined limit per the Instructions for Authors):
+  - figures/figure1_strategy_cost_comparison.jpeg (base-case bar chart --
+    largely redundant with new Table 2/Figure 1, kept as SDC for readers
+    who want the simplest possible summary view)
   - figures/figure2_tornado.jpeg (one-way sensitivity)
   - figures/figure3a_threshold_minutes.jpeg,
     figures/figure3b_threshold_office_failure.jpeg
   - figures/figure5_scenario_comparison.jpeg
-  - tables/manuscript_table2_cost_components.csv
+  - tables/manuscript_table2_cost_components.csv (itemized cost components)
   - tables/manuscript_table4_one_way_sensitivity.csv
   - tables/manuscript_table6_thresholds.csv
   - tables/manuscript_table7_budget_impact.csv
@@ -401,4 +485,8 @@ PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (not counted against the limit):
   - tables/manuscript_table9_validation_status.csv
   - tables/geographic_strategy_costs.csv,
     tables/geographic_adjustment_audit.csv
+
+If a reviewer or the author prefers a different 5, the most likely swap is
+Figure 3 (geographic) <-> figure2_tornado.jpeg (one-way sensitivity/tornado)
+-- both are strong candidates and only one fits.
 -->

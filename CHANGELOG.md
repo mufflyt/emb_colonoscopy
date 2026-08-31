@@ -5,6 +5,33 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (manuscript submission materials: Introduction, Discussion, decision-tree figure, finalized figures/tables, verified references)
+
+### Added
+- Full Introduction and Discussion sections drafted in `manuscript/manuscript.qmd` (previously
+  placeholders). Both flagged as a reasonable first-pass draft pending the author's clinical/policy
+  framing, not asserted as final.
+- `analysis/10_decision_tree_figure.R`: builds `figures/figure7_decision_tree.png`, a schematic
+  decision-tree diagram (Graphviz via `DiagrammeR`) satisfying CHEERS item 15, with every probability
+  and dollar value pulled live from `compute_strategy_costs()`. An initial version conflated
+  path-specific terminal costs with strategy-level expected costs; caught and corrected (terminal
+  nodes now show `initial_cost + dnc_cost` for escalation paths, not the overall expected total, which
+  is instead annotated at the chance node).
+- `analysis/11_manuscript_table10_summary.R`: builds `tables/manuscript_table10_summary.csv`,
+  combining base-case cost with PSA-derived clinical-outcome means. Deliberately reads the
+  already-saved PSA draws file rather than re-running `run_probabilistic_sensitivity()`, to avoid
+  reintroducing the same-document numeric inconsistency already caught once while drafting the earlier
+  Methods/Results document.
+- `DiagrammeR`, `DiagrammeRsvg`, `rsvg` added to `R/00_source_all.R`'s `required_packages`.
+- Figure/table selection finalized at 5 of 5 slots (Original Research's combined limit): 2 tables
+  (parameters/assumptions; base-case + clinical-outcome summary) + 3 figures (decision tree, PSA,
+  geographic sensitivity). Remaining analyses proposed for Supplemental Digital Content.
+- Both flagged `[VERIFY]` references independently confirmed against primary sources: Ladabaum et al.
+  2011 (Ann Intern Med 155(2):69-79, exactly as drafted) and Childers/Maggard-Gibbons 2018 (JAMA Surg
+  153(4):e176233, exactly as drafted) -- the latter's primary-source read also cross-validated this
+  repository's own `direct_room_cost_per_minute`/`procedure_room_cost_per_minute` parameters against
+  the abstract's reported figures.
+
 ## 2026-08-31 (geographic sensitivity analysis, post analysis-v1.0 tag)
 
 ### Added

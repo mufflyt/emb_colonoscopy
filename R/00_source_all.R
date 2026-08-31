@@ -10,7 +10,10 @@ required_packages <- c(
   "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
   "forcats", "rlang",
   # evidence layer (CMS/HPT/MEPS) -- see docs/evidence_layers.md
-  "duckplyr", "httr2", "readxl", "stringr", "openssl"
+  "duckplyr", "httr2", "readxl", "stringr", "openssl",
+  # manuscript decision-tree figure only (analysis/10_decision_tree_figure.R)
+  # -- see docs/data_sources.md
+  "DiagrammeR", "DiagrammeRsvg", "rsvg"
 )
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
