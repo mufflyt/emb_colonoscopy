@@ -3,6 +3,27 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a literature-mining round that mostly confirmed what we already had)
+
+**Four candidate papers, one real addition.** Following up on the "next literature to mine" list,
+we tracked down PDFs for Munro et al. 2022, the NIHR review's own cost tables, ONCE 2025 (plus its
+misidentified "companion" citation), and a University of Florida hysteroscopy cost study. Most of
+this confirmed rather than changed anything: Munro's full text matches the three numbers already in
+the model exactly, and ONCE 2025's 42-minute combined-procedure time is consistent with the Huang
+2011 estimate already driving `combined_emb_added_minutes` (just less precise, so it didn't replace
+it). The NIHR review's own detailed cost tables turned out to be UK NHS tariffs bundling hysteroscopy
+with ultrasound and CA-125 testing -- a different currency, payer system, and procedure bundle than
+this US-CMS, EMB-specific model, so they're documented but not converted into parameters.
+
+One real gain: the University of Florida study (Moawad et al. 2014) added a second, independent
+office-vs-OR cost comparison ($1,356 vs. $4,946) alongside Munro's, as reference-only benchmarks.
+
+One correction worth flagging: a citation for a "Weill Cornell implementation framework" paper that
+appeared earlier in this project's literature list turned out to be unconfirmed -- extensive
+searching never located a real paper matching it. The paper actually obtained instead, Ahsan et al.
+2022, is a real Weill Cornell commentary, but a qualitative one with no cost or time figures to
+extract. No base-case numbers changed this round.
+
 ## 2026-08-30 (the combined arm now includes a preop office visit -- base case moves)
 
 **A scenario toggle became a confirmed clinical-practice decision.** The model previously assumed, by

@@ -5,6 +5,41 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (five candidate papers reviewed; two new reference-only benchmarks added)
+
+### Added
+- `cost_hysteroscopy_office_moawad_2014` ($1,356) and `cost_hysteroscopy_or_moawad_2014` ($4,946) --
+  reference-only office-vs-OR procedure-charge figures from Moawad et al. 2014 (JSLS, PMID 25392671),
+  a University of Florida audit of diagnostic hysteroscopy for abnormal uterine bleeding. A second,
+  independent office-vs-institutional cost differential alongside the existing Munro 2022 values.
+
+### Changed
+- Corrected a stale/unconfirmed citation in `docs/data_sources.md`'s `coordination_cost` entry: the
+  "Weill Cornell implementation framework, ScienceDirect S1048891X2401017X" citation could not be
+  located by any search method and is now flagged as unconfirmed. The paper actually obtained is a
+  different, real Weill Cornell source: Ahsan et al. 2022 (Int J Gynecol Cancer 32:818-819), a
+  qualitative implementation commentary with no extractable cost/time figures.
+
+### Reviewed, not incorporated
+- Munro et al. 2022's full text (previously known only via its three already-extracted reference
+  values) now obtained directly; Table 1 confirms all three figures exactly. Its per-vendor
+  instrumentation/depreciation tables (2A-2D) answer a hysteroscope-purchasing question, not this
+  repository's EMB-vs-D&C setting comparison, and were not mined further.
+- The 2024 NIHR Lynch review's own gynaecological-surveillance cost tables (UK NHS HRG tariffs, GBP,
+  2021-2 prices) were located and read in full but not converted into parameters: different
+  currency/payer system than this repository's US CMS basis, and the costs are bundled procedures
+  (hysteroscopy+TVUS+CA-125) rather than a standalone EMB Pipelle cost. See `docs/data_sources.md`
+  for the specific figures found.
+- ONCE 2025 (Frissora et al., Proc BUMC 2025;38(5):646-649) reports a mean 42-minute combined
+  procedure duration, converging directionally with (but less granular than) the Huang et al. 2011
+  estimate already used for `combined_emb_added_minutes`. No cost or failure-rate data. Not used to
+  change any parameter.
+- Ahsan et al. 2022's implementation commentary (see "Changed" above) -- qualitative only, no
+  extractable figures.
+
+See `docs/data_sources.md`'s "Next literature to mine" section for the full writeup of all four
+items reviewed this round.
+
 ## 2026-08-30 (combined_requires_preop_office_visit flipped to TRUE -- base case changes)
 
 ### Changed

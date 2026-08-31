@@ -61,7 +61,7 @@ transparent model, not a publication-ready result.
 ## Provisional parameters -- read before citing any number from this repository
 
 Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 4
-of 41 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
+of 45 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
 is now a real BLS/O*NET figure); `office_to_dnc_escalation_fraction` (the assumption that 100% of
 failed office EMB attempts escalate to D&C -- now grounded by an analogous MD Anderson protocol
 citation, though no standalone-office-EMB-specific study was found); and two `reference_only` values

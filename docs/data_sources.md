@@ -93,6 +93,11 @@ with the CMS-2026 track, or because they are pure external benchmarks:
   `combined_screen_adherence`, `office_emb_pain_*`, `combined_emb_pain` -- tagged
   `future_extension`, for effectiveness/adherence/patient-experience extensions this repository does
   not yet implement.
+- `cost_hysteroscopy_office_moawad_2014` / `cost_hysteroscopy_or_moawad_2014` ($1,356 / $4,946) --
+  Moawad et al. 2014 (JSLS, PMID 25392671), a University of Florida audit of office vs. OR diagnostic
+  hysteroscopy for abnormal uterine bleeding (non-Lynch, n=130, billing-department charges rather than
+  Medicare-allowed amounts). A second independent office-vs-institutional cost differential alongside
+  the Munro 2022 values, for a different procedure and dollar year.
 
 ## Supply-cost double-count and facility-vs-nonfacility rate correction (2026-08-28)
 
@@ -335,7 +340,7 @@ history.
 
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
-| `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. A formal micro-costing/implementation-cost study of actual coordination time (cf. the Weill Cornell implementation framework, ScienceDirect S1048891X2401017X) would still improve on the time component specifically |
+| `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. Ahsan et al. 2022's Weill Cornell implementation commentary (see "Next literature to mine" item 5 below) describes the same kind of stakeholder-coordination workflow qualitatively but reports no time or cost figures, so it does not resolve this gap. A formal micro-costing/implementation-cost study of actual coordination time would still improve on the time component specifically |
 | `office_to_dnc_escalation_fraction` | 100% | No study of standalone office EMB reports this split; the four candidate Lynch EMB-failure studies are confirmed paywalled (see below). Nebgen et al. 2014's explicit protocol quote now grounds the 100% assumption in an analogous (combined-arm) Lynch-surveillance context, but a standalone-office-EMB-specific citation is still needed to fully resolve this |
 
 **`dnc_recovery_room_cost` was removed from this list, not filled in.** Per MedPAC's Ambulatory
@@ -360,14 +365,27 @@ This list reflects the priority ranking developed during model design, highest-y
    (`cost_pipelle_yi2018`, `cost_dc_yi2018`), plus a real supporting citation for
    `office_to_dnc_escalation_fraction` (95% of failed Pipelle attempts move to D&C, per Yi et al.'s
    own Table 1).
-2. **Munro et al. 2022** (ScienceDirect S1553465021013261) -- office vs. institutional operative
-   hysteroscopy economic model; already contributes the three reference values above, but its full
-   cost decomposition (instrumentation, supplies, staffing) has not yet been extracted.
-3. **The 2024 NIHR Lynch systematic review and economic model** (NCBI Bookshelf NBK606810/NBK606812)
-   -- already the source of `emb_failure_lynch` and `hysteroscopy_failure_rate_lynch_range`; its full
-   cost tables (gynecologic surveillance, colorectal surveillance, risk-reducing surgery, downstream
-   cancer treatment, gamma-distribution uncertainty with a ~10% coefficient of variation) have not
-   been mined beyond those two probabilities.
+2. ~~Munro et al. 2022~~ **DONE (2026-08-31)** -- full text obtained (open access, CC BY). Table 1
+   confirms the three reference values above exactly ($1,382.48 / $1,655.31 / $2,918.10). The paper's
+   further cost decomposition (Tables 2A-2D: per-vendor hysteroscope/camera/monitor pricing,
+   depreciation schedules, and net-practice-revenue-by-case-volume modeling) answers a different
+   question -- which hysteroscopic system/instrument a practice should purchase and at what case
+   volume it becomes profitable -- not this repository's EMB-vs-D&C setting comparison, so it was
+   deliberately not mined further into new parameters.
+3. ~~The 2024 NIHR Lynch systematic review and economic model~~ **REVIEWED, NOT INCORPORATED
+   (2026-08-31)** -- the review's own "Costs" section (whole-disease economic model chapter) was
+   located and read in full. Its gynaecological-surveillance costs are UK NHS tariffs (Healthcare
+   Resource Groups) in GBP, 2021-2 price year: hysteroscopy-with-biopsy-and-TVUS £279.53 (HRG MA46Z,
+   inflated from £264.02 in 2019/20 prices), plus CA-125 testing £49.60 = £329.13 combined; TVUS alone
+   with CA-125 £220.86; colorectal surveillance colonoscopy £593.37-£749.29 (HRGs FE32Z/FE30Z);
+   risk-reducing hysterectomy/BSO £4,660.22-£6,281.03; all costed with gamma distributions at a 10%
+   coefficient of variation. Not extracted into new parameters for two compounding reasons: (1) these
+   are NHS tariff costs in a different currency and payer system than this repository's US
+   CMS-allowed-amount basis -- a GBP-to-USD conversion would introduce exchange-rate and
+   health-system-structure noise, not resolve it; (2) the surveillance costs are bundled procedures
+   (hysteroscopy + TVUS, or + CA-125) rather than a standalone EMB Pipelle cost comparable to this
+   repository's office_emb/combined_emb/dnc arms. `emb_failure_lynch` and
+   `hysteroscopy_failure_rate_lynch_range` remain the only parameters sourced from this review.
 4. ~~The original Lynch surveillance studies~~ **DONE (2026-08-31)** -- full text of Lecuru, Elmasry,
    and Rijcken obtained via institutional access (Woolderink was already open access). This is what
    caught the `emb_failure_lynch` correction above: Elmasry's true count is 5/25 not 6/25, and Rijcken
@@ -376,16 +394,42 @@ This list reflects the priority ranking developed during model design, highest-y
    `office_to_dnc_escalation_fraction`) or a "cannot access the endometrium" vs. "inadequate specimen"
    breakdown the way Adambekov et al. reported for the general population -- this is a genuine gap in
    what these studies measured, not an access barrier.
-5. **ONCE 2025** (PMC12351693) and the **Weill Cornell implementation framework**
-   (ScienceDirect S1048891X2401017X) -- contemporary workflow and micro-costing detail (mean 42-minute
-   combined procedure duration, staffing/scheduling/supply requirements) that could refine
-   `coordination_cost` and `combined_emb_added_minutes` beyond the 2011 Huang et al. estimate.
-6. **Office-vs-OR hysteroscopy literature for external validation** -- a systematic review/meta-analysis
-   (PubMed 30528838) reporting outpatient costs of ~$97-$1,258 vs. OR costs of ~$258-$3,144 across
-   seven studies, and a University of Florida analysis (PMC4154435) modeling an office-first strategy
-   with OR rescue ($3,448 vs. an all-OR $4,946, saving $1,498, 95% CI $1,051-$1,923) -- structurally
-   very close to this repository's own decision tree and a second external validation target
-   alongside Yi et al. 2018.
+5. ~~ONCE 2025~~ **REVIEWED, NOT INCORPORATED (2026-08-31)** -- Frissora et al., One-Stop Colon and
+   Endometrial Screening (ONCE): a prospective study of combined cancer screening for Lynch syndrome.
+   Proc (Bayl Univ Med Cent) 2025;38(5):646-649. Full text obtained. Reports mean combined-procedure
+   duration 42 minutes (range 27-59) and mean total OR/suite time 54 minutes (range 37-93) in n=20
+   Lynch patients, with "the EMB typically takes less than 10 minutes" -- directionally consistent
+   with, but less granular than, Huang et al. 2011's Table-reported median 5 min (range 1-12) already
+   used for `combined_emb_added_minutes`, since ONCE reports total combined-session time rather than
+   an isolated EMB-added-time measurement. No cost data and no EMB failure-rate data (0% of patients
+   reported pain; the study's only "failure"-adjacent finding is unrelated -- one incidental stage IA
+   endometrial cancer diagnosis). Not used to change any parameter; logged here as a second,
+   independent, converging real-world time observation for `combined_emb_added_minutes`.
+   The originally hypothesized companion citation "Weill Cornell implementation framework
+   (ScienceDirect S1048891X2401017X)" could not be located or verified by any search method tried
+   (PubMed keyword search, general web search) and should be treated as an unconfirmed/likely
+   erroneous citation -- **not** a real source. What the user actually located and downloaded instead
+   is a different, real Weill Cornell paper: Ahsan MD et al., "Combining endometrial biopsy with colon
+   cancer screening for patients with Lynch syndrome: framework for establishing a patient-centered
+   approach." Int J Gynecol Cancer 2022;32:818-819 (doi:10.1136/ijgc-2022-003355) -- a commentary
+   describing a 4-step institutional rollout process (stakeholder identification; equipment/tray
+   setup; OR-scheduling workflow; staff education sessions) for launching a combined GI+GYN Lynch
+   screening program. Purely qualitative/process description, no cost, time, or failure-rate figures
+   -- not extractable into any parameter, but consistent with and supportive of this repository's
+   `combined_requires_preop_office_visit` and `coordination_cost` modeling choices (both reflect the
+   same kind of institutional coordination burden this commentary describes). The `coordination_cost`
+   citation above previously misattributed this framework to a nonexistent ScienceDirect/Value in
+   Health PII; that citation is corrected here.
+6. ~~Office-vs-OR hysteroscopy literature for external validation~~ **PARTIALLY DONE (2026-08-31)** --
+   the University of Florida analysis (Moawad et al. 2014, JSLS, PMC4154435/e2014.00393) was obtained
+   and its office ($1,356) and all-OR ($4,946) procedure-charge figures added as
+   `cost_hysteroscopy_office_moawad_2014` / `cost_hysteroscopy_or_moawad_2014` (see above); its
+   office-first-with-OR-rescue-vs-all-OR framing ($3,448 vs. $4,946, saving $1,498 per patient, 95% CI
+   $1,051-$1,923) is structurally close to this repository's own office_emb-vs-dnc comparison, though
+   for diagnostic hysteroscopy (CPT 58555) in a non-Lynch abnormal-uterine-bleeding population rather
+   than Pipelle EMB in Lynch surveillance -- kept as reference-only for that reason. The seven-study
+   systematic review/meta-analysis (PubMed 30528838, outpatient $97-$1,258 vs. OR $258-$3,144) was not
+   pursued this round.
 7. **Patient time-cost literature** (colonoscopy time-and-motion studies, e.g. PubMed 18263561 and
    PMC5847315) -- mean patient-occupied time of 23.2-28.8 hours and $335-$432 in lost time/caregiver
    cost per colonoscopy episode. Not used in the current payer-perspective base case, but directly
