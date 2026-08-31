@@ -5,6 +5,53 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (CHEERS 2022 checklist audit; fixed 8 real reporting gaps in Methods)
+
+### Added
+- `docs/CHEERS_2022_checklist.md`: detailed internal audit of all 28 CHEERS 2022 items against the
+  current manuscript, with specific manuscript-section citations and reasoning for each determination.
+  Explicitly follows ISPOR's own guidance that CHEERS is a reporting-completeness checklist, not a
+  methodological quality score. Supersedes an earlier stale audit performed by a collaborator against
+  a prior manuscript snapshot (before Title, Abstract, Introduction, Discussion, and the decision-tree
+  figure existed) -- several items that audit marked "Missing" were already "Reported" once checked
+  against the live file.
+- `manuscript/cheers_checklist.qmd`: the clean, submission-ready version of the same checklist,
+  intended as Supplemental Digital Content (the format most economic-evaluation journals request).
+  Renders to `cheers_checklist.docx`.
+
+### Changed
+- `manuscript/manuscript.qmd`'s Methods section: fixed 8 real, substantive CHEERS reporting gaps
+  identified by the audit (not just manuscript polish):
+  - **Perspective (item 8):** revised from "U.S. health-system/payer perspective" to an explicit
+    "U.S. healthcare-sector perspective," distinguishing Medicare-reimbursement-valued inputs from
+    resource-cost-valued inputs (incremental room/anesthesia time, coordination labor) that Medicare
+    does not separately reimburse, and explicitly excluding patient time/transportation/productivity
+    costs. The prior framing risked implying every dollar in the model was a Medicare payer
+    expenditure, which is not accurate.
+  - **Time horizon and discount rate (items 9-10):** added an explicit statement (single surveillance
+    episode through any rescue D&C; not discounted, horizon <1 year).
+  - **Health economic analysis plan (item 4):** added an explicit statement that none was
+    prespecified.
+  - **Outcome selection and valuation (items 11, 13):** added explicit rationale for the primary
+    outcome and the two secondary outcomes, and an explicit statement that secondary outcomes were
+    not converted to utilities or dollars.
+  - **Heterogeneity and distributional effects (items 18-19):** added explicit statements that only
+    setting-level (geographic) heterogeneity was characterized, not patient-level heterogeneity, and
+    that distributional/equity effects were outside scope.
+  - **Patient/stakeholder engagement (items 21, 25):** added an explicit statement that no formal
+    engagement process occurred, naming the specific structural assumption (the combined arm's
+    preoperative visit) that clinician-investigator input did affect.
+  - **Study population (item 5):** refined to explicitly state which patient characteristics are not
+    modeled as subgroups.
+  - A pointer to the CHEERS checklist as Supplemental Digital Content was added to the end of Methods.
+  - Word count after all additions: 2,517 of the journal's 3,000-word limit.
+
+### Audit result
+26 of 28 CHEERS items are now reported in the manuscript. The remaining 2 (funding source, conflicts
+of interest) have their reporting structure already in place on the title page but require the
+author's actual disclosure content -- not something an AI assistant should state on an author's
+behalf.
+
 ## 2026-08-31 (manuscript submission materials: Introduction, Discussion, decision-tree figure, finalized figures/tables, verified references)
 
 ### Added

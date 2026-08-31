@@ -1,0 +1,63 @@
+---
+title: "CHEERS 2022 Checklist"
+format: docx
+---
+
+<!--
+Submission-ready CHEERS 2022 checklist, intended as Supplemental Digital
+Content per the target journal's Instructions for Authors (many
+economic-evaluation journals request the completed checklist as an
+appendix/supplement). Render separately:
+
+  quarto render manuscript/cheers_checklist.qmd
+
+Reference: Husereau D, Drummond M, Augustovski F, et al. Consolidated
+Health Economic Evaluation Reporting Standards 2022 (CHEERS 2022)
+Statement: Updated Reporting Guidance for Health Economic Evaluations.
+Value Health 2022;25(1):3-9.
+
+This table cites manuscript SECTION rather than page number, since page
+numbers are not assigned until the journal typesets an accepted
+manuscript -- update to page numbers at proof stage if the journal
+requires them.
+
+For the detailed internal audit (evidence and reasoning behind each
+"Reported" determination), see docs/CHEERS_2022_checklist.md in the
+repository. This file is the clean, submission-facing version of that
+same audit.
+-->
+
+Consolidated Health Economic Evaluation Reporting Standards (CHEERS) 2022
+checklist, completed for: Cost-Minimization of Endometrial Biopsy
+Strategies for Lynch Syndrome Surveillance: A Decision-Analytic Model.
+
+| Topic | No. | Item | Reported in section |
+|---|---|---|---|
+| Title | 1 | Identify the study as an economic evaluation and specify the interventions compared. | Title |
+| Abstract | 2 | Provide a structured summary that highlights context, key methods, results, and alternative analyses. | Abstract |
+| Background and objectives | 3 | Give the context for the study, the study question, and its practical relevance. | Introduction |
+| Health economic analysis plan | 4 | State whether a health economic analysis plan was developed and where available. | Methods |
+| Study population | 5 | Describe characteristics of the study population and why relevant for decision-making. | Methods |
+| Setting and location | 6 | Provide relevant contextual information for decision-making. | Methods |
+| Comparators | 7 | Describe the interventions being compared and why chosen. | Methods; Introduction |
+| Perspective | 8 | State the perspective(s) adopted and why relevant, and how costs and outcomes assessed were justified. | Methods |
+| Time horizon | 9 | State the time horizon and why appropriate. | Methods |
+| Discount rate | 10 | Report discount rates and why appropriate. | Methods |
+| Selection of outcomes | 11 | Describe what outcomes were used and why. | Methods |
+| Measurement of outcomes | 12 | Describe how outcomes were measured. | Methods; Figure 1 |
+| Valuation of outcomes | 13 | Describe the population and methods used to value outcomes. | Methods |
+| Measurement and valuation of resources and costs | 14 | Describe how costs were measured and valued. | Methods; Table 1 |
+| Currency, price date, and conversion | 15 | State the currency, price date, and conversion methods. | Methods |
+| Rationale and description of model | 16 | Describe the type of model, why chosen, and provide a diagram if applicable. | Methods; Figure 1 |
+| Analytics and assumptions | 17 | Describe methods to validate/adjust the model and structural assumptions. | Methods; Table 1 |
+| Characterizing heterogeneity | 18 | Describe methods for estimating differential results by subgroups. | Methods |
+| Characterizing distributional effects | 19 | Describe how impacts were distributed across affected individuals, if analyzed. | Methods |
+| Characterizing uncertainty | 20 | Describe methods for characterizing parameter and model uncertainty. | Methods |
+| Engagement with patients and other affected groups | 21 | Describe steps to engage patients/service recipients/caregivers, and how their perspectives were integrated. | Methods |
+| Study parameters | 22 | Report all analytic inputs with ranges/distributions and sources. | Table 1 (`tables/manuscript_table1_parameters.csv`) |
+| Summary of main results | 23 | Report mean values for costs, effects, and their differences, and summarize in a table. | Results; Table 2 |
+| Effect of uncertainty | 24 | Describe how uncertainty in study inputs affected findings. | Results |
+| Effect of engagement with patients and others | 25 | Report the results of engagement, if any. | Methods |
+| Study findings, limitations, generalizability, and current knowledge | 26 | Report key findings, limitations, generalizability, and how the study fits with current knowledge. | Discussion |
+| Source of funding | 27 | Describe funding source(s), role of funder, and how it influenced the study. | Title Page |
+| Conflicts of interest | 28 | Report authors' conflicts of interest per journal policy. | Title Page |

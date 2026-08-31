@@ -3,6 +3,26 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (an outside audit against a checklist -- most of it already stood up)
+
+Ran the manuscript against CHEERS 2022, the standard 28-item reporting checklist for health-economic
+evaluations (the health-economics equivalent of CONSORT for trials). Two things came out of it.
+
+First, a collaborator's audit had flagged Title, Abstract, and Discussion as missing -- they weren't;
+that audit was against an older snapshot, from before the last update added them. Worth remembering:
+an outside review is only as current as the file it actually looked at.
+
+Second, underneath that, eight real gaps were genuinely there and got fixed: the study's perspective
+needed to be stated more precisely (it blends Medicare reimbursement rates with separately-sourced
+resource costs, which isn't quite the same thing as a pure payer perspective, and now says so), plus
+explicit statements on time horizon, discounting, the study's outcome-selection logic, what
+heterogeneity was and wasn't examined, and whether patients or other stakeholders were formally
+engaged in building the model (they weren't, beyond clinician input on specific workflow assumptions --
+now stated plainly rather than left implicit).
+
+Two items are genuinely left for the corresponding author to complete, on purpose: funding source and
+conflicts of interest. Those aren't something to guess at.
+
 ## 2026-08-31 (a first complete draft, and a diagram that had to be fixed before it was honest)
 
 Filled in the two sections that were placeholders: Introduction and Discussion. Both are first-pass

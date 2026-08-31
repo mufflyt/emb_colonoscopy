@@ -35,6 +35,12 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
   observational or randomized clinical study, so the flow-diagram
   requirement for "clinical studies (observational or randomized)" does not
   apply.
+- CHEERS 2022 checklist: manuscript/cheers_checklist.qmd (renders to
+  cheers_checklist.docx), submitted as Supplemental Digital Content. See
+  docs/CHEERS_2022_checklist.md for the detailed internal audit (26 of 28
+  items reported in this manuscript; items 27-28 [funding, conflicts of
+  interest] have their reporting structure in place on the title page but
+  need the author's actual disclosure content).
 
 WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
 text only (not this comment block, not the abstract/precis/references/
@@ -137,25 +143,48 @@ parameter uncertainty, or on practice location.
 ## Methods
 
 We conducted a cost-minimization analysis comparing three strategies for
-endometrial cancer surveillance in women with Lynch syndrome: standalone
-office endometrial biopsy, operative dilation and curettage (D&C), and
-endometrial biopsy performed during an already-scheduled surveillance
-colonoscopy (combined biopsy). The analysis took a U.S. health-system/payer
-perspective, using Medicare-anchored allowed amounts (the Physician Fee
-Schedule and the Physician & Other Practitioners by Provider and Service
-Public Use Files) rather than hospital charges.^6^ All costs are reported in
-2026 U.S. dollars; costs originally reported in an earlier year were
-inflation-adjusted using the Bureau of Labor Statistics Consumer Price Index
-for Medical Care.
+endometrial cancer surveillance in adult women with Lynch syndrome who are
+candidates for gynecologic surveillance and have an already-scheduled
+surveillance colonoscopy: standalone office endometrial biopsy, operative
+dilation and curettage (D&C), and endometrial biopsy performed during that
+colonoscopy (combined biopsy). Age, genotype, menopausal status, and prior
+biopsy history were not modeled separately; the model represents a single
+surveillance episode rather than a specific patient subgroup. No
+prespecified health economic analysis plan was registered before the
+analysis began; complete parameter-level sourcing is provided as
+supplementary material.
 
-A cost-minimization design assumes equivalent clinical effectiveness across
-strategies -- specifically, that an adequate endometrial specimen provides
+The analysis took a U.S. healthcare-sector perspective. Healthcare resources
+were valued primarily using Medicare allowed amounts (the Physician Fee
+Schedule and the Physician & Other Practitioners by Provider and Service
+Public Use Files),^6^ supplemented by published resource-cost estimates for
+services not separately reimbursed, such as incremental procedure-room and
+anesthesia time and scheduling-coordination labor. Patient time,
+transportation, lost productivity, and other nonmedical costs were excluded.
+All costs are reported in 2026 U.S. dollars; costs originally reported in an
+earlier year were inflation-adjusted using the Bureau of Labor Statistics
+Consumer Price Index for Medical Care. The analytic horizon was a single
+endometrial-surveillance episode, beginning with the initial sampling
+strategy and extending through any rescue D&C required after an
+unsuccessful initial attempt; costs or consequences beyond resolution of
+that episode were not included. Because the horizon was less than one year,
+costs were not discounted.
+
+Total expected cost per patient was the primary outcome, selected because
+the decision this model addresses -- which sampling strategy a program
+should adopt -- is, in the base case, a cost-minimization question: a
+cost-minimization design assumes equivalent clinical effectiveness across
+strategies, specifically that an adequate endometrial specimen provides
 equivalent diagnostic information regardless of which strategy obtained it.
 We did not extend the base case to a full cost-effectiveness or
 cost-utility analysis (no quality-adjusted life-year axis, willingness-to-pay
-threshold, or efficiency frontier). Instead, we conducted two supplementary
-clinical-outcome sensitivity analyses that directly test, rather than merely
-assume, this equivalence (described below).
+threshold, or efficiency frontier). Instead, we selected two secondary
+outcomes -- D&C-related adverse-event exposure and delayed-neoplasia
+probability -- specifically to test, rather than merely assume, this
+equivalence (described below). Both secondary outcomes are reported as
+event counts per 1,000 patients; neither was converted to a utility,
+quality-adjusted life-year, or monetary value, so no outcome valuation
+step was required for them.
 
 Each strategy was modeled as a one-step decision tree: an initial sampling
 attempt, which either succeeds or fails and escalates to operative D&C. D&C
@@ -227,6 +256,19 @@ separately report the fraction of combined-biopsy failures, if any, that go
 unresolved without follow-up sampling; this limitation is addressed in the
 Discussion.
 
+The geographic sensitivity analysis characterizes setting-level
+heterogeneity (how the base-case conclusion varies by practice location);
+it does not characterize patient-level heterogeneity, which was not
+modeled -- the model does not stratify results by age, genotype,
+menopausal status, or other individual patient characteristics.
+Distributional or equity effects (e.g., differential access or affordability
+across patient subgroups) were outside this analysis's scope. Structural
+modeling assumptions describing actual clinical workflow (e.g., whether the
+combined-biopsy strategy requires a separate preoperative office visit)
+were informed by clinician-investigator practice experience; no formal
+patient or public engagement process was undertaken in developing this
+model.
+
 We compared the model's cost estimates against three independently
 published analyses as a validation check: a historical office-biopsy cost
 anchor,^11^ a Medicare-payer-perspective decision-tree comparing Pipelle
@@ -237,7 +279,10 @@ All analyses were implemented in R (R Foundation for Statistical Computing,
 Vienna, Austria) and are publicly available, with every model parameter
 individually cited to its source. [Author: confirm final phrasing for a
 double-anonymized submission -- the public repository URL and any
-institution-identifying detail belong on the title page, not here.]
+institution-identifying detail belong on the title page, not here.] This
+study is reported in accordance with the Consolidated Health Economic
+Evaluation Reporting Standards (CHEERS) 2022 statement; the completed
+checklist is provided as Supplemental Digital Content.
 
 ## Results
 
