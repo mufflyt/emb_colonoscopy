@@ -20,6 +20,26 @@ minutes (still within, but closer to the edge of, the observed 1-12 minute range
 Three tests were updated to match the new default, including one that now explicitly compares the
 toggle both ways instead of quietly depending on which state happened to be the default.
 
+## 2026-08-31 (reading the primary sources found two real errors in a trusted secondary review)
+
+**A base-case parameter got corrected because someone finally read the original papers.**
+`emb_failure_lynch` -- the pooled Lynch-specific EMB failure rate driving the office arm's escalation
+probability -- had been verified twice already this session, but only against the NIHR systematic
+review's own summary table and a third-party evidence report, never the four primary studies
+themselves. With institutional full-text access finally in hand, both were checked directly, and the
+review's table turned out to have two real errors: Elmasry 2009's true failure count is 5 out of 25,
+not the 6/25 the review reported, and Rijcken 2003 -- despite being cited as a "Pipelle failure rate"
+study -- actually used five different sampling methods, with the two failures the review counted
+coming from hysteroscopy attempts, not Pipelle at all. The genuinely Pipelle-specific rate in that
+study is a clean 0 out of 4.
+
+Corrected the pooled estimate to use only the three studies now individually confirmed
+Pipelle-specific (Elmasry corrected, Lecuru and Woolderink both checked out exactly as before):
+13.7% moves to 13.3%. Small shift, real effect: office EMB's own cost ticks up slightly, narrowing
+its margin against the combined strategy from 26.3% to 24.9%. The bigger point isn't the number --
+it's that "matches the cited secondary source" and "is actually true" turned out to be two different
+questions, and only reading the original papers could tell them apart.
+
 ## 2026-08-31 (Yi et al. 2018, finally read in full -- and it doesn't say what we needed it to)
 
 **The top-priority validation target for months turned out not to be a validation target at all --

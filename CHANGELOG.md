@@ -26,6 +26,40 @@ grouped by date.
   threshold **~11.1** (was ~13.8); PSA cost-saving frequency **79.7%** (was 92.3%). Provisional count
   down to 4 of 41 (was 5 of 41).
 
+## 2026-08-31 (emb_failure_lynch corrected: two errors found in the NIHR review's Table 11)
+
+### Changed
+- Obtained full-text institutional access to all four candidate Lynch EMB-failure studies underlying
+  `emb_failure_lynch` (Elmasry 2009, Lecuru 2008, Rijcken 2003 -- via institutional SSO;
+  Woolderink 2020 -- genuinely open access). This parameter's numbers had previously been verified
+  only against the NIHR systematic review's own extraction table (Table 11) and a third-party German
+  HTA evidence report, never against the primary sources directly.
+- **Found two errors in the review's Table 11**, both now corrected:
+  1. Elmasry et al. 2009's true Pipelle failure count is **5/25 (20.0%)**, not 6/25 (24.0%) as the
+     review's table stated. Verified directly from the paper's Table 3 ("Pipelle done" column: 20
+     Yes, 5 No), recounted twice to confirm.
+  2. Rijcken et al. 2003 is **not a Pipelle-specific study** -- its own Table 2 shows 5 different
+     sampling methods were used (Pipelle, VABRA, hysteroscopy, curettage, hysteroscopy+curettage),
+     and the 2 failures the review attributed to "Pipelle" were actually hysteroscopy and
+     hysteroscopy+curettage attempts. All 4 genuinely Pipelle-labeled samples in this study succeeded
+     (0/4 failures). Dropped from the pool entirely rather than corrected to 0/4, since a 4-patient
+     Pipelle-only subset within an otherwise mixed-method study is not a meaningful independent
+     replicate.
+- Lecuru 2008 (12/116, confirmed Pipelle-specific via its Methods section) and Woolderink 2020 (5/25)
+  both verified exact matches to the existing citation -- no correction needed for either.
+- `emb_failure_lynch` updated: base value 0.137 -> **0.133** (pooled proportion (5+12+5)/(25+116+25) =
+  22/166), low/high 0.103-0.24 -> 0.103-0.20 (now spanning three studies, not four). Source/notes
+  rewritten to document the full verification chain; evidence tier stays A.
+- One hardcoded test value updated (`test-parameters.R`, a boolean-override test using this
+  parameter as its example, not testing its scientific content).
+- Base case updated: office EMB **$764.93** (was $780.23; combined EMB unchanged at $574.77, since
+  `emb_failure_lynch` only affects the office arm's own escalation probability). Combined EMB is
+  **24.9%** cheaper than office EMB (was 26.3%); minutes threshold **~10.7** (was ~11.1); PSA
+  cost-saving frequency **83.5%** (was 79.7%).
+- This is a study-frame-relevant correction (per this project's meta-rule, independently verified
+  against primary sources rather than re-derived from the same secondary review that produced the
+  original error) -- see `docs/data_sources.md` for the full verification chain, study by study.
+
 ## 2026-08-31 (Yi et al. 2018 full text obtained; validation target confirmed non-viable, real findings extracted anyway)
 
 ### Changed

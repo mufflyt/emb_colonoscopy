@@ -66,11 +66,13 @@ failure rate in this repository), and `hysteroscopy_failure_rate_lynch_range` is
 
 ## Two escalation probabilities, and why they are not the same parameter
 
-- **Office arm:** `emb_failure_lynch` (a pooled 13.7% estimate across four Lynch-specific
-  surveillance studies) is multiplied by `office_to_dnc_escalation_fraction` (**provisional**,
-  fixed at 100%, i.e. every failed office attempt is assumed to escalate to D&C rather than, say, a
-  repeat office attempt). No study of standalone office EMB reports this split directly, and the four
-  Lynch EMB-failure studies are confirmed hard-paywalled (checked 2026-08-30). Nebgen et al. 2014's
+- **Office arm:** `emb_failure_lynch` (a pooled 13.3% estimate across three Lynch-specific
+  surveillance studies confirmed genuinely Pipelle-specific by direct primary-source verification --
+  see the correction note above) is multiplied by `office_to_dnc_escalation_fraction`
+  (**provisional**, fixed at 100%, i.e. every failed office attempt is assumed to escalate to D&C
+  rather than, say, a repeat office attempt). No study reports this specific repeat-vs-escalate split
+  for the standalone office population, even now that full text of all four candidate Lynch
+  EMB-failure studies has been obtained via institutional access (2026-08-31). Nebgen et al. 2014's
   MD Anderson combined-screening protocol grounds the 100% assumption in an analogous context -- its
   written protocol escalates every EMB failure straight to D&C with no repeat-office step -- but that
   describes the combined arm, not standalone office EMB, so this remains a placeholder for this
@@ -91,15 +93,15 @@ Running `analysis/01_base_case.R` under current parameters (many of them still p
 `docs/data_sources.md`) produces:
 
 - Combined EMB: **$574.77** per patient
-- Office EMB: **$780.23** per patient
+- Office EMB: **$764.93** per patient
 - Operative D&C: **$3,827.04** per patient
-- Combined EMB is **$205.46 (26.3%) cheaper** than office EMB
+- Combined EMB is **$190.16 (24.9%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~11.1 minutes** -- within, but near the upper end of, the observed 1-12 minute range
-  from Huang et al. 2011 (see the preop-visit note below for why this margin narrowed)
+  stays below **~10.7 minutes** -- within, but near the upper end of, the observed 1-12 minute range
+  from Huang et al. 2011
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **79.7%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **83.5%** of 1,000 probabilistic-sensitivity draws
 
 (Updated 2026-08-28 across six steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
 `coordination_cost`'s wage component, `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were each
@@ -109,12 +111,16 @@ confirming it was double-counting a cost already inside `dnc_facility_or_asc_fee
 double-count/setting-mismatch found in the office and combined arms (see "Supply-cost double-count
 and facility-vs-nonfacility rate correction" below). Then, 2026-08-30,
 `combined_requires_preop_office_visit` was flipped from FALSE to TRUE (see below), adding
-`office_visit_em_cost` ($88.76) to the combined arm and narrowing its advantage further. Net effect
-on the headline numbers has gone in **both directions** across these corrections: some raised the
-combined arm's advantage, others (genuine double-count removals, and now a confirmed clinical-practice
-requirement) shrank it -- evidence this process is following the data, not steering toward a
-preferred conclusion. Minutes threshold moved from ~11.2 to ~13.8 to ~11.1; PSA cost-saving frequency
-moved from 85.8% to 92.3% to 79.7%.)
+`office_visit_em_cost` ($88.76) to the combined arm and narrowing its advantage further. Then,
+2026-08-31, `emb_failure_lynch` was corrected from 13.7% to 13.3% after direct primary-source
+verification found two errors in the secondary review it had relied on (see "emb_failure_lynch
+correction" below), raising the office arm's own expected cost slightly and narrowing the margin a
+little further. Net effect on the headline numbers has gone in **both directions** across these
+corrections: some raised the combined arm's advantage, others (genuine double-count removals, a
+confirmed clinical-practice requirement, and a citation-accuracy fix) shrank it -- evidence this
+process is following the data, not steering toward a preferred conclusion. Minutes threshold moved
+from ~11.2 to ~13.8 to ~11.1 to ~10.7; PSA cost-saving frequency moved from 85.8% to 92.3% to 79.7%
+to 83.5%.)
 
 **`combined_requires_preop_office_visit` flipped to TRUE (2026-08-30):** per the model owner's
 clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's protocol includes a
@@ -126,6 +132,19 @@ longer flagged provisional. It adds `office_visit_em_cost` ($88.76) to the combi
 (37.7%) to $205.46 (26.3%) and the minutes threshold tightened from ~13.8 to ~11.1. Scenario analysis
 can set this back to FALSE to model consent/risk assessment folded into existing care instead (the
 prior base-case assumption).
+
+**`emb_failure_lynch` correction (2026-08-31):** direct primary-source verification (institutional
+full-text access to all four candidate Lynch EMB-failure studies) found that the NIHR systematic
+review's Table 11, which this parameter had relied on, contained two errors: Elmasry et al. 2009's
+true Pipelle failure count is 5/25 (20.0%), not the 6/25 (24.0%) the review's table stated; and
+Rijcken et al. 2003 is not a Pipelle-specific study at all (its "2/17" figure came from a mix of five
+different sampling methods, and the genuinely Pipelle-only subset of that study is 0/4). The pooled
+estimate was corrected to use only the three studies confirmed genuinely Pipelle-specific (Elmasry
+5/25, Lecuru 12/116, Woolderink 5/25 -- Rijcken dropped entirely): (5+12+5)/(25+116+25) = 22/166 =
+13.3% (was 13.7%). This is a small, real shift -- office EMB's own expected cost rose slightly
+(escalation probability = `emb_failure_lynch` x `office_to_dnc_escalation_fraction`), narrowing
+office EMB from $780.23 to $764.93 and the combined-vs-office margin from $205.46 (26.3%) to $190.16
+(24.9%). See `docs/data_sources.md` for the full verification chain.
 
 ### Supply-cost double-count and facility-vs-nonfacility rate correction (2026-08-28)
 

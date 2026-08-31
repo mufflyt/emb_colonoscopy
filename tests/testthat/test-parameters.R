@@ -40,7 +40,7 @@ test_that("override_model_parameters replaces a base value without mutating the 
     model_parameters, list(emb_failure_lynch = 0.5)
   )
   expect_equal(get_parameter_value(overridden, "emb_failure_lynch"), 0.5)
-  expect_equal(get_parameter_value(model_parameters, "emb_failure_lynch"), 0.137)
+  expect_equal(get_parameter_value(model_parameters, "emb_failure_lynch"), 0.133)
 })
 
 test_that("override_model_parameters errors on an unknown parameter name", {
