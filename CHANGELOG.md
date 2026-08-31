@@ -5,6 +5,46 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (README refresh, independent PSA verification script formalized, appendix updates)
+
+### Added
+- `analysis/12_independent_psa_verification.R`: formalizes, as a repository artifact, the
+  independent re-derivation of the manuscript's PSA-derived clinical-outcome claims (82.0%
+  probability combined EMB is cheaper; 0.34-vs-2.11-per-1,000 adverse-event exposure; 100%
+  no-worse-delayed-neoplasia-risk claim). Reads only `tables/probabilistic_sensitivity_draws.csv`
+  using base R; never sources `R/00_source_all.R` and never calls
+  `compute_strategy_clinical_outcomes()` or `run_probabilistic_sensitivity()`, per the
+  independent-confirmation meta-rule (`docs/testing_philosophy.md`, Rule 2). This check had
+  previously been performed ad hoc in a scratch location and not preserved; re-running it against
+  the current `tables/probabilistic_sensitivity_draws.csv` reproduced every manuscript number
+  exactly, with 0/1,000 mismatches on the cheapest-strategy sanity cross-check.
+- `docs/appendix.md`: new "Independent PSA verification script" section and new "Raw CMS source
+  files (not committed)" section inventorying the RVU26C, FY2026 IPPS wage-index, and
+  CMS-1832-F Direct PE Inputs packages consulted while building the geographic-sensitivity and
+  Direct-PE-sourced parameters, with the reasoning for not vendoring the raw multi-megabyte CMS
+  packages into the repository (already distilled into `data/cms_geographic_indices_2026.csv`,
+  `data/cms_pfs_rvus_2026.csv`, and individually cited parameter values; re-downloadable from the
+  URLs already in `docs/data_sources.md`).
+- `docs/testing_philosophy.md`: cross-referenced `analysis/12_independent_psa_verification.R`
+  under Rule 2 as the manuscript-level application of the independent-confirmation pattern,
+  alongside the existing `test-independent-confirmation.R` test-level application.
+
+### Changed
+- `README.md`: fixed a stale base-case blockquote left over from before the
+  `combined_to_dnc_probability` denominator correction (2/55 to 2/111, see the "corrected
+  combined_to_dnc_probability's denominator" entry below) -- it still read "$574.77 per
+  patient... $190.16 less... 24.9%... 10.7 minutes," which no
+  longer matched either the live model output or the manuscript's Results text. Re-ran
+  `analysis/01_base_case.R` and confirmed the correct current numbers ($505.88, $259.04, 33.9%,
+  12.7 minutes) match `tables/summary_sentence.txt` and `manuscript/manuscript.qmd`'s Results
+  paragraph exactly. Added three more embedded figures (decision tree, PSA incremental-cost
+  histogram, geographic sensitivity), a new "Independent verification" section, a new "Manuscript
+  and reporting" section (this file had never mentioned `manuscript/`, the Green Journal format,
+  or the CHEERS checklist despite that work already being complete), updated the repository
+  structure diagram and quick-start commands for `analysis/09`-`12`, and aligned the "Perspective
+  and extending this model" section's language with the CHEERS-fixed "U.S. healthcare-sector
+  perspective" phrasing used in the manuscript.
+
 ## 2026-08-31 (CHEERS checklist: quote the proving sentence for each item, not just the section)
 
 ### Changed

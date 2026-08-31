@@ -3,6 +3,22 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (README caught up to the model, and a verification script got a permanent home)
+
+Two things here. First, the README's headline result was stale -- it still quoted $574.77 as the
+combined strategy's cost, a number from before the escalation-probability denominator fix
+(2/55 to 2/111) landed. Re-ran the base case, confirmed the correct number ($505.88) matches both
+the live model and the manuscript, and updated it. The README also picked up three more figures
+(decision tree, PSA distribution, geographic sensitivity) and, somewhat overdue, a section actually
+mentioning that a submission-ready manuscript and CHEERS checklist exist in `manuscript/` -- that
+had never made it into the README despite being finished work.
+
+Second, the ad hoc script used to independently double-check the manuscript's PSA-derived numbers
+(the 82.0% cheaper claim, the adverse-event and delayed-neoplasia exposure figures) was living in a
+scratch location where it would have been lost. It's now `analysis/12_independent_psa_verification.R`
+-- a permanent, re-runnable artifact of the same "never call the pipeline you're checking" rule this
+project already applies at the test level.
+
 ## 2026-08-31 (CHEERS checklist now quotes the actual sentence, not just a section name)
 
 The submission-ready CHEERS checklist previously pointed to a section ("Methods") for each of the 28

@@ -16,7 +16,41 @@ navigation index now that there are several of them.
 | [`docs/validation_notes.md`](validation_notes.md) | Why Yi et al. 2018 is not numerically reproduced, and what a real replication would require |
 | [`docs/evidence_layers.md`](evidence_layers.md) | The CMS/HPT/MEPS public-data layer: what exists, what was dropped (APCD, CMS facility) and why, three real bugs caught during review |
 | [`docs/testing_philosophy.md`](testing_philosophy.md) | Two CI meta-rules: prove every blocking test fails-then-passes on a planted defect; independently re-derive any study-frame-changing finding. Worked log of five real mutation tests. |
-| `docs/appendix.md` (this file) | Bug-reproduction record, CI workflow notes, provenance of the evidence-layer code |
+| `docs/appendix.md` (this file) | Bug-reproduction record, CI workflow notes, provenance of the evidence-layer code, raw CMS source-file inventory |
+
+## Independent PSA verification script
+
+`analysis/12_independent_psa_verification.R` formalizes, as a reusable repository script, the
+independent re-derivation described in `docs/testing_philosophy.md`'s Rule 2 as applied to the
+manuscript's clinical-outcome claims. It was originally written and run ad hoc (in a scratch
+location, not tracked by the repository) while verifying the manuscript's Results/Discussion
+numbers before submission; it is preserved here so the same check can be re-run whenever
+`tables/probabilistic_sensitivity_draws.csv` is regenerated, rather than being reconstructed from
+scratch each time. It is read-only and does not call any function from `R/`.
+
+## Raw CMS source files (not committed)
+
+The geographic sensitivity analysis (`R/geographic_sensitivity.R`) and several Direct
+Practice Expense-sourced cost parameters (see `docs/data_sources.md`) are built from real,
+downloaded CMS packages. The distilled values these packages produced are committed
+(`data/cms_geographic_indices_2026.csv`, `data/cms_pfs_rvus_2026.csv`, and the individual
+parameter values in `config/model_parameters.csv`); the raw packages themselves are not,
+because they are large (tens of MB across ZIP archives and spreadsheets) and are official
+CMS public-use files that can be re-downloaded from the URLs already cited in
+`docs/data_sources.md` rather than vendored into this repository. For traceability, the
+packages consulted while building this model's geographic and Direct-PE parameters were:
+
+- `RVU26C` (GPCI and RVU values) -- `cms.gov/medicare/payment/fee-schedules/physician/
+  pfs-relative-value-files/rvu26c`
+- FY2026 IPPS wage-index tables (OPPS wage index by core-based statistical area) --
+  the FY2026 IPPS/OPPS final rule's published wage-index files
+- `CMS-1832-F` Direct PE Inputs PUFs (Equipment, Labor, Labor Task Detail, Supply,
+  Summary) -- the CY2026 Physician Fee Schedule Final Rule's Direct PE Inputs file,
+  already cited by HCPCS code in `docs/data_sources.md`
+
+If these need to be re-verified or re-derived from scratch, re-download the current-year
+version of each package from CMS rather than assuming last year's cached copy still
+matches the live rule -- CMS revises these files with dated addenda.
 
 ## Provenance of the evidence-layer code
 

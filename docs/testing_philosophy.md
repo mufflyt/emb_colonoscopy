@@ -68,6 +68,16 @@ correct consequence of the current parameter values, several of which are still
 provisional (see `docs/data_sources.md`). Independent confirmation checks the math,
 not the inputs.
 
+**Also applied, at the manuscript level:** the manuscript's PSA-derived clinical-outcome
+claims (combined EMB cheaper in 82.0% of draws, 0.34-vs-2.11-per-1,000 adverse-event
+exposure, 100% no-worse-delayed-neoplasia-risk) were re-derived by
+`analysis/12_independent_psa_verification.R`, which reads only the saved
+`tables/probabilistic_sensitivity_draws.csv` and never sources `R/00_source_all.R` or
+calls `compute_strategy_clinical_outcomes()`/`run_probabilistic_sensitivity()`. Every
+number it produces matched the manuscript's Results/Discussion text exactly on the
+2026-08-31 re-run that formalized this script (previously this check had been done ad
+hoc and not preserved as a repository artifact).
+
 **When to apply this rule going forward:** any new finding that would appear in a
 manuscript's abstract or headline results -- a threshold value, a dominance claim, a
 "strategy X is cheapest" statement -- before it's treated as established, not just
