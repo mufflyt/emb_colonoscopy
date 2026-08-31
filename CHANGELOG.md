@@ -5,6 +5,20 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (CHEERS checklist: quote the proving sentence for each item, not just the section)
+
+### Changed
+- `manuscript/cheers_checklist.qmd`: the far-right column ("Reported in section") previously named only
+  a manuscript section (e.g., "Methods"), which required a reviewer to search the text to confirm each
+  item was actually satisfied. Replaced with the actual verbatim sentence(s) from `manuscript.qmd` (or
+  `title_page.qmd` for items 27-28, funding/conflicts of interest) that satisfy each of the 28 CHEERS
+  2022 items, so the checklist is independently verifiable without cross-referencing the manuscript.
+  Items 27-28 quote the title page's placeholder disclosure fields and explicitly state no sentence can
+  yet be marked satisfied, since the author has not supplied the actual funding/COI content.
+- `docs/CHEERS_2022_checklist.md`: added a pointer noting the submission-ready file now carries the
+  verbatim proving text; left this internal working document's "Where addressed" column as section
+  names only, to keep it short.
+
 ## 2026-08-31 (CHEERS 2022 checklist audit; fixed 8 real reporting gaps in Methods)
 
 ### Added

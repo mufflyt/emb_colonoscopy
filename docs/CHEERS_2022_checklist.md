@@ -16,7 +16,10 @@ against the live file rather than trusting any cached summary of this table, inc
 the manuscript changes further.
 
 The submission-ready version of this table (for use as Supplemental Digital Content, the format most
-economic-evaluation journals request) is `manuscript/cheers_checklist.qmd`.
+economic-evaluation journals request) is `manuscript/cheers_checklist.qmd`. That file's far-right
+column quotes the actual proving sentence(s) from `manuscript.qmd`/`title_page.qmd` for each item,
+rather than just naming a section -- read it directly for the verbatim text; this internal audit's
+"Where addressed" column below still names sections/notes only, to keep this working document short.
 
 | # | CHEERS 2022 item | Status | Where addressed | Notes |
 |---|---|---|---|---|

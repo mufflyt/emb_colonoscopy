@@ -3,6 +3,14 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (CHEERS checklist now quotes the actual sentence, not just a section name)
+
+The submission-ready CHEERS checklist previously pointed to a section ("Methods") for each of the 28
+items -- accurate, but it made a reviewer go find and re-read the relevant sentence themselves. The
+far-right column now quotes that sentence directly, so each "Reported" claim is checkable at a glance.
+The two items that are genuinely still open -- funding source and conflicts of interest -- now say so
+plainly instead of pointing at a placeholder field as if it were filled in.
+
 ## 2026-08-31 (an outside audit against a checklist -- most of it already stood up)
 
 Ran the manuscript against CHEERS 2022, the standard 28-item reporting checklist for health-economic
