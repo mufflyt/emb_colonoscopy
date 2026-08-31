@@ -5,6 +5,31 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (Table 5's cheapest-strategy probabilities were NA; extracted and fixed)
+
+### Fixed
+- `analysis/07_manuscript_outputs.R`'s Table 5 (`manuscript_table5_psa_summary.csv`) had
+  `n_draws_cheapest`/`pct_draws_cheapest` equal to `NA` for every row: the inline
+  `tidyr::pivot_longer()` produced a `strategy` column with a `"_cost"` suffix (`"office_emb_cost"`)
+  that never matched `summarize_probability_cheapest()`'s bare strategy names (`"office_emb"`), so the
+  subsequent `dplyr::left_join()` matched nothing. Found by actually running the script and reading
+  its output, not by code review.
+- Extracted the join logic into a new, tested function, `build_psa_summary_table()`
+  (`R/tables.R`), rather than leaving it duplicated and unverified inline. It strips the `"_cost"`
+  suffix before joining, and also `coalesce()`s a second, related gap the extraction surfaced: a
+  strategy that was cheapest in 0 draws (e.g. D&C, in a small or skewed PSA sample) is absent from
+  `summarize_probability_cheapest()`'s output entirely, which the join previously turned into `NA`
+  rather than the correct `0`.
+- `analysis/07_manuscript_outputs.R` now calls `build_psa_summary_table()` instead of duplicating the
+  pivot/join logic inline.
+- Two new regression tests in `tests/testthat/test-tables.R` (mutation-tested together, logged in
+  `docs/testing_philosophy.md`): one confirming no `NA`s appear in a normal run, one confirming a
+  never-cheapest strategy reports `0`, not `NA` or a missing row.
+- Rerunning `Rscript analysis/07_manuscript_outputs.R` after the fix: Table 5 now correctly shows
+  `combined_emb` cheapest in 68.2% of 1,000 draws, `office_emb` in 31.8%, `dnc` in 0% (0 draws) --
+  consistent with the `office_to_dnc_escalation_fraction` distribution fix earlier today. All other
+  manuscript tables (1-4, 6-9) were reviewed after this run and are unaffected.
+
 ## 2026-08-31 (fixed a degenerate boundary-beta distribution in PSA; PSA results change)
 
 ### Fixed

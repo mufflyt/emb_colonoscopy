@@ -48,6 +48,52 @@ build_strategy_comparison_table <- function(strategy_comparison) {
     )
 }
 
+#' Build the PSA cost-distribution summary table, joined with cheapest-strategy probabilities
+#'
+#' Extracted from `analysis/07_manuscript_outputs.R` (2026-08-31) after
+#' running that script and finding `n_draws_cheapest`/`pct_draws_cheapest`
+#' were `NA` for every row: the inline pivot produced a `strategy` column
+#' with a `"_cost"` suffix (`"office_emb_cost"`), which never matched
+#' [summarize_probability_cheapest()]'s bare strategy names
+#' (`"office_emb"`), so the join silently matched nothing. Pulling this into
+#' a standalone, tested function makes that failure mode a regression test
+#' rather than something only caught by manually reading a manuscript table.
+#'
+#' @param probabilistic_estimates Tibble from [run_probabilistic_sensitivity()].
+#' @return A tibble with one row per strategy: `strategy`, `mean_cost`,
+#'   `sd_cost`, `p2_5`, `p97_5`, `n_draws_cheapest`, `pct_draws_cheapest`.
+build_psa_summary_table <- function(probabilistic_estimates) {
+  cost_summary <- probabilistic_estimates %>%
+    tidyr::pivot_longer(
+      cols = c("office_emb_cost", "combined_emb_cost", "dnc_cost"),
+      names_to = "strategy", values_to = "expected_total_cost"
+    ) %>%
+    dplyr::mutate(strategy = base::sub("_cost$", "", .data$strategy)) %>%
+    dplyr::group_by(.data$strategy) %>%
+    dplyr::summarise(
+      mean_cost = base::mean(.data$expected_total_cost),
+      sd_cost = stats::sd(.data$expected_total_cost),
+      p2_5 = stats::quantile(.data$expected_total_cost, 0.025),
+      p97_5 = stats::quantile(.data$expected_total_cost, 0.975),
+      .groups = "drop"
+    )
+
+  cost_summary %>%
+    dplyr::left_join(
+      summarize_probability_cheapest(probabilistic_estimates),
+      by = "strategy"
+    ) %>%
+    # A strategy absent from summarize_probability_cheapest()'s output
+    # (e.g. D&C, in a small/skewed PSA sample) was cheapest in exactly 0
+    # draws -- a real zero, not missing data. Left uncorrected, the join
+    # above turns that into NA, which reads as "unknown" rather than "never
+    # won" in a manuscript table.
+    dplyr::mutate(
+      n_draws_cheapest = dplyr::coalesce(.data$n_draws_cheapest, 0L),
+      pct_draws_cheapest = dplyr::coalesce(.data$pct_draws_cheapest, 0)
+    )
+}
+
 #' Build a dynamic, model-driven summary sentence
 #'
 #' Generates the headline sentence from live model output rather than a

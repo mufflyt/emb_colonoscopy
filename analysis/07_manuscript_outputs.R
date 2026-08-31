@@ -60,23 +60,7 @@ base::message("Running probabilistic sensitivity analysis for Table 5 (1000 draw
 probabilistic_estimates <- run_probabilistic_sensitivity(
   model_parameters, price_index_table = price_index_table, n_simulations = 1000
 )
-table5_psa_summary <- probabilistic_estimates %>%
-  tidyr::pivot_longer(
-    cols = c("office_emb_cost", "combined_emb_cost", "dnc_cost"),
-    names_to = "strategy", values_to = "expected_total_cost"
-  ) %>%
-  dplyr::group_by(.data$strategy) %>%
-  dplyr::summarise(
-    mean_cost = base::mean(.data$expected_total_cost),
-    sd_cost = stats::sd(.data$expected_total_cost),
-    p2_5 = stats::quantile(.data$expected_total_cost, 0.025),
-    p97_5 = stats::quantile(.data$expected_total_cost, 0.975),
-    .groups = "drop"
-  ) %>%
-  dplyr::left_join(
-    summarize_probability_cheapest(probabilistic_estimates),
-    by = "strategy"
-  )
+table5_psa_summary <- build_psa_summary_table(probabilistic_estimates)
 
 table6_thresholds <- threshold_estimates
 table7_budget_impact <- budget_impact

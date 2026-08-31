@@ -3,6 +3,18 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a second bug found the same way: run it, read the output, don't trust it)
+
+Same lesson as the PSA distribution fix earlier today, one script over. Running the manuscript-tables
+script and actually opening Table 5 -- rather than assuming it worked because the script exited
+cleanly -- showed every "probability this strategy is cheapest" value as blank. A column-name mismatch
+in a join meant those numbers were never being attached to the cost summary at all.
+
+Fixed, and pulled into its own tested function so a future change to either side of that join can't
+silently reintroduce the same gap. Also caught, while fixing it: a strategy that's never the cheapest
+in a given PSA run (D&C, essentially always) was showing up as blank rather than a real zero -- which
+matters, because "blank" and "zero times" mean very different things in a table someone might cite.
+
 ## 2026-08-31 (a real bug found by actually running the new analysis, not by reading the code)
 
 The clinical-outcome extension described below was written, tested, and passing -- and then produced
