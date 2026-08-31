@@ -1,0 +1,5 @@
+locality_id,locality_label,gpci_work,gpci_pe,gpci_mp,opps_wage_index
+national,National,1,1,1,1
+colorado,"Colorado (Denver-Aurora-Centennial)",1.012,1.064,0.781,1.0542
+low_cost,"Arkansas (statewide/rural)",1.000,0.859,0.515,0.8187
+high_cost,"Manhattan (New York-Jersey City-White Plains)",1.064,1.162,1.586,1.3697

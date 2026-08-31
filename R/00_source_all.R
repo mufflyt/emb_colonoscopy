@@ -50,6 +50,9 @@ source_files <- c(
   "diagnostic_yield.R",
   "threshold_analysis.R",
   "scenarios.R",
+  # geographic_sensitivity.R calls override_model_parameters()/
+  # compute_strategy_costs(), already sourced above.
+  "geographic_sensitivity.R",
   "budget_impact.R",
   "literature_replication.R",
   "plotting.R",

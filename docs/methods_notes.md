@@ -290,6 +290,18 @@ revert) after the `dnc_recovery_room_cost` removal. Both paths agree: the D&C-vs
 alternatives gap at zero facility fee is a correct consequence of the current
 parameter values -- not a pipeline bug.
 
+## Geographic sensitivity (2026-08-31): the base case is not a national-average artifact
+
+`R/geographic_sensitivity.R` re-prices the model at four localities (national, Colorado, a low-cost
+locality [Arkansas], a high-cost locality [Manhattan]) using real CMS GPCI and OPPS wage-index data --
+see `docs/data_sources.md` for the full methodology, citations, and a disclosed limitation (physician
+GPCI locality and hospital OPPS wage-index geography are two different CMS systems that don't share a
+common unit). Result: combined EMB remained the least expensive strategy in all 4 of 4 localities
+tested, with its advantage over office EMB *widening* from $209.77 in the low-cost locality to $353.14
+in the high-cost locality. This is a deterministic analysis, deliberately kept out of
+`run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
+parameter-uncertainty question the way a study's confidence interval is.
+
 ## Simplifying assumptions not yet relaxed
 
 - Pathology cost (`emb_pathology_cost`) is assumed identical across all three strategies (one

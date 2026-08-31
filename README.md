@@ -97,6 +97,18 @@ columns alongside cost columns for every draw, so cost and clinical-outcome find
 Monte Carlo realizations. See `docs/data_sources.md` for the full parameter list and citations, and
 `R/diagnostic_yield.R`'s file-level docblock for why no adverse-event dollar costs are wired in yet.
 
+## Geographic sensitivity analysis
+
+`R/geographic_sensitivity.R` re-prices the base-case strategies at four localities -- national,
+Colorado, a low-cost locality (Arkansas), and a high-cost locality (Manhattan) -- using real CMS GPCI
+values for professional fees and the real CMS OPPS wage index (with the actual CY2026 60% labor-related
+share) for the D&C facility fee. No geographic multiplier is invented; every value traces to a
+downloaded CMS file (`docs/data_sources.md` has the exact files and citations). Combined EMB remained
+the least expensive strategy in all 4 of 4 localities tested (`Rscript analysis/09_geographic_sensitivity.R`),
+with its advantage over office EMB widening from $209.77 (low-cost) to $353.14 (high-cost) per patient
+-- i.e. the base-case conclusion is not an artifact of national-average pricing. Deliberately
+deterministic, not part of the PSA (see `docs/methods_notes.md` for why).
+
 ## Repository structure
 
 ```text

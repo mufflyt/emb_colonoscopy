@@ -1,0 +1,17 @@
+locality_id,locality_label,parameter,adjustment_type,source_key,national_value,multiplier,local_value
+national,National,emb_office_professional_cost,pfs_gpci,58100:nonfacility,97.03,1,97.03
+national,National,emb_office_professional_cost_facility,pfs_gpci,58100:facility,60.05,1,60.05
+national,National,dc_professional_cost,pfs_gpci,58120:facility,209.76,1,209.76
+national,National,dnc_facility_or_asc_fee,facility_wage_index,opps_wage_index,3307.24,1,3307.24
+colorado,Colorado (Denver-Aurora-Centennial),emb_office_professional_cost,pfs_gpci,58100:nonfacility,97.03,1.0229149659863945,99.25343914965987
+colorado,Colorado (Denver-Aurora-Centennial),emb_office_professional_cost_facility,pfs_gpci,58100:facility,60.05,0.9907939393939393,59.49717606060605
+colorado,Colorado (Denver-Aurora-Centennial),dc_professional_cost,pfs_gpci,58120:facility,209.76,1.0057277070063695,210.96144382165605
+colorado,Colorado (Denver-Aurora-Centennial),dnc_facility_or_asc_fee,facility_wage_index,opps_wage_index,3307.24,1.0325199999999999,3414.791444799999
+low_cost,Arkansas (statewide/rural),emb_office_professional_cost,pfs_gpci,58100:nonfacility,97.03,0.8910204081632653,86.45571020408164
+low_cost,Arkansas (statewide/rural),emb_office_professional_cost_facility,pfs_gpci,58100:facility,60.05,0.9160545454545455,55.00907545454545
+low_cost,Arkansas (statewide/rural),dc_professional_cost,pfs_gpci,58120:facility,209.76,0.9019777070063694,189.19884382165603
+low_cost,Arkansas (statewide/rural),dnc_facility_or_asc_fee,facility_wage_index,opps_wage_index,3307.24,0.89122,2947.4784328
+high_cost,Manhattan (New York-Jersey City-White Plains),emb_office_professional_cost,pfs_gpci,58100:nonfacility,97.03,1.152952380952381,111.87096952380952
+high_cost,Manhattan (New York-Jersey City-White Plains),emb_office_professional_cost_facility,pfs_gpci,58100:facility,60.05,1.145878787878788,68.81002121212121
+high_cost,Manhattan (New York-Jersey City-White Plains),dc_professional_cost,pfs_gpci,58120:facility,209.76,1.1512675159235668,241.48987414012737
+high_cost,Manhattan (New York-Jersey City-White Plains),dnc_facility_or_asc_fee,facility_wage_index,opps_wage_index,3307.24,1.22182,4040.8519767999996

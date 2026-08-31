@@ -5,6 +5,41 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (geographic sensitivity analysis, post analysis-v1.0 tag)
+
+### Added
+- `R/geographic_sensitivity.R` (new file): `compute_pfs_geographic_multiplier()` (RVU-weighted GPCI
+  multiplier), `compute_facility_geographic_multiplier()` (labor-share-weighted OPPS wage-index
+  multiplier), `validate_geographic_inputs()`, `build_geographic_overrides()`,
+  `run_geographic_sensitivity()`, `summarize_geographic_sensitivity()`, `save_geographic_sensitivity()`.
+  A thin layer around the existing `override_model_parameters()` + `compute_strategy_costs()`, not a
+  new cost engine. Deliberately deterministic, not part of `run_probabilistic_sensitivity()`.
+- `data/cms_geographic_indices_2026.csv` and `data/cms_pfs_rvus_2026.csv`: real CMS data for 4
+  localities (national, Colorado, low-cost [Arkansas], high-cost [Manhattan]) -- GPCI from
+  `GPCI2026.csv` (RVU26C package), RVUs from `PPRRVU2026_Jul_nonQPP.csv` (same package), OPPS wage
+  index from the FY2026 IPPS Final Rule Table 3, OPPS labor-related share (0.60) verified directly
+  from the Federal Register CY2026 OPPS/ASC final rule (document 2025-20907). No value invented; see
+  `docs/data_sources.md`'s new "Geographic sensitivity analysis" section for every citation and a
+  disclosed limitation (physician GPCI locality and hospital OPPS wage-index geography are different
+  CMS systems without a shared geographic unit).
+- `analysis/09_geographic_sensitivity.R`: runs the analysis, saves
+  `tables/geographic_strategy_costs.csv`, `tables/geographic_adjustment_audit.csv`,
+  `tables/geographic_sensitivity_summary.csv`, and `figures/figure6_geographic_sensitivity.jpeg`.
+- `tests/testthat/test-geographic-sensitivity.R`: unit tests for both multiplier functions and the
+  validation guards, plus an INDEPENDENT-CONFIRMATION-flavored test that the real, shipped CMS
+  locality/RVU tables reproduce `compute_strategy_costs()`'s base-case output exactly at the
+  `national` locality (all GPCIs/wage index = 1.0 by construction). Two mutation-tested defect pairs
+  logged in `docs/testing_philosophy.md`.
+- The raw CMS RVU26C package and the FY2026 IPPS wage-index tables were also archived to
+  `~/Dropbox/emb_colonoscopy_cms_reference/` (not part of this git repo) and loaded into a DuckDB
+  database (`cms_reference.duckdb`, tables `gpci_2026` and `pprrvu_2026_jul`) at the user's request,
+  for reuse outside this repository.
+
+### Result
+- Combined EMB remained the least expensive strategy in all 4 of 4 localities tested. Combined-vs-
+  office savings ranged from $209.77 (Arkansas, low-cost) to $353.14 (Manhattan, high-cost) per
+  patient -- the base case's qualitative conclusion strengthens, not weakens, at the high-cost extreme.
+
 ## 2026-08-31 (tagged analysis-v1.0)
 
 Tagged `analysis-v1.0` (annotated, pushed) at this commit -- the frozen base case ($505.88 combined

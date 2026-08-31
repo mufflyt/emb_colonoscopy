@@ -538,6 +538,80 @@ column varied with a mean of 1.60 per 1,000 -- see `docs/methods_notes.md`'s "In
 delayed-neoplasia outcomes" section for the full write-up and why the resulting "cheaper AND no
 greater delayed-neoplasia risk" joint probability should not be reported as a distinct finding.
 
+## Geographic sensitivity analysis (2026-08-31)
+
+`R/geographic_sensitivity.R` re-prices the base-case strategies at four localities using real CMS
+geographic-adjustment data -- no GPCI, wage index, or RVU value is invented. Deliberately kept
+deterministic (not part of `run_probabilistic_sensitivity()`): geography is a "does the conclusion
+generalize elsewhere" question, not a parameter-uncertainty question.
+
+**Data sources, all downloaded directly from cms.gov 2026-08-31:**
+
+- **GPCI** (`data/cms_geographic_indices_2026.csv`'s `gpci_work`/`gpci_pe`/`gpci_mp` columns) --
+  `GPCI2026.csv`, part of the RVU26C package (`cms.gov/medicare/payment/fee-schedules/physician/
+  pfs-relative-value-files/rvu26c`, `files/zip/rvu26c-updated-06-30-2026.zip`), "ADDENDUM E. FINAL
+  CY 2026 GEOGRAPHIC PRACTICE COST INDICES (GPCIs) BY STATE AND MEDICARE LOCALITY."
+- **RVUs** (`data/cms_pfs_rvus_2026.csv`) -- `PPRRVU2026_Jul_nonQPP.csv`, same RVU26C package,
+  "2026 National Physician Fee Schedule Relative Value File July Release." Work/practice-expense
+  (nonfacility and facility separately)/malpractice RVUs, by CPT and setting.
+- **OPPS wage index** (`opps_wage_index` column) -- FY2026 IPPS Final Rule (CMS-1833-F) Table 3,
+  "WAGE INDEX TABLE BY CBSA" (`cms.gov/files/zip/fy2026-ipps-fr-tables-2-3-4a-4b.zip`), Reclassified
+  Wage Index column. OPPS uses the IPPS post-reclassification wage index for its own facility-payment
+  geographic adjustment.
+- **OPPS labor-related share** (0.60, used as `labor_share` in `facility_mapping`) -- Federal Register,
+  CY 2026 OPPS/ASC final rule with comment period (document 2025-20907, published 2025-11-25). Exact
+  quote, verified by reading the full text directly: "The OPPS labor-related share is 60 percent of the
+  national OPPS payment. This labor-related share is based on a regression analysis that determined
+  that, for all hospitals, approximately 60 percent of the costs of services paid under the OPPS were
+  attributable to wage costs."
+
+**The four localities** (`data/cms_geographic_indices_2026.csv`), chosen per the collaborator's own
+suggestion (national / Denver-Colorado / a low-cost locality / a high-cost locality):
+
+| locality_id | Physician GPCI locality (statewide unless noted) | Physician GPCIs (work/PE/MP) | OPPS wage-index area | OPPS wage index |
+| --- | --- | --- | --- | --- |
+| `national` | -- (synthetic, all GPCIs = 1.0) | 1.000 / 1.000 / 1.000 | -- (synthetic) | 1.0000 |
+| `colorado` | Colorado (statewide Medicare physician locality) | 1.012 / 1.064 / 0.781 | Denver-Aurora-Centennial, CO (CBSA 19740) | 1.0542 |
+| `low_cost` | Arkansas (statewide) | 1.000 / 0.859 / 0.515 | Arkansas statewide/rural (CBSA 04) | 0.8187 |
+| `high_cost` | Manhattan, NY (a specific physician locality, not statewide) | 1.064 / 1.162 / 1.586 | New York-Jersey City-White Plains, NY-NJ (CBSA 35614) | 1.3697 |
+
+**A real, disclosed limitation:** Medicare's physician-fee-schedule geography (GPCI, by Medicare
+"locality," often statewide) and hospital-facility geography (OPPS wage index, by CBSA/metro area) are
+two genuinely different CMS systems that do not share a common geographic unit. Colorado's GPCI is
+literally statewide (every Colorado provider shares one locality) while the OPPS wage index used
+alongside it is Denver-metro-specific; Arkansas's GPCI and wage index are both genuinely statewide
+(a clean pairing); Manhattan's GPCI is borough-specific while its paired OPPS wage index covers the
+broader New York-Jersey City-White Plains metro. This is not a data-quality shortcut -- it is the most
+faithful pairing possible given how CMS's own two systems are actually structured, and is disclosed
+here rather than presented as if "Denver" meant one single, unified geography in both systems.
+
+**Parameters adjusted, and why others are deliberately not (yet):** `professional_mapping` covers only
+`emb_office_professional_cost` (CPT 58100, nonfacility), `emb_office_professional_cost_facility` (CPT
+58100, facility), and `dc_professional_cost` (CPT 58120, facility) -- the three professional fees with
+a directly verified CPT/setting RVU match. `emb_pathology_cost` (CPT 88305), `office_visit_em_cost`/
+`dnc_preop_clinic_visit_cost` (E/M codes), and `dnc_anesthesia_cost` are deliberately NOT
+geographically adjusted this round -- their exact Medicare payment/setting treatment (e.g. whether the
+malpractice GPCI-bearing procedure code is the right RVU source for a pathology or anesthesia service)
+has not been verified, and the architecture (an additional `professional_mapping` row) supports adding
+them later without changing any function. `facility_mapping` covers only `dnc_facility_or_asc_fee`,
+using `opps_wage_index` (matching that parameter's own OPPS-sourced base value) and the real, verified
+0.60 labor-related share -- validation deliberately fails (rather than silently defaulting) if this
+value were ever left unsourced.
+
+**The critical validation, run first:** the `national` locality's GPCIs and wage index are all 1.0 by
+construction, so it must reproduce `compute_strategy_costs()`'s own base-case output exactly. Confirmed
+both by an automated test (`tests/testthat/test-geographic-sensitivity.R`, INDEPENDENT-CONFIRMATION-
+flavored, mutation-tested) and by the actual analysis run: national locality produced $505.88 /
+$764.93 / $3,827.04 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
+
+**Result** (`Rscript analysis/09_geographic_sensitivity.R`): combined EMB remained the least expensive
+strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $209.77 (Arkansas, the
+low-cost locality) to $353.14 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
+qualitative conclusion (combined EMB cheaper than office EMB) is not an artifact of national-average
+pricing; it holds, and if anything strengthens, at both geographic extremes tested. See
+`tables/geographic_sensitivity_summary.csv` for the full table and
+`tables/geographic_adjustment_audit.csv` for every individual GPCI/wage-index multiplier applied.
+
 ## Provisional placeholders with no source yet
 
 | Parameter | Base value | What's needed |

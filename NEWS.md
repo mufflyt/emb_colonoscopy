@@ -3,6 +3,23 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (does this hold up outside the national average? yes -- and more so)
+
+Every number in this model up to now has been a national Medicare average. That's a reasonable
+starting point, but it leaves an obvious question unanswered: does "combined EMB is cheaper" survive
+contact with an actual place, or is it an artifact of averaging?
+
+Priced the same three strategies in four real locations -- the national average, Colorado, a
+low-cost area (Arkansas), and a high-cost one (Manhattan) -- using real CMS geographic adjustment
+data (the same kind of locality-specific rate tables Medicare itself uses to pay providers
+differently by region). No guessed multipliers; every adjustment factor traces back to a downloaded
+CMS file.
+
+The answer: combined EMB won in all four places, and its margin over office EMB actually widened in
+the high-cost location ($353 saved per patient) compared to the low-cost one ($210). The base case
+isn't hiding a location-dependent flip -- if anything, the advantage gets stronger exactly where
+health care costs more.
+
 ## 2026-08-31 (a line in the sand: analysis-v1.0)
 
 Tagged `analysis-v1.0`. After a day of real corrections -- a degenerate PSA distribution, a missing
