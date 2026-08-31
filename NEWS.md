@@ -3,6 +3,26 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-08-31 (a real bug found by actually running the new analysis, not by reading the code)
+
+The clinical-outcome extension described below was written, tested, and passing -- and then produced
+exactly 0 for its headline metric across all 1,000 draws of a probabilistic sensitivity run. Not "0 at
+the base case" (expected), but 0 in every single simulated draw, which shouldn't happen for a
+parameter explicitly given a 0.5-1.0 uncertainty range.
+
+The cause: `office_to_dnc_escalation_fraction` sits at exactly 1.0, and the model's generic
+probability-sampling machinery uses a beta distribution, which mathematically cannot have a mean of
+exactly 1.0 -- it was silently rounding down to 0.999999 and drawing values indistinguishable from the
+fixed base case every time. Switching that one parameter to a triangular distribution (which handles
+a boundary mode correctly) fixed it, and a new validation check now catches this pattern automatically
+for any parameter, so it can't recur unnoticed.
+
+Once the parameter could actually vary, both halves of the model moved together: combined EMB's
+share of cost-saving simulations dropped from 81.4% to 69.3% (the earlier figure had been implicitly
+assuming near-100% D&C rescue every time), and the delayed-neoplasia metric -- silent before -- now
+shows a real distribution (median about 1.4 per 1,000 patients). That's the tradeoff this whole
+extension was built to surface, and it only appeared once the sampling bug was fixed.
+
 ## 2026-08-31 (the model can now show its work on whether "equal effectiveness" is safe to assume)
 
 **The single biggest scientific gap in this model has always been the same one:** it compares three

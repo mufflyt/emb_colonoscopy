@@ -5,6 +5,31 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-08-31 (fixed a degenerate boundary-beta distribution in PSA; PSA results change)
+
+### Fixed
+- `office_to_dnc_escalation_fraction`'s `distribution` changed from `beta` to `triangular` (min=0.5,
+  mode/base=1.0, max=1.0). Running `analysis/03_probabilistic_sensitivity.R` surfaced that this
+  parameter never actually varied across 1,000 PSA draws: `draw_parameter_sample()` clamps a beta
+  mean of exactly 1.0 to `1 - 1e-6` before moment-matching, producing a near-point-mass distribution
+  despite the parameter's declared 0.5-1.0 range. `sample_triangular()` handles min=0.5/mode=1.0/
+  max=1.0 correctly, so 1.0 remains the base-case assumption while PSA now genuinely explores the
+  full range. The base-case value itself is unchanged.
+- `validate_model_parameters()` (`R/utils_validation.R`) now rejects any `beta`-distributed parameter
+  with `base_value` exactly 0 or 1 and a non-degenerate `low_value`/`high_value` range, so this class
+  of bug cannot recur silently. Mutation-tested (guard disabled -> RED -> reverted -> GREEN, logged in
+  `docs/testing_philosophy.md`).
+- Two new regression tests: `tests/testthat/test-parameters.R` (1,000 draws of the real parameter
+  span most of 0.5-1.0, `sd > 0.01`) and `tests/testthat/test-validation.R` (the new guard, plus a
+  companion test confirming a genuinely-degenerate `low_value == high_value` beta row is still
+  allowed).
+
+### PSA results changed as a direct, intended consequence
+- Combined EMB cheapest in 69.3% of 1,000 draws (was 81.4%); office EMB mean cost $680 (was $766);
+  combined EMB mean cost $598 (was $616). `office_emb_neoplasia_delayed_per_1000` is now nonzero in
+  all 1,000 draws (median 1.41, range 0.002-5.42), versus exactly 0 in every draw before the fix. See
+  `docs/data_sources.md`'s new section for the full before/after table and interpretation.
+
 ## 2026-08-31 (diagnostic-yield/clinical-outcome extension: additive, no base-case cost change)
 
 ### Added

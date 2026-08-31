@@ -56,3 +56,28 @@ test_that("every provisional parameter is clearly flagged in notes", {
   provisional_rows <- model_parameters[model_parameters$provisional, ]
   expect_true(all(grepl("PROVISIONAL|UNVERIFIED|DATA QUALITY FLAG", provisional_rows$notes)))
 })
+
+test_that("office_to_dnc_escalation_fraction's boundary structural uncertainty is not degenerate in PSA", {
+  # Regression test for the 2026-08-31 fix: this parameter's base_value
+  # sits at 1.0, a distribution boundary. It was originally "beta", which
+  # draw_parameter_sample() cannot meaningfully vary around a mean of 1.0
+  # (it clamps to ~0.999999, so the parameter never actually moved across
+  # 1,000 PSA draws -- see R/utils_validation.R's boundary-beta guard).
+  # Now "triangular", which sample_triangular() handles correctly as
+  # min/mode/max.
+  model_parameters <- test_model_parameters()
+  row_index <- which(model_parameters$parameter == "office_to_dnc_escalation_fraction")
+
+  expect_equal(model_parameters$distribution[[row_index]], "triangular")
+
+  set.seed(20260831)
+  sampled_values <- purrr::map_dbl(
+    seq_len(1000),
+    ~ draw_parameter_sample(model_parameters[row_index, ])
+  )
+
+  expect_true(all(sampled_values >= 0.5))
+  expect_true(all(sampled_values <= 1))
+  expect_lt(min(sampled_values), 0.9)
+  expect_gt(stats::sd(sampled_values), 0.01)
+})

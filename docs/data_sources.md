@@ -336,6 +336,55 @@ assumption). This narrowed the combined-vs-office margin from $294.22 (37.7%) to
 the minutes threshold from ~13.8 to ~11.1 -- see `docs/methods_notes.md` for the full base-case
 history.
 
+## Fixed: `office_to_dnc_escalation_fraction` was a degenerate beta distribution in PSA (2026-08-31)
+
+Running `analysis/03_probabilistic_sensitivity.R` after adding the diagnostic-yield extension below
+surfaced a real bug: `office_emb_neoplasia_delayed_per_1000` was exactly 0 across all 1,000 PSA draws,
+not just at the base case. Cause: `office_to_dnc_escalation_fraction`'s `base_value` sits at exactly
+1.0, a distribution boundary. `draw_parameter_sample()` (`R/sensitivity_probabilistic.R`) moment-matches
+a beta distribution to `base_value`, clamping means of exactly 0 or 1 to `1e-6`/`1 - 1e-6` -- so every
+PSA draw for this parameter landed within a hair of 1.0 regardless of its declared 0.5-1.0
+`low_value`/`high_value` range. The parameter never actually varied in probabilistic sensitivity
+analysis, which meant `compute_strategy_clinical_outcomes()`'s delayed-neoplasia metric was
+mechanically silent in every stochastic run -- exactly the parameter this whole extension exists to
+stress-test.
+
+**Fix:** changed `office_to_dnc_escalation_fraction`'s `distribution` from `beta` to `triangular`
+(min=0.5, mode=1.0, max=1.0). `sample_triangular()` already handles this correctly as min/mode/max, so
+1.0 remains the base-case/modal assumption while PSA now genuinely explores the 0.5-1.0 range.
+Triangular is also the more honest distributional choice here on its own terms: this 0.5-1.0 range is
+a structural/plausibility bound (per the parameter's own notes, no study of standalone office EMB
+reports this split), not a binomial confidence interval, which is what the beta machinery implicitly
+assumes. The base case (100% escalation) itself was deliberately left unchanged -- this is a sampling
+fix, not a re-grounding of the assumption.
+
+**Guard added:** `validate_model_parameters()` (`R/utils_validation.R`, run automatically inside
+`load_model_parameters()`) now rejects any `beta`-distributed parameter with `base_value` exactly 0 or
+1 and a non-degenerate `low_value`/`high_value` range, so this class of bug cannot recur silently
+elsewhere. Regression tests: `tests/testthat/test-parameters.R` (confirms 1,000 draws of the real,
+fixed parameter span most of 0.5-1.0 with `sd > 0.01`) and `tests/testthat/test-validation.R` (the
+guard itself, mutation-tested per `docs/testing_philosophy.md`).
+
+**Effect on PSA results** (`Rscript analysis/03_probabilistic_sensitivity.R`, `n_simulations = 1000`,
+before -> after):
+
+| Metric | Before fix | After fix |
+| --- | --- | --- |
+| Combined EMB cheapest | 81.4% of draws | 69.3% of draws |
+| Office EMB mean cost | $766 | $680 |
+| Combined EMB mean cost | $616 | $598 |
+| `office_emb_neoplasia_delayed_per_1000` | exactly 0 in all 1,000 draws | median 1.41, mean 1.60, range 0.002-5.42 (all 1,000 draws nonzero) |
+
+The prior 81.4% figure was effectively conditioning on `P(D&C after failed office EMB) ~= 1` in every
+draw, which understated office EMB's true expected rescue-D&C cost across the parameter's own declared
+uncertainty range. Once the parameter actually varies, lower escalation draws reduce office EMB's
+expected cost (narrowing combined EMB's cost-saving margin) while simultaneously generating nonzero
+delayed-neoplasia risk for office EMB specifically -- the cost-versus-diagnostic-risk tradeoff this
+extension was built to expose. Combined EMB remains the more frequently cost-saving strategy; office
+EMB's PSA-implied delayed-neoplasia risk (median ~1.4 per 1,000) is a new, previously invisible
+finding that argues against treating `office_to_dnc_escalation_fraction`'s 100% base case as a
+costless conservative assumption.
+
 ## Diagnostic-yield and clinical-outcome extension (2026-08-31)
 
 `R/diagnostic_yield.R` adds 15 new parameters, all `future_extension` category/strategy (not wired

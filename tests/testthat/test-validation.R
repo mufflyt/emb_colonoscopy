@@ -46,3 +46,35 @@ test_that("validate_model_parameters catches low_value > high_value", {
   model_parameters$high_value[[1]] <- 1
   expect_error(validate_model_parameters(model_parameters), "low_value > high_value")
 })
+
+test_that("validate_model_parameters rejects a beta distribution with base_value exactly 0 or 1", {
+  model_parameters <- test_model_parameters()
+  row_index <- which(model_parameters$parameter == "office_to_dnc_escalation_fraction")
+
+  degenerate_parameters <- model_parameters
+  degenerate_parameters$distribution[[row_index]] <- "beta"
+  degenerate_parameters$base_value[[row_index]] <- "1"
+  degenerate_parameters$low_value[[row_index]] <- 0.5
+  degenerate_parameters$high_value[[row_index]] <- 1
+
+  expect_error(
+    validate_model_parameters(degenerate_parameters),
+    "Non-degenerate beta-distributed parameters cannot have base_value"
+  )
+})
+
+test_that("validate_model_parameters allows a beta row with base_value 0 or 1 when low_value == high_value", {
+  # A degenerate range (low == high, e.g. a fixed 0 or 1) is not the bug
+  # this guard targets -- only a real 0.5-1.0-style structural range paired
+  # with a boundary base_value is.
+  model_parameters <- test_model_parameters()
+  row_index <- which(model_parameters$parameter == "office_to_dnc_escalation_fraction")
+
+  degenerate_parameters <- model_parameters
+  degenerate_parameters$distribution[[row_index]] <- "beta"
+  degenerate_parameters$base_value[[row_index]] <- "1"
+  degenerate_parameters$low_value[[row_index]] <- 1
+  degenerate_parameters$high_value[[row_index]] <- 1
+
+  expect_true(validate_model_parameters(degenerate_parameters))
+})

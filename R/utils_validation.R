@@ -114,6 +114,38 @@ validate_model_parameters <- function(model_parameters) {
     )
   }
 
+  # A non-degenerate beta distribution cannot have a genuine mean of exactly
+  # 0 or 1. draw_parameter_sample() (R/sensitivity_probabilistic.R) clamps
+  # such a base_value to 1e-6/1-1e-6 before moment-matching, which silently
+  # produces a near-point-mass distribution -- the parameter never actually
+  # varies in PSA despite carrying an explicit low_value/high_value range.
+  # This caught office_to_dnc_escalation_fraction (2026-08-31): PSA ran
+  # 1,000 draws without that parameter ever meaningfully deviating from 1.0,
+  # which meant compute_strategy_clinical_outcomes()'s delayed-neoplasia
+  # metric was mechanically silent in every stochastic run. Fixed there by
+  # switching to `triangular`, the correct choice for a structural/
+  # plausibility range (as opposed to a binomial confidence interval).
+  boundary_beta_rows <- model_parameters %>%
+    dplyr::mutate(
+      numeric_base_value = base::suppressWarnings(base::as.numeric(.data$base_value))
+    ) %>%
+    dplyr::filter(
+      .data$distribution == "beta",
+      .data$numeric_base_value %in% base::c(0, 1),
+      !base::is.na(.data$low_value),
+      !base::is.na(.data$high_value),
+      .data$low_value != .data$high_value
+    )
+
+  if (nrow(boundary_beta_rows) > 0) {
+    base::stop(
+      "Non-degenerate beta-distributed parameters cannot have base_value ",
+      "exactly 0 or 1: ", base::paste(boundary_beta_rows$parameter, collapse = ", "),
+      ". Use a distribution appropriate for boundary-mode structural ",
+      "uncertainty, such as triangular."
+    )
+  }
+
   base::invisible(TRUE)
 }
 
