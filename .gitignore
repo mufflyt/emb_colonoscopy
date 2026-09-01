@@ -6,6 +6,14 @@
 renv/
 tmp/
 
+# Downloaded copies of the journal articles this model's parameters cite.
+# This is a public repository -- publisher-copyrighted PDFs must not be
+# redistributed here. Kept locally for the author's own reference; every
+# citation itself (author/year/journal/DOI/PMID) is already in
+# config/model_parameters.csv, docs/data_sources.md, and the manuscript's
+# reference list, which is what actually needs to be public.
+articles/
+
 # Evidence layer: a real (filled-in) hospital MRF manifest must never be
 # committed -- only the _template.csv is tracked. See docs/evidence_layers.md.
 config/hpt_mrf_manifest.csv
