@@ -5,6 +5,32 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-01 (fixed title/precis over the journal's character/word limits; verified abstract has no limit)
+
+### Fixed
+- `manuscript/manuscript.qmd`, `manuscript/title_page.qmd`, `manuscript/cheers_checklist.qmd`: the
+  title was 109 characters against the journal's 100-character limit -- dropped the
+  ": A Decision-Analytic Model" suffix (82 characters now); the Abstract's Objective already names
+  all three compared strategies, so the title doesn't need to. The précis was 29 words against the
+  25-word limit -- trimmed to exactly 25 while keeping both the "already-scheduled colonoscopy"
+  framing and the "range of assumptions and locations" robustness claim. Neither had actually been
+  counted before now; both were previously flagged `[DRAFT, count words/characters before
+  finalizing]` rather than verified.
+
+### Verified (no code/content change needed)
+- Abstract word count (301 words): fetched the live Instructions for Authors directly and confirmed
+  Original Research's "1) Abstract" section states only the structural requirement (headings
+  Objective/Methods/Results/Conclusion[/Funding Source]) -- no numeric word limit is given anywhere
+  on the page for the abstract itself. Resolves the uncertainty the manuscript's own comment had
+  flagged ("some LWW journals cap structured abstracts at 300-350 words").
+- Discovered a real, previously-undocumented constraint on the same fetch: "The Introduction should
+  not exceed 250 words; the Discussion should not exceed 750 words" (a sub-limit within the overall
+  3,000-word body cap). Current draft: Introduction 234 words, Discussion 673 words -- both already
+  compliant. Documented in the manuscript's top comment block so a future edit doesn't silently
+  cross it.
+- Body text (Introduction+Methods+Results+Discussion): 2,517 / 3,000 words. Short running title:
+  33 / 45 characters. References: 13 / 30. All within limits, no change needed.
+
 ## 2026-09-01 (fixed three Inf/NaN guard gaps found by review; all mutation-tested)
 
 ### Fixed

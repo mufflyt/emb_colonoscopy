@@ -3,6 +3,22 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-01 (title and precis were over the journal's limits; nobody had actually counted)
+
+Asking "what's left before this is ready to submit" turned into actually counting things instead of
+trusting the draft placeholders that said "count before finalizing." Two of them were over: the
+title was 109 characters against a 100-character limit, and the precis was 29 words against a
+25-word limit. Both fixed now -- the title just drops its subtitle (the Abstract already names all
+three strategies being compared), and the precis lost a few words without losing either of its two
+substantive claims (cheaper, and robust across locations).
+
+While in there, went back to the live Instructions for Authors to settle a question the manuscript
+had left open since the CHEERS work: is there an abstract word limit? No -- the journal only
+specifies the required headings, not a count. But that same page had a constraint nobody had
+checked yet: the Introduction can't exceed 250 words and the Discussion can't exceed 750, as
+sub-limits inside the overall 3,000-word cap. Both sections already fit (234 and 673), but it's the
+kind of thing that's easy to blow past on a future edit without noticing, so it's written down now.
+
 ## 2026-09-01 (three latent divide-by-zero gaps closed, none of them live bugs)
 
 A review pass went looking for two things: was the escalation-probability denominator fix from

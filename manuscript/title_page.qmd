@@ -18,11 +18,15 @@ Title requirement: no more than 100 characters (letters + spaces), not
 declarative, not a question, no abbreviations or commercial names.
 -->
 
-**Title:** [DRAFT -- count characters before finalizing, limit 100 including
-spaces] Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome
-Surveillance: A Decision-Analytic Model
+**Title:** Cost-Minimization of Endometrial Biopsy Strategies for Lynch
+Syndrome Surveillance
 
-<!-- Character count of the title above (letters + spaces only): fill in before submission. -->
+<!-- Character count: 82 (letters + spaces), verified 2026-09-01, within the
+100-character limit. Was 109 with the earlier ": A Decision-Analytic Model"
+suffix; dropped it since the Abstract's Objective already names all three
+compared strategies and CHEERS item 1 only requires the title to identify
+the study as an economic evaluation ("Cost-Minimization"), not enumerate
+every comparator. -->
 
 **Author(s):** [To be completed by the corresponding author -- full name(s),
 institutional/corporate/commercial affiliation(s), up to two major degrees per

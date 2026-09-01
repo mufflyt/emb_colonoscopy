@@ -11,7 +11,10 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
 
 - Original Research: <=3,000 words of TEXT (Introduction+Methods+Results+
   Discussion only -- excludes title page, abstract, precis, tables, figures,
-  references, SDC), <=30 references, <=5 figures+tables COMBINED.
+  references, SDC), <=30 references, <=5 figures+tables COMBINED. Within
+  that total, the Introduction itself must not exceed 250 words and the
+  Discussion must not exceed 750 words (verified live 2026-09-01; current
+  draft: Introduction 234 words, Discussion 673 words -- both compliant).
 - Structured abstract, headings exactly: Objective / Methods / Results /
   Conclusion (+ Funding Source only if industry-funded).
 - Body sections: Introduction / Methods / Results / Discussion.
@@ -52,12 +55,11 @@ proposed for Supplemental Digital Content in the same section.
 -->
 
 Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome
-Surveillance: A Decision-Analytic Model
+Surveillance
 
-**Précis:** [DRAFT, count words, limit 25] Combining endometrial biopsy with
-an already-scheduled surveillance colonoscopy costs less than a standalone
-office biopsy or operative dilation and curettage across a wide range of
-assumptions and practice locations.
+**Précis:** Combining endometrial biopsy with an already-scheduled
+colonoscopy costs less than standalone office biopsy or operative dilation
+and curettage across a range of assumptions and locations.
 
 ## Abstract
 
@@ -100,10 +102,12 @@ less than standalone office biopsy or operative dilation and curettage for
 Lynch syndrome surveillance, and this advantage is robust to parameter
 uncertainty and practice location.
 
-<!-- Abstract word count: count before submission (no fixed limit found in
-the current Instructions for Authors' Table 1 for Original Research beyond
-the overall structure; verify current abstract word limit at submission
-time, as some LWW journals cap structured abstracts at 300-350 words). -->
+<!-- Abstract word count: 301 words. Verified directly against the live
+Instructions for Authors (fetched 2026-09-01) -- Original Research's
+"1) Abstract" section states only the structural requirement (headings
+Objective/Methods/Results/Conclusion[/Funding Source]) with no numeric word
+limit given anywhere on the page for the abstract itself. No further
+verification needed on this point before submission. -->
 
 ## Introduction
 

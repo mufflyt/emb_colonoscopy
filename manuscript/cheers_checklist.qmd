@@ -29,7 +29,7 @@ same audit.
 
 Consolidated Health Economic Evaluation Reporting Standards (CHEERS) 2022
 checklist, completed for: Cost-Minimization of Endometrial Biopsy
-Strategies for Lynch Syndrome Surveillance: A Decision-Analytic Model.
+Strategies for Lynch Syndrome Surveillance.
 
 Per the journal's request, the far-right column below does not merely name a
 section -- it quotes the actual sentence(s) from the manuscript that satisfy
@@ -37,7 +37,7 @@ each item, so a reviewer can verify the claim without searching the text.
 
 | Topic | No. | Item | Reported in section (supporting text) |
 |---|---|---|---|
-| Title | 1 | Identify the study as an economic evaluation and specify the interventions compared. | **Title.** "Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome Surveillance: A Decision-Analytic Model." **Abstract, Objective.** "To estimate and compare the health-system costs of three strategies for endometrial cancer surveillance in women with Lynch syndrome: standalone office endometrial biopsy, operative dilation and curettage (D&C), and endometrial biopsy performed during an already-scheduled surveillance colonoscopy." |
+| Title | 1 | Identify the study as an economic evaluation and specify the interventions compared. | **Title.** "Cost-Minimization of Endometrial Biopsy Strategies for Lynch Syndrome Surveillance." **Abstract, Objective.** "To estimate and compare the health-system costs of three strategies for endometrial cancer surveillance in women with Lynch syndrome: standalone office endometrial biopsy, operative dilation and curettage (D&C), and endometrial biopsy performed during an already-scheduled surveillance colonoscopy." |
 | Abstract | 2 | Provide a structured summary that highlights context, key methods, results, and alternative analyses. | **Abstract, Methods.** "We conducted deterministic and probabilistic sensitivity analyses (1,000 Monte Carlo draws), a threshold analysis, a budget-impact analysis, a geographic sensitivity analysis using real Medicare Geographic Practice Cost Indices and hospital wage indices across four localities, and two supplementary clinical-outcome sensitivity analyses testing the model's assumption of equivalent diagnostic effectiveness across strategies." |
 | Background and objectives | 3 | Give the context for the study, the study question, and its practical relevance. | **Introduction, final paragraph.** "We built a decision-analytic, cost-minimization model to estimate and compare the health-system costs of these three strategies, and to test, rather than assume, whether the model's cost conclusion depends on the assumption of equivalent diagnostic effectiveness across strategies, on Medicare-derived parameter uncertainty, or on practice location." |
 | Health economic analysis plan | 4 | State whether a health economic analysis plan was developed and where available. | **Methods, opening paragraph.** "No prespecified health economic analysis plan was registered before the analysis began; complete parameter-level sourcing is provided as supplementary material." |
