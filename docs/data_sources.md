@@ -279,6 +279,40 @@ text, with Rijcken excluded as a category error rather than merely a wrong numbe
 (5+12+5)/(25+116+25) = 22/166 = **13.3%** (was 13.7%). See `config/model_parameters.csv`'s
 `emb_failure_lynch` row for the full citation and `docs/methods_notes.md` for the base-case impact.
 
+## Corroborating (non-Lynch) context for `emb_failure_lynch`: Adambekov et al. 2017 (2026-09-01)
+
+Adambekov et al. 2017 (Gynecol Oncol 144:324-328, PMID 27913154) is a general (non-Lynch)
+retrospective cohort of 201 women undergoing Pipelle biopsy for suspected uterine pathology at a
+single U.S. health system (UPMC, 2013), examining risk factors for sampling failure. Read in full
+2026-09-01 to assess whether it belongs in this repository's citation base.
+
+**Not used to change `emb_failure_lynch`'s base value.** This is a general population, not Lynch
+syndrome specifically -- tier C (general/adjacent) evidence relative to the tier-A pooled
+Lynch-specific estimate above. This project's convention is not to dilute a direct-population
+tier-A estimate with adjacent-population data (see the evidence-tier system in
+`config/model_parameters.csv`).
+
+**What it does provide: corroborating context that 13.3% is plausible, not an outlier.** Adambekov
+reports an overall Pipelle failure rate of 46/201 = 22.89% in its general population -- higher than
+this model's Lynch-specific 13.3%, but Adambekov's own introduction cites Dijkhuizen et al. 2000's
+pooled meta-analytic estimate of 10.4% and Clark et al. 2002's 8%, with individual studies reporting
+up to 33% depending on population characteristics. This model's Lynch-specific pooled rate (13.3%)
+sits within that broader range, closer to the meta-analytic estimates than to the higher
+single-study outliers.
+
+**Checked and confirmed NOT relevant to `office_to_dnc_escalation_fraction`.** Despite superficially
+seeming related (both concern "what happens around a failed Pipelle attempt"), Adambekov reports
+only predictors of the failure event itself (postmenopausal bleeding as indication, OR 7.41; history
+of prior biopsy failure, OR 23.87; non-physician provider, OR 9.15) and nothing about the pathway
+after a failure -- no repeat-attempt-vs-D&C data. `office_to_dnc_escalation_fraction` remains sourced
+only by Nebgen et al. 2014's protocol language and Yi et al. 2018's published estimate (see
+`config/model_parameters.csv`).
+
+**Net result:** added as a corroborating-context citation in `config/model_parameters.csv`'s
+`emb_failure_lynch` notes field, not wired into any cost function, not added to the manuscript's
+reference list (the manuscript's Methods does not currently discuss general Pipelle-failure-rate
+literature at all).
+
 ## CORRECTED: `combined_to_dnc_probability`'s denominator (2026-08-31)
 
 A collaborator flagged a possible denominator mismatch and asked for it to be audited against the

@@ -5,6 +5,24 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-01 (assessed Adambekov et al. 2017 for relevance; cited as corroborating context, not wired in)
+
+### Added
+- `config/model_parameters.csv`: `emb_failure_lynch`'s notes field now cites Adambekov et al. 2017
+  (Gynecol Oncol 144:324-328, PMID 27913154) as corroborating context. Read in full: a general
+  (non-Lynch) retrospective cohort of 201 women, overall Pipelle failure rate 46/201 = 22.89%. Not
+  used to change the base value -- tier C (general population) relative to the tier-A Lynch-specific
+  pool -- but cited because Adambekov's own introduction places the general Pipelle-failure
+  literature at 8%-33% (meta-analytic estimates 8-10.4%, individual studies up to 33%), and this
+  model's 13.3% Lynch-specific rate sits comfortably within that range, closer to the meta-analytic
+  end. Also checked and confirmed NOT relevant to `office_to_dnc_escalation_fraction`: the paper
+  reports predictors of Pipelle failure (postmenopausal bleeding OR 7.41, prior failure OR 23.87,
+  non-physician provider OR 9.15) but nothing about the post-failure pathway (repeat attempt vs.
+  D&C), so it has no bearing on that parameter despite the surface-level topical overlap.
+- `docs/data_sources.md`: new "Corroborating (non-Lynch) context for `emb_failure_lynch`: Adambekov
+  et al. 2017" section with the full relevance assessment (what it does and doesn't support, and
+  why). Regenerated `tables/manuscript_table1_parameters.csv` to pick up the updated notes field.
+
 ## 2026-09-01 (fixed title/precis over the journal's character/word limits; verified abstract has no limit)
 
 ### Fixed

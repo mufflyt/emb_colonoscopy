@@ -3,6 +3,18 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-01 (checked a candidate paper; it's real but doesn't do what it looked like it would)
+
+Asked to cite Adambekov et al. 2017 if it's relevant to the office-EMB-failure parameter. It's
+topically on point -- Pipelle sampling failure is exactly what `emb_failure_lynch` represents -- but
+it's a general (non-Lynch) population, so it can't replace or blend with the Lynch-specific pooled
+estimate already in use. What it's good for is context: it places the broader Pipelle-failure
+literature at 8%-33%, and this model's 13.3% sits comfortably inside that range rather than looking
+like an outlier. It looked, at first glance, like it might also help with a different open question
+-- what fraction of failed attempts get repeated versus sent to D&C -- since both are about "what
+happens around a failed biopsy." It doesn't; the paper only studies what predicts failure, not what
+happens after one. Cited for what it actually supports, not stretched to cover what it doesn't.
+
 ## 2026-09-01 (title and precis were over the journal's limits; nobody had actually counted)
 
 Asking "what's left before this is ready to submit" turned into actually counting things instead of
