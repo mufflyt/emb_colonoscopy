@@ -73,9 +73,22 @@ draw_parameter_sample <- function(parameter_row) {
 
 #' Sample from a triangular distribution
 #'
+#' A degenerate range (`min_value == max_value`) is treated the same way
+#' `draw_parameter_sample()` already treats a degenerate beta/gamma range
+#' (`approx_sd <= 0`, see above): fall back to the fixed value rather than
+#' dividing by zero. `mode_value - min_value)/(max_value - min_value)` would
+#' otherwise be `0/0 = NaN`, and `if (uniform_draw < NaN)` errors with
+#' "missing value where TRUE/FALSE needed" -- not a silent wrong number, but
+#' not the graceful degenerate-range handling this model uses everywhere
+#' else either.
+#'
 #' @param min_value,mode_value,max_value Numeric scalars.
 #' @return One draw.
 sample_triangular <- function(min_value, mode_value, max_value) {
+  if (base::isTRUE(min_value == max_value)) {
+    return(mode_value)
+  }
+
   uniform_draw <- stats::runif(1)
   mode_fraction <- (mode_value - min_value) / (max_value - min_value)
 

@@ -54,6 +54,31 @@ test_that("no adjacent pair of index years implies an implausible multi-year inf
   }
 })
 
+test_that("adjust_for_inflation errors rather than dividing by a zero or negative index_value", {
+  # Regression guard: adjust_for_inflation() previously divided by
+  # source_index/reference_index with no finiteness/positivity check, unlike
+  # the equivalent denominators in R/geographic_sensitivity.R (national_rvu,
+  # wage_index), which already stop() on <= 0. A corrupted or blanked
+  # index_value would have silently produced Inf/-Inf/NaN costs instead.
+  zero_source_index <- tibble::tibble(
+    year = c(2010, 2026),
+    index_value = c(0, 593.781)
+  )
+  expect_error(
+    adjust_for_inflation(100, 2010, 2026, zero_source_index),
+    "non-positive or non-finite index_value"
+  )
+
+  negative_reference_index <- tibble::tibble(
+    year = c(2010, 2026),
+    index_value = c(388.436, -1)
+  )
+  expect_error(
+    adjust_for_inflation(100, 2010, 2026, negative_reference_index),
+    "non-positive or non-finite index_value"
+  )
+})
+
 test_that("the real BLS CPI anchors reproduce the ~1.529x multiplier used to cross-check the Ladabaum EMB cost", {
   price_index_table <- test_price_index_table()
   index_2010 <- price_index_table$index_value[price_index_table$year == 2010]

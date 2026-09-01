@@ -3,6 +3,19 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-01 (three latent divide-by-zero gaps closed, none of them live bugs)
+
+A review pass went looking for two things: was the escalation-probability denominator fix from
+yesterday actually clean everywhere (it was), and were there any places the code could silently
+produce Inf or NaN instead of a real number or a clear error. It found three -- a triangular
+distribution's mode-fraction calculation, the inflation adjuster's index-ratio division, and two of
+three sibling cost-comparison functions missing a zero-cost guard the third one already had. None of
+them were actually firing against today's data; all three were the kind of gap that stays quiet
+until someone edits a parameter or a data file in a way that happens to hit it, and then produces a
+wrong number instead of an error. Fixed all three, and -- following this project's own rule for
+itself -- proved each fix actually does something by breaking it, watching the new test fail with
+the right error, and putting it back.
+
 ## 2026-08-31 (CI had actually been red for two pushes -- a hardcoded package list drifted)
 
 Worth flagging: continuous integration on `main` had been failing since the decision-tree figure

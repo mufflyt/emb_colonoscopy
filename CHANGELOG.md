@@ -5,6 +5,39 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-01 (fixed three Inf/NaN guard gaps found by review; all mutation-tested)
+
+### Fixed
+- `R/sensitivity_probabilistic.R::sample_triangular()`: added an early return of `mode_value` when
+  `min_value == max_value`. A degenerate triangular range (`low_value == high_value`) is explicitly
+  allowed by `validate_model_parameters()` (same design as an allowed degenerate beta/gamma range,
+  see `test-validation.R`'s "allows a beta row ... when low_value == high_value"), but unlike beta/
+  gamma -- which already fall back to `base_value` via `draw_parameter_sample()`'s
+  `approx_sd <= 0` check -- `sample_triangular()` had no equivalent guard: `(mode_value -
+  min_value)/(max_value - min_value)` evaluated to `0/0 = NaN`, and `if (uniform_draw < NaN)` throws
+  "missing value where TRUE/FALSE needed" instead of gracefully returning the fixed value. No
+  currently-configured `triangular` parameter is degenerate today (checked both:
+  `combined_emb_added_minutes` and `office_to_dnc_escalation_fraction`), so this was latent, not live.
+- `R/inflation.R::adjust_for_inflation()`: added finiteness/positivity checks on `source_index` and
+  `reference_index` before dividing, mirroring the equivalent guards already present in
+  `R/geographic_sensitivity.R` (`national_rvu <= 0`, `wage_index <= 0`). Previously a `0`, negative,
+  or non-finite `index_value` in the price-index table would have silently produced `Inf`/`-Inf`/`NaN`
+  costs rather than erroring. Not live with the current `data/cpi_medical_care.csv` values (388.436/
+  431.9/593.781), but a future edit or corrupted CSV could have hit it silently.
+- `R/comparison.R`: `compare_combined_vs_office()` and `build_pairwise_comparison_table()` now guard
+  their percent-difference divisions (`office_cost == 0` / `cost_b == 0` -> `NA_real_`), matching the
+  guard `compare_strategies_to_cheapest()` already had for the structurally identical
+  `cheapest_cost == 0` case in the same file. Not reachable with real strategy costs today (no
+  strategy's `expected_total_cost` is ever exactly `$0`), but the three sibling functions are now
+  consistently guarded instead of one of the three being silently unsafe.
+
+All three fixes were mutation-tested per `docs/testing_philosophy.md` Rule 1 (temporarily reverted
+each guard, confirmed the new test failed with the exact expected failure signature, restored the
+fix, confirmed green) -- see the updated log table there. New tests added to `test-parameters.R`,
+`test-inflation.R`, and `test-comparison.R`. Found during a code review covering statistical/code
+correctness and numeric provenance (see conversation); none of the three were live bugs against
+current data, all three were real robustness gaps against future/corrupted input.
+
 ## 2026-08-31 (fixed broken CI: workflow's hardcoded package list drifted from required_packages)
 
 ### Fixed

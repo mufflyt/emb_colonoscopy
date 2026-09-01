@@ -81,3 +81,23 @@ test_that("office_to_dnc_escalation_fraction's boundary structural uncertainty i
   expect_lt(min(sampled_values), 0.9)
   expect_gt(stats::sd(sampled_values), 0.01)
 })
+
+test_that("sample_triangular falls back to the mode instead of dividing by zero when min == max", {
+  # A degenerate triangular range (low_value == high_value) is allowed by
+  # validate_model_parameters() -- same design as a degenerate beta/gamma
+  # range (see test-validation.R's "allows a beta row ... when low_value ==
+  # high_value"). Before this guard, min_value == max_value made
+  # (mode_value - min_value)/(max_value - min_value) = 0/0 = NaN inside
+  # sample_triangular(), and `if (uniform_draw < NaN)` throws "missing value
+  # where TRUE/FALSE needed" instead of gracefully returning the fixed value.
+  expect_equal(sample_triangular(5, 5, 5), 5)
+  expect_equal(sample_triangular(1, 1, 1), 1)
+
+  degenerate_row <- tibble::tibble(
+    distribution = "triangular",
+    base_value = "7.5",
+    low_value = 7.5,
+    high_value = 7.5
+  )
+  expect_equal(draw_parameter_sample(degenerate_row), 7.5)
+})

@@ -64,7 +64,11 @@ compare_combined_vs_office <- function(strategy_costs) {
   }
 
   incremental_cost <- combined_cost - office_cost
-  pct_difference <- 100 * incremental_cost / office_cost
+  pct_difference <- if (office_cost == 0) {
+    NA_real_
+  } else {
+    100 * incremental_cost / office_cost
+  }
 
   base::message(
     "Incremental cost of combined_emb vs. office_emb: $",
@@ -105,7 +109,11 @@ build_pairwise_comparison_table <- function(strategy_costs) {
     ) %>%
     dplyr::mutate(
       absolute_difference = .data$cost_a - .data$cost_b,
-      pct_difference = 100 * .data$absolute_difference / .data$cost_b
+      pct_difference = dplyr::if_else(
+        .data$cost_b == 0,
+        NA_real_,
+        100 * .data$absolute_difference / .data$cost_b
+      )
     ) %>%
     dplyr::select(
       "strategy_a", "strategy_b", "cost_a", "cost_b",

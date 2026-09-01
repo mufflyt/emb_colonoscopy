@@ -67,6 +67,19 @@ adjust_for_inflation <- function(
       reference_year
     )
   }
+  if (!base::is.finite(source_index) || source_index <= 0) {
+    base::stop(
+      "price_index_table has a non-positive or non-finite index_value (",
+      source_index, ") for source_year = ", source_year,
+      " -- cannot use as a division denominator."
+    )
+  }
+  if (!base::is.finite(reference_index) || reference_index <= 0) {
+    base::stop(
+      "price_index_table has a non-positive or non-finite index_value (",
+      reference_index, ") for reference_year = ", reference_year, "."
+    )
+  }
 
   adjusted_cost <- cost_value * (reference_index / source_index)
 
