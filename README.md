@@ -64,8 +64,11 @@ publication-ready result.
 
 ## Provisional parameters -- read before citing any number from this repository
 
-Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 7
-of 68 parameters are flagged `TRUE`: the coordination-time half of `coordination_cost` (its wage half
+Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 8
+of 69 parameters are flagged `TRUE`: `patient_time_opportunity_cost_per_visit` (its $43 base value is
+directly confirmed via three converging secondary sources, but the 2010 dollar-year used to
+inflation-adjust it is inferred rather than primary-confirmed -- see "Perspective and extending this
+model" below); the coordination-time half of `coordination_cost` (its wage half
 is now a real BLS/O*NET figure); `office_to_dnc_escalation_fraction` (still flagged, but **superseded
 2026-09-02** and no longer consumed by any cost or clinical-outcome function -- see "Office
 repeat-attempt structure" below for the two real, sourced parameters that replaced it); two `reference_only` values
@@ -311,13 +314,29 @@ a reproduction (see [`docs/validation_notes.md`](docs/validation_notes.md)).
 The base case is a **U.S. healthcare-sector perspective**: CMS-anchored professional fees, pathology,
 facility, and anesthesia/sedation costs, supplemented by published resource-cost estimates for
 services Medicare does not separately reimburse. The parameter table already carries patient-reported values
-not used in the base case (`office_emb_pain_parous`, `combined_emb_pain`, etc.) and the literature
-review identified colonoscopy time-and-motion studies (patient time, travel, need for a driver) as
-the next data source for a **patient-time/societal perspective** extension. Functions accept explicit
-inputs rather than depending on the global environment, so adding a societal-perspective cost column
-or a QALY-based extension should not require restructuring the existing office/combined/D&C cost
+not used in the base case (`office_emb_pain_parous`, `combined_emb_pain`, etc.). Functions accept
+explicit inputs rather than depending on the global environment, so adding a QALY-based
+cost-effectiveness extension should not require restructuring the existing office/combined/D&C cost
 functions -- see `docs/methods_notes.md`'s note on why the base case is cost-minimization rather than
 cost-effectiveness, and what would need to change to make it one.
+
+**Societal-perspective secondary analysis (added 2026-09-02).** `R/societal_costs.R` reintroduces the
+patient time and travel-time opportunity costs the base case excludes, as a separate, deterministic
+secondary analysis -- not a change to the base case itself. Each strategy's expected number of
+dedicated patient encounters (office visits, repeat visits, D&C's own preoperative visit plus
+procedure day) is valued at a single published opportunity cost per ambulatory visit (Ray et al.
+2015, PMID 26295356, $43 in 2010 dollars, inflated using a new general CPI-U series --
+`data/cpi_all_items.csv`, deliberately not the medical-care CPI used elsewhere). Result: this widens,
+rather than narrows, combined biopsy's cost advantage over office biopsy ($243.06 healthcare-sector ->
+$257.94 societal-total in the base case; $412.32 under the existing alternate scenario where combined
+biopsy's preoperative visit is folded into the colonoscopy day). See `docs/methods_notes.md`'s own
+section for the full methodology and `analysis/14_societal_perspective.R` /
+`tables/societal_perspective.csv` for the reproducible output. Disclosed limitation: every encounter
+is valued at the same per-visit rate, including D&C's OR/anesthesia-day encounter, which likely
+understates D&C's true relative burden -- the colonoscopy time-and-motion literature originally
+flagged here as future work (patient time, travel, need for a driver) remains a genuine next step for
+a differentiated, procedure-day-specific estimate; see `docs/data_sources.md`'s "Next literature to
+mine" item 7.
 
 ## Reproducibility
 

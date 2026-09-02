@@ -234,19 +234,18 @@ costs were not discounted.
 
 Total expected cost per patient was the primary outcome, selected because
 the decision this model addresses -- which sampling strategy a program
-should adopt -- is, in the base case, a cost-minimization question: a
-cost-minimization design assumes equivalent clinical effectiveness across
+should adopt -- is, in the base case, a cost-minimization question:
+cost-minimization assumes equivalent clinical effectiveness across
 strategies, specifically that an adequate endometrial specimen provides
 equivalent diagnostic information regardless of which strategy obtained it.
 We did not extend the base case to a full cost-effectiveness or
-cost-utility analysis (no quality-adjusted life-year axis, willingness-to-pay
-threshold, or efficiency frontier). Instead, we selected two secondary
-outcomes -- D&C-related adverse-event exposure and delayed-neoplasia
-probability -- specifically to test, rather than merely assume, this
-equivalence (described below). Both secondary outcomes are reported as
-event counts per 1,000 patients; neither was converted to a utility,
-quality-adjusted life-year, or monetary value, so no outcome valuation
-step was required for them.
+cost-utility analysis (no quality-adjusted life-year axis,
+willingness-to-pay threshold, or efficiency frontier). Instead, we selected
+two secondary outcomes -- D&C-related adverse-event exposure and
+delayed-neoplasia probability -- to test, rather than assume, this
+equivalence (described below), both reported as event counts per 1,000
+patients rather than converted to a utility, quality-adjusted life-year, or
+monetary value.
 
 Each strategy was modeled as a one-step decision tree: an initial sampling
 attempt, which either succeeds or fails and escalates to operative D&C. D&C
@@ -271,9 +270,8 @@ office attempt, we modeled two pathways rather than assuming universal
 escalation to D&C: a repeat office attempt, estimated to occur in 5% of
 failures based on a Pipelle decision-tree model's expert clinical
 estimate,^12^ succeeding 75% of the time based on a separate, much larger
-cohort of patients with an insufficient endometrial sample, among whom a
-second sampling attempt was adequate in three-quarters of those who
-underwent one,^15^ or direct escalation to D&C. The
+cohort of patients with an insufficient endometrial sample,^15^ or direct
+escalation to D&C. The
 combined-arm probability of escalation to D&C was the directly observed rate
 from a 10.5-year, 111-visit combined-screening cohort (2 of 111 visits,
 1.8%).^4^ The combined arm's incremental procedure time (median 5 minutes,
@@ -299,15 +297,13 @@ To test whether the base-case conclusion depends on national-average
 Medicare pricing, we re-priced all three strategies at four localities: the
 national average, a mid-cost state, a low-cost locality, and a high-cost
 locality. Professional-fee components were adjusted using the Medicare
-Geographic Practice Cost Index for the relevant procedure code and setting,
-applying the standard relative-value formula (work relative-value units x
-work index + practice-expense relative-value units x practice-expense index
-+ malpractice relative-value units x malpractice index, divided by the
-unadjusted total).^6^ The D&C facility fee was adjusted using the real
-Hospital Outpatient Prospective Payment System wage index for the relevant
-core-based statistical area,^7^ applying the labor-related-share formula
-(labor share x wage index + [1 - labor share]) with the actual 60%
-labor-related share finalized for the payment year.^8^ This geographic
+Geographic Practice Cost Index, applying the standard RVU-weighted
+relative-value formula for the relevant procedure code and setting.^6^ The
+D&C facility fee was adjusted using the real Hospital Outpatient
+Prospective Payment System wage index for the relevant core-based
+statistical area,^7^ applying the standard labor-related-share formula
+with the actual 60% labor-related share finalized for the payment year.^8^
+This geographic
 analysis was kept deterministic rather than folded into the probabilistic
 sensitivity analysis, since geographic variation is a question of whether
 the conclusion generalizes to a different practice location rather than a
@@ -343,6 +339,17 @@ meta-analysis.^17^ This calculation is a point estimate only, not
 integrated into the probabilistic sensitivity analysis; see Discussion for
 its limitations.
 
+As a supplementary societal-perspective check, we reintroduced patient
+time and travel-time opportunity costs the base case excludes: each
+strategy's expected number of dedicated patient encounters (office or
+preoperative visits, repeat visits, and D&C's own preoperative visit plus
+procedure day, weighted by the same escalation probabilities) was valued
+at a published average opportunity cost per ambulatory visit.^18^ This
+deterministic, non-PSA calculation values every encounter equally and
+excludes travel expense and caregiver time (see Discussion); we also
+report it under the existing scenario folding combined biopsy's
+preoperative visit into the colonoscopy day.
+
 The geographic sensitivity analysis characterizes setting-level
 heterogeneity (how the base-case conclusion varies by practice location);
 it does not characterize patient-level heterogeneity, which was not
@@ -364,9 +371,10 @@ versus institutional hysteroscopic surgery.^13^
 
 All analyses were implemented in R (R Foundation for Statistical Computing,
 Vienna, Austria) and are publicly available, with every model parameter
-individually cited to its source. [Author: confirm final phrasing for a
-double-anonymized submission -- the public repository URL and any
-institution-identifying detail belong on the title page, not here.] This
+individually cited to its source.
+<!-- Author: confirm final phrasing for a double-anonymized submission --
+the public repository URL and any institution-identifying detail belong
+on the title page, not here. --> This
 study is reported in accordance with the Consolidated Health Economic
 Evaluation Reporting Standards (CHEERS) 2022 statement; the completed
 checklist is provided as Supplemental Digital Content.
@@ -428,6 +436,12 @@ its underlying sensitivity carries a very wide 95% confidence interval
 (28.1%-99.3%, from only 5 pooled studies), compared with 56.5%-90.0% for
 Pipelle; this ordering is therefore far from established (see Discussion).
 
+Reintroducing patient time/travel opportunity costs widened combined
+biopsy's advantage over office biopsy from $243.06 to $257.94 per patient
+($574.11 vs $832.04 total cost); D&C's total was $3,971.07. Folding
+combined biopsy's preoperative visit into the colonoscopy day widened
+this advantage further, to $412.32 ($419.72 vs $832.04).
+
 ## Discussion
 
 <!-- DRAFT -- clinical/policy framing is a reasonable first pass, not
@@ -445,11 +459,14 @@ localities spanning a national low-cost to high-cost range, and illustrative
 payer-mix and structural scenarios. The combined strategy also carried
 substantially lower exposure to D&C-related adverse events than standalone
 office biopsy, because fewer combined-biopsy patients ultimately require a
-D&C rescue procedure. Together, these findings suggest combined biopsy is
-not simply a lower-cost substitute but a strategy that reduces both cost and
-a specific, quantifiable procedural risk relative to standalone office
-biopsy -- a combination that should make it an attractive default where
-gastroenterology and gynecology scheduling can be coordinated.
+D&C rescue procedure, and a supplementary societal-perspective analysis
+found that reintroducing patient time and travel costs the base case
+excludes widened, rather than narrowed, its cost advantage (see Results).
+Together, these findings suggest combined biopsy is not simply a
+lower-cost substitute but a strategy that reduces cost, procedural risk,
+and patient burden relative to standalone office biopsy -- a combination
+that should make it an attractive default where gastroenterology and
+gynecology scheduling can be coordinated.
 
 This model's principal limitation is that its cost-minimization design
 formally assumes equivalent diagnostic effectiveness across strategies. We
@@ -512,13 +529,12 @@ syndrome surveillance and quantifies it using contemporary, publicly
 documented Medicare payment data rather than modeled charges.
 
 Endometrial biopsy performed during an already-scheduled surveillance
-colonoscopy costs less, and exposes patients to less D&C-related procedural
-risk, than either standalone office biopsy or operative D&C for Lynch
-syndrome surveillance. This conclusion was robust to parameter uncertainty
-and practice location in every sensitivity analysis performed. Programs
+colonoscopy costs less, and exposes patients to less D&C-related
+procedural and patient-time burden, than either alternative for Lynch
+syndrome surveillance -- a conclusion robust to parameter uncertainty and
+practice location across every sensitivity analysis performed. Programs
 that can coordinate gastroenterology and gynecology scheduling should
-consider combined biopsy as the default surveillance strategy for this
-population.
+consider it the default surveillance strategy for this population.
 
 ## References
 
@@ -568,6 +584,25 @@ Pipelle and conventional D&C match exactly what was already coded into
 earlier code comment's "verified directly from the full text" claim
 independently rather than trusting it as-is.
 
+Reference 18 (Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A, Am J
+Manag Care 2015;21(8):567-574, PMID 26295356) added 2026-09-02, when the
+societal-perspective secondary analysis (patient time/travel opportunity
+cost) was wired into `R/societal_costs.R` and reported via
+`analysis/14_societal_perspective.R`. VERIFICATION LIMITATION: confirmed
+via three independent web searches converging on identical figures ($43
+average opportunity cost per visit; 121 minutes total time, 37 travel/84
+clinic; a $52 billion 2010 national total), but the primary full text was
+not directly read this session -- AJMC returned an access-denied
+response, PMC's copy sat behind a CAPTCHA this session did not attempt to
+bypass, and ResearchGate/RAND mirrors both blocked automated access. The
+dollar_year (2010) used to inflation-adjust this parameter is INFERRED
+from the paper's only explicitly dollar-dated figure available from
+secondary sources (the $52 billion 2010 national total), not directly
+confirmed from primary text -- see
+`patient_time_opportunity_cost_per_visit`'s own notes in
+`config/model_parameters.csv` for the full caveat and re-verify directly
+if paywall/institutional access becomes available before submission.
+
 KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01/02, not yet fixed):
 reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
 paragraph before references 1-5 first appear later in the same section;
@@ -575,11 +610,11 @@ references 12 and 15 (Yi et al. 2018; Kandil et al. 2014) are now cited
 in the "Clinical probabilities" paragraph before their validation-paragraph/
 first-numbered appearance later in Methods; and reference 16 (NCCN Version
 1.2026) is cited in the Introduction -- textually the very first citation
-in the document -- while numbered second-to-last. Citation numbering is not
-strictly in first-appearance order throughout. Flagged rather than silently
-fixed or silently left unmentioned -- a full renumbering pass touches every
-in-text marker and was out of scope for these changes; do before
-submission. -->
+in the document -- while numbered third-from-last. Citation numbering is
+not strictly in first-appearance order throughout. Flagged rather than
+silently fixed or silently left unmentioned -- a full renumbering pass
+touches every in-text marker and was out of scope for these changes; do
+before submission. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -640,6 +675,9 @@ submission. -->
     Diagnostic accuracy of endometrial sampling tests for detecting
     endometrial cancer: a systematic review and meta-analysis. BMJ Open
     2023;13(6):e072124.
+18. Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A. Opportunity
+    costs of ambulatory medical care in the United States. Am J Manag
+    Care 2015;21(8):567-574.
 
 <!-- ACOG Committee Opinion 800 and Namazov et al. 2017 would support a
 D&C/hysteroscopy adverse-event or hysteroscopy-guided-D&C extension if one
@@ -705,6 +743,8 @@ PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (explicitly exempted from the
     tables/geographic_adjustment_audit.csv
   - tables/diagnostic_yield.csv (secondary detection-probability analysis,
     built by analysis/13_diagnostic_yield.R)
+  - tables/societal_perspective.csv (societal-perspective secondary
+    analysis, both scenarios, built by analysis/14_societal_perspective.R)
 
 If a reviewer or the author prefers a different 5, the most likely swap is
 Figure 3 (geographic) <-> figure2_tornado.jpeg (one-way sensitivity/tornado)

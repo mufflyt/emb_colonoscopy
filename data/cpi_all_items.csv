@@ -1,0 +1,3 @@
+year,index_value,index_source,is_placeholder
+2010,218.056,"BLS CPI-U (All Items, U.S. city average, 1982-84=100) annual average, a well-established published figure independently cross-checked via a web search during literature review; RECOMMEND independently re-confirming against the live BLS series (CUUR0000SA0) before publication",FALSE
+2026,332.813,"BLS CPI-U (All Items), seasonally adjusted, July 2026 (FRED series CPIAUCSL), as reported during literature review; RECOMMEND independently re-confirming against the live BLS/FRED series before publication",FALSE

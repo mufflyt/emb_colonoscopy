@@ -796,13 +796,21 @@ This list reflects the priority ranking developed during model design, highest-y
    than Pipelle EMB in Lynch surveillance -- kept as reference-only for that reason. The seven-study
    systematic review/meta-analysis (PubMed 30528838, outpatient $97-$1,258 vs. OR $258-$3,144) was not
    pursued this round.
-7. **Patient time-cost literature** (colonoscopy time-and-motion studies, e.g. PubMed 18263561 and
-   PMC5847315) -- mean patient-occupied time of 23.2-28.8 hours and $335-$432 in lost time/caregiver
-   cost per colonoscopy episode. Not used in the current payer-perspective base case, but directly
-   relevant to the patient-time/societal perspective this repository's structure is designed to add
-   later without restructuring (see the README's "Extending this model" section) -- and to the
-   specific argument that the combined arm's *incremental* patient burden is close to zero, since the
-   colonoscopy trip is already being made.
+7. ~~Patient time-cost literature~~ **PARTIALLY DONE (2026-09-02)** -- the societal-perspective
+   secondary analysis (`R/societal_costs.R`, see `docs/methods_notes.md`'s own section) was built
+   using a different, more directly applicable source than the colonoscopy-specific time-and-motion
+   studies originally flagged here: Ray et al. 2015 (Am J Manag Care, PMID 26295356), a nationally
+   representative American-Time-Use-Survey-based estimate of average opportunity cost per *ambulatory
+   visit* ($43 in 2010 dollars; 121 minutes total time, 37 travel/84 clinic), used as a single
+   per-encounter rate applied uniformly across every dedicated encounter each strategy requires
+   (office visits, D&C's preop visit, D&C's own procedure day). The colonoscopy-specific
+   time-and-motion studies originally flagged here (PubMed 18263561, PMC5847315: mean patient-occupied
+   time 23.2-28.8 hours and $335-$432 in lost time/caregiver cost per colonoscopy episode) were NOT
+   pursued and remain a genuine opportunity: they specifically describe the OR/procedure-day time
+   burden this repository's current uniform per-visit rate likely understates for the D&C arm (see the
+   disclosed limitation in `patient_time_opportunity_cost_per_visit`'s own notes) -- a natural next
+   step for whoever wants a differentiated, procedure-day-specific patient-time-cost estimate instead
+   of the single general-ambulatory-visit rate currently used for every encounter.
 
 ## What should not be conflated
 

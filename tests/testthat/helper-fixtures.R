@@ -16,3 +16,7 @@ test_model_parameters <- function() {
 test_price_index_table <- function() {
   load_price_index_table(file.path(repo_root_path(), "data/cpi_medical_care.csv"))
 }
+
+test_all_items_price_index_table <- function() {
+  load_price_index_table(file.path(repo_root_path(), "data/cpi_all_items.csv"))
+}

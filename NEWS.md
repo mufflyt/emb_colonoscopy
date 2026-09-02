@@ -3,6 +3,38 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (what does this cost the patient, not just the health system?)
+
+Every number in this model up to now has answered "what does the health system pay?" -- Medicare
+allowed amounts, facility fees, professional fees. It's a deliberate, stated scope, but it leaves
+out something real: the time a patient spends getting care. An extra office visit isn't free just
+because nobody bills for it -- it's a morning off work, a drive, a waiting room.
+
+Added a second, separate accounting of cost that puts a number on that: how many dedicated trips
+does each strategy actually require, and what's an hour or two of a patient's time worth? For the
+"how many trips" question, the answer traces back to structure this model already has -- office
+biopsy's own visit (plus, rarely, a repeat), combined biopsy's one pre-procedure visit, and D&C's
+two separate encounters (a pre-op visit and a full OR day). For "what's an hour worth," used a real,
+nationally representative study of the time cost of an average outpatient visit -- travel, waiting
+room, the visit itself -- valued at people's own wages.
+
+The result strengthens the paper's central argument rather than complicating it: once patient time is
+counted, combined biopsy's advantage over office biopsy gets *bigger*, not smaller -- and it gets a
+lot bigger under the version of the model where combined biopsy doesn't need its own separate
+appointment at all, just piggybacking entirely on the colonoscopy visit the patient is already
+making. That's the whole point of "combine the procedures" made concrete in dollars.
+
+One honest asterisk: every visit in this calculation is valued the same, including D&C's operating-
+room day -- which almost certainly costs a patient more time (and possibly a driver, given the
+anesthesia) than a routine office visit does. No good source for that specific gap was found this
+session, so it's left uncorrected and said so plainly, rather than guessed at. If anything, that
+means D&C looks better in this analysis than it should.
+
+Getting the word count to work was its own small puzzle -- the journal caps the Discussion at 750
+words and the whole paper at 3,000, and this addition pushed both right to the edge. Trimmed some
+unrelated verbosity elsewhere (a formula spelled out in more detail than it needed, a sentence that
+repeated itself) to make room, without touching what any of it actually claims.
+
 ## 2026-09-02 (a finished analysis that had been sitting on the shelf, unreported)
 
 Asked what else could be added to strengthen the model, and the honest answer turned out to be:

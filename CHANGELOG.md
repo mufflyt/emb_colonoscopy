@@ -5,6 +5,79 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (added a societal-perspective secondary analysis: patient time and travel opportunity cost)
+
+### Added
+- `data/cpi_all_items.csv`: a new general CPI-U (All Items) price index series (2010: 218.056; July
+  2026: 332.813, FRED CPIAUCSL), deliberately separate from `data/cpi_medical_care.csv` -- a
+  wage/time-based cost should track general price/wage inflation, not medical-service-price inflation.
+- `config/model_parameters.csv`: new parameter `patient_time_opportunity_cost_per_visit` (base $43,
+  2010 dollars, fixed distribution, PROVISIONAL). Source: Ray KN, Chari AV, Engberg J, Bertolet M,
+  Mehrotra A. Opportunity costs of ambulatory medical care in the United States. Am J Manag Care
+  2015;21(8):567-574 (PMID 26295356) -- a nationally representative American Time Use Survey analysis
+  finding an average total time of 121 minutes (37 travel, 84 clinic) and $43 average opportunity cost
+  per ambulatory visit, monetized at self-reported/imputed wages (a standard human-capital approach).
+  Confirmed via three independent web searches converging on identical figures; the primary full text
+  was not directly read this session (AJMC access-denied, PMC CAPTCHA-gated, ResearchGate/RAND both
+  blocked) -- the 2010 dollar-year is therefore INFERRED (from the paper's only explicitly dollar-dated
+  figure available secondhand, a "$52 billion in 2010" national total) rather than primary-confirmed;
+  see the parameter's own notes for the full disclosure.
+- `R/societal_costs.R`: two new functions, `compute_strategy_expected_encounters()` (each strategy's
+  expected number of dedicated patient-borne encounters, reusing the exact same escalation/repeat-
+  attempt probabilities already in `R/strategy_costs.R`, recomputed independently per the same
+  consistency-guard pattern used in `R/diagnostic_yield.R`) and `compute_strategy_societal_costs()`
+  (adds a patient-time-cost add-on to the healthcare-sector `expected_total_cost`, producing a
+  societal-perspective total). Encounter counts: office_emb = 1 initial visit + repeat-attempt
+  probability x 1 + escalation probability x 2 (D&C's own encounters); combined_emb =
+  `combined_requires_preop_office_visit` x 1 + escalation probability x 2; dnc = 2 (fixed, no
+  escalation branch). Does NOT change `compute_strategy_costs()`'s output or the base case; not
+  integrated into the probabilistic sensitivity analysis (a deterministic point estimate, same scope
+  discipline as `compute_diagnostic_yield()`).
+- `analysis/14_societal_perspective.R`: runs the above for both the base case
+  (`combined_requires_preop_office_visit = TRUE`) and the existing alternate scenario (`FALSE`),
+  saving `tables/societal_perspective.csv`.
+- `tests/testthat/test-societal-costs.R`: 9 new tests, including an INDEPENDENT CONFIRMATION test
+  (re-derives office/combined encounter counts via a path that never calls
+  `compute_strategy_expected_encounters()`), a consistency guard against `compute_strategy_costs()`,
+  a scenario test, and a mutation guard. Mutation-tested for real: changed `dnc_encounters <- 2` to
+  `dnc_encounters <- 1` in `R/societal_costs.R`, confirmed 5 tests failed with the expected signature,
+  reverted, confirmed all green again -- logged in `docs/testing_philosophy.md`.
+- Manuscript: new reference 18 (Ray et al. 2015); new Methods paragraph introducing the analysis; new
+  Results paragraph reporting the numbers; the Discussion's opening and closing paragraphs revised to
+  incorporate this finding (this is a POSITIVE finding for combined biopsy's thesis, unlike the
+  diagnostic-yield secondary analysis -- reintroducing patient time/travel costs widens rather than
+  narrows combined biopsy's advantage). To make room within the journal's word limits (Introduction
+  <=250, Discussion <=750, total Intro+Methods+Results+Discussion <=3,000), several existing passages
+  were tightened without changing their meaning: the geographic-sensitivity Methods paragraph's RVU/
+  wage-index formulas were summarized rather than spelled out in full, a redundant clause in the
+  repeat-attempt-structure sentence was removed, the outcome-selection paragraph was condensed, and a
+  bracketed author-facing note (about double-anonymized-submission phrasing) was moved into an HTML
+  comment (invisible in the rendered manuscript, as HTML comments already are throughout this file) --
+  none of these were scientific content changes. Final counts: Introduction 244/250, Discussion
+  750/750 (at the limit), total 2,996/3,000.
+- `manuscript/cheers_checklist.qmd`: item 8 (Perspective) now describes the societal-perspective
+  secondary analysis; item 26's quotes updated to match the revised Discussion text.
+- `README.md`, `docs/methods_notes.md`, `docs/data_sources.md`: new sections/updates describing the
+  analysis, its results, and its disclosed limitations. `docs/data_sources.md`'s "Next literature to
+  mine" item 7 (previously an open item flagging colonoscopy time-and-motion studies as a future
+  patient-time-cost source) marked PARTIALLY DONE -- this change used a different, more general
+  source (Ray et al. 2015) instead; the originally-flagged colonoscopy-specific studies remain a
+  genuine next step for a differentiated, procedure-day-specific estimate (see "Not done" below).
+
+### Not done (explicitly out of scope, or a real gap this change disclosed rather than closed)
+- Every dedicated encounter (including D&C's OR/anesthesia-day procedure) is valued at the SAME
+  per-visit opportunity-cost rate. No source differentiating a routine office visit's time burden from
+  an OR/anesthesia day's (which plausibly requires more patient time, a companion/driver, and recovery
+  time) was identified or pursued this session -- this likely UNDERSTATES D&C's true relative
+  societal-cost disadvantage, disclosed explicitly in the manuscript, `R/societal_costs.R`'s docblock,
+  and the parameter's own notes, not corrected for.
+- Out-of-pocket travel expense (mileage, parking) and caregiver/companion time are not included at
+  all -- Ray et al. 2015's "opportunity cost" captures time (including travel time) valued at wage
+  rate, not cash travel expense or a second person's time.
+- This secondary analysis is a deterministic point estimate, not integrated into the probabilistic
+  sensitivity analysis -- consistent with, not a departure from, how `compute_diagnostic_yield()` was
+  also deliberately left un-PSA-wired.
+
 ## 2026-09-02 (wired the existing, previously-unreported diagnostic-yield secondary analysis into the pipeline and manuscript)
 
 ### Added

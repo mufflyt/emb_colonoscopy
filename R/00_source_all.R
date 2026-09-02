@@ -45,6 +45,10 @@ source_files <- c(
   "parameters.R",
   "inflation.R",
   "strategy_costs.R",
+  # societal_costs.R reuses the same escalation/repeat-attempt formulas as
+  # strategy_costs.R (by design, so the two never silently diverge -- see
+  # its own file-level docblock), so it must come after strategy_costs.R.
+  "societal_costs.R",
   "comparison.R",
   "sensitivity_deterministic.R",
   "sensitivity_probabilistic.R",

@@ -135,6 +135,38 @@ Only costs *incremental* to that already-planned colonoscopy are counted: the in
 gynecologic professional time, biopsy supplies, pathology, incremental room/anesthesia minutes, any
 incremental anesthetic drug cost, and coordination overhead.
 
+## Societal-perspective secondary analysis (2026-09-02): patient time and travel
+
+The base case's healthcare-sector perspective deliberately excludes patient time, transportation,
+and lost productivity (stated explicitly in the manuscript's Methods). `R/societal_costs.R` adds a
+separate, deterministic secondary analysis (`compute_strategy_expected_encounters()`,
+`compute_strategy_societal_costs()`, driven by `analysis/14_societal_perspective.R`) that
+reintroduces this excluded cost category, using the same incremental-cost logic above: the
+colonoscopy day itself is never counted for any arm, since the patient is assumed to be undergoing
+it regardless of which EMB strategy is chosen. What IS counted is each strategy's expected number of
+*dedicated* patient-borne encounters -- office_emb's initial visit plus its (small) repeat-attempt
+probability of a second visit; combined_emb's separate preoperative office visit (`TRUE` in the base
+case per `combined_requires_preop_office_visit`, `FALSE` in the existing alternate scenario); and
+D&C's fixed 2 encounters (preop clinic visit + OR/procedure day) -- each weighted, where relevant, by
+the exact same escalation probabilities `R/strategy_costs.R` already uses for dollar costs (a
+consistency guard test in `tests/testthat/test-societal-costs.R` enforces this, mirroring the pattern
+already used for `R/diagnostic_yield.R`). Every encounter is valued at a single published per-visit
+opportunity-cost estimate (`patient_time_opportunity_cost_per_visit`, Ray et al. 2015, $43 in 2010
+dollars, inflated to 2026 dollars using a NEW general CPI-U series, `data/cpi_all_items.csv` --
+deliberately not the medical-care CPI series used elsewhere, since a wage-based cost should track
+general price/wage inflation, not medical-service-price inflation).
+
+**Result:** in the base case, this widens rather than narrows combined biopsy's cost advantage over
+office biopsy ($243.06 healthcare-sector -> $257.94 societal-total), and widens it much further under
+the alternate scenario where combined biopsy's preoperative visit is folded into the colonoscopy day
+($331.83 healthcare-sector -> $412.32 societal-total). See the manuscript's Methods/Results/Discussion
+for the reported numbers and `patient_time_opportunity_cost_per_visit`'s own notes in
+`config/model_parameters.csv` for the full sourcing and disclosed limitations (dollar-year inferred
+rather than primary-confirmed; captures time and travel-TIME opportunity cost only, not out-of-pocket
+travel expense or caregiver time; every encounter valued at the same rate, which likely understates
+D&C's true relative burden, since its OR/anesthesia-day encounter plausibly costs more patient time
+than a routine office visit and no differentiated source was identified for that difference).
+
 ## Decision-tree structure: initial attempt, then escalation to D&C
 
 Each strategy is modeled as a one-step decision tree rather than three isolated point-costs:
