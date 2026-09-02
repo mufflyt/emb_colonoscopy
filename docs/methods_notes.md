@@ -74,7 +74,7 @@ pathways therefore account for essentially all failures, and `neoplasia_delayed_
 
 **This is a null result under current evidence, not a finding that either strategy's true risk is
 zero.** None of the underlying studies -- Yi et al.'s Pipelle decision-tree model, the general
-(non-Lynch) Pipelle-failure literature it draws its repeat-success rate from (Adambekov et al. 2017),
+(non-Lynch) insufficient-sample literature it draws its repeat-success rate from (Kandil et al. 2014),
 or the combined-screening cohort (Nebgen et al. 2014) -- was designed to detect or report a distinct
 unresolved-failure outcome. A true difference between strategies could exist without being visible to
 this analysis; what would resolve this is a study, in either population, that follows sampling
@@ -83,8 +83,8 @@ received either an adequate repeat sample or D&C, rather than assuming or inferr
 escalation rates.
 
 **The major-adverse-event comparison remains the genuine, non-degenerate clinical-risk finding.**
-Combined EMB had substantially lower D&C-rescue-driven major-AE exposure than office EMB (mean 0.35
-vs. 2.51 events per 1,000 in the current run), which is not true by construction -- it reflects real
+Combined EMB had substantially lower D&C-rescue-driven major-AE exposure than office EMB (mean 0.36
+vs. 2.48 events per 1,000 in the current run), which is not true by construction -- it reflects real
 differences in each arm's probability of ultimately requiring D&C, and office EMB's mean AE exposure
 rose further once the repeat-attempt structure's narrower escalation-probability range replaced the
 old parameter's occasionally-generous PSA draws (see the update note above).
@@ -144,15 +144,19 @@ failure rate in this repository), and `hysteroscopy_failure_rate_lynch_range` is
   Lynch-specific surveillance studies confirmed genuinely Pipelle-specific by direct primary-source
   verification -- see the correction note above) is combined with two sourced parameters,
   `office_repeat_attempt_fraction` (5%, an expert clinical estimate) and
-  `office_repeat_attempt_success_probability` (25%, exact binomial 95% CI 3.2%-65.1%), reproducing Yi
-  et al. 2018's own decision-tree structure for a failed Pipelle attempt: either a repeat office
-  attempt (5% of failures, succeeding 25% of the time) or direct escalation to D&C. This replaces the
-  single **provisional** `office_to_dnc_escalation_fraction` parameter (fixed at 100%, i.e. every
-  failed office attempt assumed to escalate to D&C with no repeat-attempt pathway at all), which is
-  now superseded and retained in `config/model_parameters.csv` only as a historical record -- see that
-  parameter's own notes for the full supersession rationale. No study directly measures this
-  repeat-vs-escalate split in a Lynch-specific standalone-office population; Yi et al. 2018 and
-  Adambekov et al. 2017 are both general (non-Lynch) postmenopausal-bleeding/gynecologic populations.
+  `office_repeat_attempt_success_probability` (75%, reconstructed 95% CI 70.73%-79.15%, from Kandil et
+  al. 2014's 1,120-patient insufficient-sample cohort -- **replaced 2026-09-02**, same day as the
+  structure below was wired in; originally sourced from Adambekov et al. 2017's n=8 subgroup, 25%,
+  exact binomial 95% CI 3.2%-65.1%, superseded for a much larger and more directly relevant cohort --
+  see that parameter's own notes in `config/model_parameters.csv` for the reconstruction methodology),
+  reproducing Yi et al. 2018's own decision-tree structure for a failed Pipelle attempt: either a
+  repeat office attempt (5% of failures, succeeding 75% of the time) or direct escalation to D&C. This
+  replaces the single **provisional** `office_to_dnc_escalation_fraction` parameter (fixed at 100%,
+  i.e. every failed office attempt assumed to escalate to D&C with no repeat-attempt pathway at all),
+  which is now superseded and retained in `config/model_parameters.csv` only as a historical record --
+  see that parameter's own notes for the full supersession rationale. No study directly measures this
+  repeat-vs-escalate split in a Lynch-specific standalone-office population; Yi et al. 2018, Adambekov
+  et al. 2017, and Kandil et al. 2014 are all general (non-Lynch) populations.
   See `docs/data_sources.md` for the full search and `docs/ae_cost_evidence_table.md`-style reasoning
   applied to these two parameters in `config/model_parameters.csv`'s own notes.
 - **Combined arm:** `combined_to_dnc_probability` (1.8%, i.e. 2/111) is Nebgen et al.'s *directly
@@ -177,14 +181,15 @@ Running `analysis/01_base_case.R` under current parameters (many of them still p
 `docs/data_sources.md`) produces:
 
 - Combined EMB: **$506.11** per patient
-- Office EMB: **$761.94** per patient (includes the office repeat-attempt structure wired in
-  2026-09-02 -- see "Interpretation of delayed-neoplasia outcomes" above)
+- Office EMB: **$749.18** per patient (includes the office repeat-attempt structure wired in
+  2026-09-02, using the Kandil-et-al.-2014-sourced 75% repeat-success probability -- see
+  "Interpretation of delayed-neoplasia outcomes" above)
 - Operative D&C: **$3,839.81** per patient (includes a partial, management-pathway-weighted adverse-event
   cost for uterine perforation, wired in 2026-09-01 -- see `docs/ae_cost_evidence_table.md` for the
   full sourcing and what remains deliberately excluded)
-- Combined EMB is **$255.83 (33.6%) cheaper** than office EMB
+- Combined EMB is **$243.06 (32.4%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~12.7 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
+  stays below **~12.3 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
   meaning the base case's own room-time assumption is now comfortably inside the threshold rather
   than close to its edge
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
@@ -315,7 +320,7 @@ locality [Arkansas], a high-cost locality [Manhattan]) using real CMS GPCI and O
 see `docs/data_sources.md` for the full methodology, citations, and a disclosed limitation (physician
 GPCI locality and hospital OPPS wage-index geography are two different CMS systems that don't share a
 common unit). Result: combined EMB remained the least expensive strategy in all 4 of 4 localities
-tested, with its advantage over office EMB *widening* from $207.12 in the low-cost locality to $348.75
+tested, with its advantage over office EMB *widening* from $195.62 in the low-cost locality to $333.44
 in the high-cost locality. This is a deterministic analysis, deliberately kept out of
 `run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
 parameter-uncertainty question the way a study's confidence interval is.

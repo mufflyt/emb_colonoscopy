@@ -686,11 +686,11 @@ value were ever left unsourced.
 construction, so it must reproduce `compute_strategy_costs()`'s own base-case output exactly. Confirmed
 both by an automated test (`tests/testthat/test-geographic-sensitivity.R`, INDEPENDENT-CONFIRMATION-
 flavored, mutation-tested) and by the actual analysis run: national locality produced $506.11 /
-$761.94 / $3,839.81 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
+$749.18 / $3,839.81 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
 
 **Result** (`Rscript analysis/09_geographic_sensitivity.R`): combined EMB remained the least expensive
-strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $207.12 (Arkansas, the
-low-cost locality) to $348.75 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
+strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $195.62 (Arkansas, the
+low-cost locality) to $333.44 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
 qualitative conclusion (combined EMB cheaper than office EMB) is not an artifact of national-average
 pricing; it holds, and if anything strengthens, at both geographic extremes tested. See
 `tables/geographic_sensitivity_summary.csv` for the full table and
@@ -701,7 +701,7 @@ pricing; it holds, and if anything strengthens, at both geographic extremes test
 | Parameter | Base value | What's needed |
 | --- | --- | --- |
 | `coordination_cost` | $22.08 | Wage component now real (O*NET/BLS OEWS, SOC 43-6013, $22.08/hr median, see `scheduler_hourly_wage_onet_2025`); the 30-min-per-scheduler time component is a practitioner estimate (Tyler Muffly, MD, Denver Health), not an independently published source. Ahsan et al. 2022's Weill Cornell implementation commentary (see "Next literature to mine" item 5 below) describes the same kind of stakeholder-coordination workflow qualitatively but reports no time or cost figures, so it does not resolve this gap. A formal micro-costing/implementation-cost study of actual coordination time would still improve on the time component specifically |
-| ~~`office_to_dnc_escalation_fraction`~~ **SUPERSEDED 2026-09-02** | ~~100%~~ | No longer a placeholder: replaced by `office_repeat_attempt_fraction` (5%, Yi et al. 2018) and `office_repeat_attempt_success_probability` (25%, Adambekov et al. 2017 Table 1, n=8) -- both real, sourced values, though from a small, general (non-Lynch) evidence base rather than a Lynch-specific standalone-office measurement. See "Interpretation of delayed-neoplasia outcomes" in `docs/methods_notes.md` for the full account. Remaining gap: still no Lynch-specific citation for either parameter. |
+| ~~`office_to_dnc_escalation_fraction`~~ **SUPERSEDED 2026-09-02** | ~~100%~~ | No longer a placeholder: replaced by `office_repeat_attempt_fraction` (5%, Yi et al. 2018) and `office_repeat_attempt_success_probability` (75%, Kandil et al. 2014, n=1,120 -- replaced same day from an original 25% figure based on Adambekov et al. 2017 Table 1, n=8) -- both real, sourced values, though from a small-to-moderate, general (non-Lynch) evidence base rather than a Lynch-specific standalone-office measurement. See "Interpretation of delayed-neoplasia outcomes" in `docs/methods_notes.md` for the full account. Remaining gap: still no Lynch-specific citation for either parameter. |
 
 **`dnc_recovery_room_cost` was removed from this list, not filled in.** Per MedPAC's Ambulatory
 Surgical Center Services Payment System documentation (payment basics, rev. Nov 2021): "Medicare pays

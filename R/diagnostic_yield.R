@@ -138,7 +138,7 @@ compute_strategy_clinical_outcomes <- function(model_parameters) {
   # office_repeat_attempt_success_probability: same parameters
   # compute_office_emb_strategy_cost() uses -- see R/strategy_costs.R for
   # full citations (Elmasry/Lecuru/Woolderink; Yi et al. 2018's decision
-  # tree; Adambekov et al. 2017's repeat-attempt success subgroup). Reused
+  # tree; Kandil et al. 2014's repeat-sampling-adequacy cohort). Reused
   # verbatim here rather than re-derived, per this file's
   # escalation-consistency design.
   office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")

@@ -3,6 +3,26 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (a better-sourced number for how often a repeat office biopsy actually works)
+
+Swapped out the source behind one of the numbers added just yesterday. The repeat-office-biopsy
+success rate had been drawn from Adambekov et al. 2017 -- a subgroup of just 8 patients, 2 of whom
+succeeded, which is the smallest sample this project has built anything on. A larger, more directly
+relevant study was available: Kandil et al. 2014 followed 1,120 patients with an insufficient
+endometrial sample and found that among those who got a second attempt, 75% of the time it worked --
+three times higher than the 25% the model had been using. The confidence interval is wider than usual
+because the paper reports only rounded percentages rather than raw patient counts, so the interval had
+to be reconstructed rather than taken directly from the source; that's disclosed everywhere the number
+appears.
+
+The effect flows through the whole model: standalone office biopsy's estimated cost drops (fewer
+failures end up paying for a full D&C, since more repeat attempts now succeed), and combined biopsy's
+cost advantage over it narrows slightly as a result -- $243 instead of $255, still a clear and durable
+advantage. Combined biopsy's probability of being the cheaper strategy in simulation actually went
+up slightly, to 91.4% from 90.5%. Nothing about the delayed-neoplasia finding from yesterday changed --
+that was about whether the decision tree has an unresolved branch at all, not about how often a repeat
+attempt succeeds.
+
 ## 2026-09-02 (the NCCN citation the Introduction had been waiting on)
 
 Closed out a loose end that had been sitting in the manuscript as a draft comment since the

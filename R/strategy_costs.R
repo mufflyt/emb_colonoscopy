@@ -211,12 +211,15 @@ compute_office_emb_strategy_cost <- function(
   # 2026-09-02 (office_to_dnc_escalation_fraction, now superseded -- see
   # config/model_parameters.csv). Yi's tree: on failure, the physician either
   # moves directly to D&C (95%, office_repeat_attempt_fraction's complement)
-  # or attempts a second Pipelle (5%); a second Pipelle attempt succeeds 25%
-  # of the time (Adambekov et al. 2017, PMID 27913154, Table 1: 2/8 patients
-  # with a documented history of prior biopsy failure succeeded on the
-  # attempt studied) or, per Yi's own text, "the physician will then move to
-  # the D&C route" -- i.e. Yi's tree has NO branch where a failure is simply
-  # left unresolved. This repository's clinical-outcome function
+  # or attempts a second sampling procedure (5%); a repeat attempt succeeds
+  # 75% of the time (Kandil et al. 2014, PMID 25083966: of 1,120 insufficient
+  # endometrial samples, 38% had a second sampling procedure by 12-month
+  # follow-up, adequate in 75% of those -- REPLACED the original Adambekov
+  # et al. 2017-based 25% figure 2026-09-02; see
+  # config/model_parameters.csv's own row for the reconstructed-CI caveat)
+  # or, per Yi's own text, "the physician will then move to the D&C route"
+  # -- i.e. Yi's tree has NO branch where a failure is simply left
+  # unresolved. This repository's clinical-outcome function
   # (compute_strategy_clinical_outcomes(), R/diagnostic_yield.R) mirrors that:
   # office_unresolved_probability is 0 under this structure, not a residual
   # PSA artifact of a single escalation-fraction parameter.

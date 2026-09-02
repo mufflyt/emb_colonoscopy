@@ -5,6 +5,43 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (replaced the Adambekov-sourced office repeat-attempt success probability with Kandil et al. 2014)
+
+### Changed
+- `config/model_parameters.csv`: `office_repeat_attempt_success_probability` base value changed from
+  0.25 to 0.75 (exact binomial 95% CI 3.2%-65.1% -> reconstructed 95% CI 70.73%-79.15%). New source:
+  Kandil D, Yang X, Stockl T, Liu Y. "Clinical outcomes of patients with insufficient sample from
+  endometrial biopsy or curettage." Int J Gynecol Pathol 2014;33(5):500-506 (PMID 25083966) -- a
+  1,120-patient cohort of insufficient endometrial samples at a single U.S. academic center; 38% had a
+  second sampling procedure by 12-month follow-up, adequate in 75% of those. Replaces the original
+  source, Adambekov et al. 2017's Table 1 "history of prior biopsy failure" subgroup (n=8, 2 succeeded),
+  which was a much smaller, less directly relevant cohort. The CI is a disclosed reconstruction, not
+  primary-reported: the abstract gives only rounded percentages, so n=426 (round(1120x0.38)) and x=320
+  (round(426x0.75)) were back-calculated and passed to `stats::binom.test()`; full text (Wolters Kluwer,
+  paywalled, no institutional access this session) was not obtained. See the parameter's own notes field
+  for the full caveat, including that "second sampling procedure" in Kandil may include D&C, not only a
+  repeat office Pipelle.
+- `R/strategy_costs.R::compute_office_emb_strategy_cost()` and `R/diagnostic_yield.R`: docblock/comment
+  updates only, citing Kandil et al. 2014 instead of Adambekov et al. 2017 for this parameter -- no
+  functional code changes, since both functions already read the parameter dynamically via
+  `get_parameter_value()`.
+- Regenerated the entire analysis pipeline and re-synced every changed number across
+  `manuscript/manuscript.qmd`, `manuscript/cheers_checklist.qmd`, `docs/manuscript_methods_results.md`,
+  `docs/methods_notes.md`, `docs/data_sources.md`, and `README.md`: base case
+  ($506.11/$749.18/$3,839.81, office arm cheaper by $12.76 from the Adambekov-based run), one-way
+  sensitivity ranges, thresholds (~12.3 min, 6.7% failure, ~$265 coordination cost), budget impact
+  ($2,431-$243,062), geographic sensitivity ($195.62-$333.44), PSA (91.4% cheapest, up from 90.5%; office
+  EMB PSA mean cost fell slightly, from $759.34 to $755.70), and AE exposure (office arm mean 2.48 per
+  1,000, down from 2.51; combined arm mean 0.36, up from 0.35; D&C arm mean 19.19, up from 19.18 --
+  small PSA-draw-composition shifts from the changed repeat-success distribution, not structural
+  changes). Delayed-neoplasia risk unaffected (still 0.00 for both office-based arms in all 1,000
+  draws -- structural, driven by whether the repeat-attempt branch exists at all, not by this
+  parameter's magnitude).
+- Full test suite (`Rscript tests/testthat.R`) confirmed green both immediately after the parameter
+  change and after the full pipeline regeneration; no test edits were required, since the existing
+  tests compute expected values dynamically via `get_parameter_value()` rather than hardcoding the old
+  25%/Adambekov figures.
+
 ## 2026-09-02 (stated explicitly what NCCN does and doesn't specify)
 
 ### Changed

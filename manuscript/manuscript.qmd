@@ -84,16 +84,16 @@ analyses testing the model's assumption of equivalent diagnostic
 effectiveness across strategies.
 
 **Results:** In the base case, combined biopsy cost an estimated $506.11 per
-patient, compared with $761.94 for standalone office biopsy and $3,839.81
-for operative D&C. Combined biopsy was $255.83 (33.6%) less expensive than
-standalone office biopsy and was cost-saving in 90.5% of probabilistic
+patient, compared with $749.18 for standalone office biopsy and $3,839.81
+for operative D&C. Combined biopsy was $243.06 (32.4%) less expensive than
+standalone office biopsy and was cost-saving in 91.4% of probabilistic
 sensitivity analysis draws. Combined biopsy remained the least expensive
 strategy across all four geographic localities tested, with its advantage
-over standalone office biopsy widening from $207.12 in a low-cost locality
-to $348.75 in a high-cost locality. Clinical-outcome sensitivity analysis
+over standalone office biopsy widening from $195.62 in a low-cost locality
+to $333.44 in a high-cost locality. Clinical-outcome sensitivity analysis
 found combined biopsy carried substantially lower exposure to
-D&C-rescue-driven adverse events than standalone office biopsy (mean 0.35
-vs 2.51 events per 1,000 patients).
+D&C-rescue-driven adverse events than standalone office biopsy (mean 0.36
+vs 2.48 events per 1,000 patients).
 
 **Conclusion:** [DRAFT -- directly supported by data, no "further research
 needed" language, per journal requirement] Endometrial biopsy performed
@@ -313,42 +313,42 @@ checklist is provided as Supplemental Digital Content.
 ## Results
 
 In the base case, combined biopsy cost an estimated $506.11 per patient,
-compared with $761.94 for standalone office biopsy and $3,839.81 for
-operative D&C. Combined biopsy was $255.83 (33.6%) less expensive than
+compared with $749.18 for standalone office biopsy and $3,839.81 for
+operative D&C. Combined biopsy was $243.06 (32.4%) less expensive than
 office biopsy, and both office-based strategies were substantially less
 expensive than D&C, which was more costly than both alternatives at every
 facility fee tested, including a facility fee of $0.
 
 The combined-vs-office cost difference was most sensitive to the office
-biopsy failure probability (range -$141.69 to -$510.74 across its 10.3%-20.0%
-bound) and the combined arm's incremental procedure time (range -$389.57 to
--$21.78 across its observed 1-12 minute range). At the upper end of the
+biopsy failure probability (range -$131.80 to -$491.54 across its 10.3%-20.0%
+bound) and the combined arm's incremental procedure time (range -$376.80 to
+-$9.01 across its observed 1-12 minute range). At the upper end of the
 observed time range, the combined arm's advantage over office biopsy
-narrowed to $21.78 but did not reverse.
+narrowed to $9.01 but did not reverse.
 
 Across 1,000 probabilistic-sensitivity draws, combined biopsy had a mean
-cost of $541.57 (SD $116.63) and office biopsy a mean cost of $759.34 (SD
-$117.35). Combined biopsy was the least expensive strategy in 90.5% of
+cost of $539.93 (SD $116.01) and office biopsy a mean cost of $755.70 (SD
+$119.99). Combined biopsy was the least expensive strategy in 91.4% of
 draws; D&C was never the least expensive strategy in any draw. Combined
 biopsy remained the least expensive strategy as long as the incremental
-colonoscopy-suite time stayed below approximately 12.7 minutes and as long
-as the office biopsy failure probability stayed above approximately 6.6%.
+colonoscopy-suite time stayed below approximately 12.3 minutes and as long
+as the office biopsy failure probability stayed above approximately 6.7%.
 At illustrative cohort sizes of 10 to 1,000 patients screened annually,
 adopting combined biopsy over standalone office biopsy was projected to
-save $2,558 to $255,829 per year.
+save $2,431 to $243,062 per year.
 
 Combined biopsy remained the least expensive strategy in all four localities
-tested. Its advantage over office biopsy ranged from $207.12 per patient in
-the low-cost locality to $270.95 in the mid-cost locality to $348.75 per
+tested. Its advantage over office biopsy ranged from $195.62 per patient in
+the low-cost locality to $257.82 in the mid-cost locality to $333.44 per
 patient in the high-cost locality -- that is, the combined-arm cost
 advantage widened, rather than narrowed or reversed, at the high-cost
 extreme.
 
 D&C-rescue-driven major-adverse-event exposure was substantially lower for
-combined biopsy (mean 0.35 events per 1,000 patients) than for office
-biopsy (mean 2.51 per 1,000), reflecting the combined arm's lower
+combined biopsy (mean 0.36 events per 1,000 patients) than for office
+biopsy (mean 2.48 per 1,000), reflecting the combined arm's lower
 probability of ultimately requiring D&C. D&C itself carried a mean
-adverse-event exposure of 19.18 per 1,000. Neither arm retained an
+adverse-event exposure of 19.19 per 1,000. Neither arm retained an
 estimable delayed-neoplasia risk (a failed sample that is neither
 adequately resampled nor rescued to D&C, and that represents cancer or
 precancer): both the office-biopsy arm's repeat-attempt-or-D&C pathway and
