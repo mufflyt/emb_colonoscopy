@@ -20,7 +20,11 @@ test_that("dnc strategy cost equals the sum of its resource components", {
   expect_equal(dnc_result$escalation_probability, 0)
 })
 
-test_that("office EMB expected cost equals initial cost plus escalation cost", {
+test_that("office EMB expected cost equals initial cost plus repeat-visit cost plus escalation cost", {
+  # Since 2026-09-02, office_to_dnc_escalation_fraction is superseded by the
+  # two-parameter repeat-attempt structure (Yi et al. 2018's own decision
+  # tree): on failure, either a repeat Pipelle attempt (which itself
+  # succeeds or proceeds to D&C) or straight to D&C. See R/strategy_costs.R.
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()
   dnc_result <- compute_dnc_strategy_cost(model_parameters, price_index_table, 2026)
@@ -28,15 +32,31 @@ test_that("office EMB expected cost equals initial cost plus escalation cost", {
     model_parameters, dnc_result$expected_total_cost, price_index_table, 2026
   )
 
-  expected_escalation_probability <-
-    get_parameter_value(model_parameters, "emb_failure_lynch") *
-    get_parameter_value(model_parameters, "office_to_dnc_escalation_fraction")
+  failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
+  repeat_attempt_fraction <- get_parameter_value(model_parameters, "office_repeat_attempt_fraction")
+  repeat_attempt_success_probability <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_success_probability"
+  )
 
+  expected_repeat_attempt_probability <- failure_probability * repeat_attempt_fraction
+  expected_escalation_probability <- failure_probability *
+    (1 - repeat_attempt_fraction * repeat_attempt_success_probability)
+
+  expect_equal(office_result$repeat_attempt_probability, expected_repeat_attempt_probability)
   expect_equal(office_result$escalation_probability, expected_escalation_probability)
   expect_equal(
-    office_result$expected_total_cost,
-    office_result$initial_cost + office_result$escalation_probability * dnc_result$expected_total_cost
+    office_result$repeat_visit_cost,
+    expected_repeat_attempt_probability * office_result$initial_cost
   )
+  expect_equal(
+    office_result$expected_total_cost,
+    office_result$initial_cost + office_result$repeat_visit_cost +
+      office_result$escalation_probability * dnc_result$expected_total_cost
+  )
+  # A repeat attempt occasionally resolves the sample without D&C, so the
+  # new escalation probability must be strictly lower than raw failure
+  # probability (unless the repeat pathway is fully degenerate).
+  expect_lt(office_result$escalation_probability, failure_probability)
 })
 
 test_that("combined EMB arm never includes the colonoscopy baseline anesthesia cost", {

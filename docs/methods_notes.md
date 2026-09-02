@@ -22,15 +22,25 @@ parameter that had been sitting unused in `config/model_parameters.csv` since be
 existed: it computes each strategy's probability of an *unresolved* sampling failure (a failure that
 does not get rescued to D&C) and the resulting delayed-cancer/precancer-diagnosis probability, plus
 each strategy's D&C-rescue-driven adverse-event exposure (using newly added, real-cited D&C/
-hysteroscopy complication probabilities -- Hefler et al. 2009, ACOG Committee Opinion 800). At the
-current base case (`office_to_dnc_escalation_fraction = 1.0`, i.e. 100% of failures are assumed
-rescued), the delayed-diagnosis probability is exactly zero for every strategy by construction --
-this metric only becomes informative under a sensitivity/scenario override of that escalation
-fraction, which is precisely the point: it quantifies what the 100% assumption is actually protecting
-against, rather than asserting equivalence outright. `run_probabilistic_sensitivity()` now carries
-these clinical-outcome columns alongside every cost draw, so a finding like "combined EMB remained
-less costly while exposing fewer patients to D&C-rescue-driven adverse-event risk" can be made from
-the same Monte Carlo realizations as the cost finding, not a separately-drawn parallel analysis.
+hysteroscopy complication probabilities -- Hefler et al. 2009, ACOG Committee Opinion 800).
+`run_probabilistic_sensitivity()` carries these clinical-outcome columns alongside every cost draw, so
+a finding like "combined EMB remained less costly while exposing fewer patients to D&C-rescue-driven
+adverse-event risk" can be made from the same Monte Carlo realizations as the cost finding, not a
+separately-drawn parallel analysis.
+
+**2026-09-02 update: `office_unresolved_probability` is now 0, always, by design -- see below.**
+Between 2026-08-31 and 2026-09-02 this repository's base case had `office_to_dnc_escalation_fraction =
+1.0` (100% of failures assumed rescued), which made the delayed-diagnosis probability exactly zero in
+the base case *but nonzero in PSA draws* whenever that parameter's `triangular(0.5, 1, 1)` distribution
+drew below 1.0 -- a mechanically-generated "unresolved failure" outcome that no source actually
+described as a distinct clinical pathway. On 2026-09-02, `office_to_dnc_escalation_fraction` was
+superseded by a two-parameter repeat-attempt structure sourced directly from Yi et al. 2018's own
+decision tree (a repeat office Pipelle attempt, which itself either succeeds or -- per Yi's own text,
+"the physician will then move to the D&C route" -- proceeds to D&C). That structure has no branch
+where a failure is simply left unresolved, so `office_unresolved_probability` (and therefore
+`office_neoplasia_delayed_probability`) is now exactly 0 in every draw, for the same underlying reason
+the combined arm's always was. See "Interpretation of delayed-neoplasia outcomes" below for what this
+does and does not mean.
 
 This is still not a full cost-effectiveness analysis: `R/diagnostic_yield.R` also contains
 `compute_diagnostic_yield()`, a broader Pipelle-vs-D&C sensitivity/specificity-based detection-
@@ -44,39 +54,40 @@ risk to invalidate pure cost minimization?" question `compute_strategy_clinical_
 
 ### Interpretation of delayed-neoplasia outcomes
 
-**2026-08-31, demonstrated empirically via `analysis/03_probabilistic_sensitivity.R`'s 1,000-draw
-output:** the delayed-neoplasia outcome is informative for the standalone office-EMB arm but is not
-currently symmetric across strategies.
+**Revised 2026-09-02 -- this section previously described an asymmetric situation that no longer
+exists.** Between 2026-08-31 and 2026-09-02, the office-EMB arm had a nonzero, PSA-varying
+delayed-neoplasia estimate (mean 1.55 per 1,000 in the last run under that structure) while the
+combined-EMB arm's was always exactly 0 "by construction" -- an asymmetry driven entirely by the two
+arms' escalation logic being sourced differently (a single wide-uncertainty `office_to_dnc_escalation_fraction`
+parameter for office EMB, vs. a directly-observed escalation rate with no unresolved branch for
+combined EMB), not by any actual evidence that the two strategies' true risks differ.
 
-For office EMB, the model permits a failed or inadequate sample to remain unresolved when the sampled
-`office_to_dnc_escalation_fraction` is less than 1.0; these unresolved failures are then combined with
-the probability of cancer or precancer after an inadequate sample to estimate potentially delayed
-neoplasia.
+**As of 2026-09-02, both arms have zero estimable delayed-neoplasia risk, for the same structural
+reason.** `office_to_dnc_escalation_fraction` was superseded by a two-parameter repeat-attempt
+structure (`office_repeat_attempt_fraction`, `office_repeat_attempt_success_probability`) built
+directly from Yi et al. 2018's own decision tree, which -- like the combined arm's
+`combined_to_dnc_probability` -- has no branch where a failed attempt is simply left unresolved: Yi's
+own text states that a failed repeat Pipelle attempt always proceeds to D&C. Both arms' failure
+pathways therefore account for essentially all failures, and `neoplasia_delayed_per_1000` is exactly
+0.00 for both strategies in every one of 1,000 PSA draws (verified via
+`analysis/12_independent_psa_verification.R`).
 
-The combined-EMB arm has no analogous unresolved-failure branch. `combined_to_dnc_probability` is a
-directly observed probability of proceeding to hysteroscopy/D&C after unsuccessful combined sampling
-and is modeled as an escalation probability rather than as a raw sampling-failure probability followed
-by a separately estimated escalation fraction. Consequently, the current model assigns zero unresolved
-combined-arm sampling failures and therefore zero delayed-neoplasia events to that strategy by
-construction.
+**This is a null result under current evidence, not a finding that either strategy's true risk is
+zero.** None of the underlying studies -- Yi et al.'s Pipelle decision-tree model, the general
+(non-Lynch) Pipelle-failure literature it draws its repeat-success rate from (Adambekov et al. 2017),
+or the combined-screening cohort (Nebgen et al. 2014) -- was designed to detect or report a distinct
+unresolved-failure outcome. A true difference between strategies could exist without being visible to
+this analysis; what would resolve this is a study, in either population, that follows sampling
+failures forward far enough to confirm whether every patient with a failed attempt eventually
+received either an adequate repeat sample or D&C, rather than assuming or inferring it from aggregate
+escalation rates.
 
-Accordingly, the finding that combined EMB had no greater delayed-neoplasia risk than office EMB in
-100% of probabilistic-sensitivity draws should not be interpreted as evidence of diagnostic
-superiority or equivalence. The result reflects an asymmetry in available evidence and model
-structure. A symmetric comparison would require data on the probability of combined EMB failure and,
-conditional on failure, the probability that the patient does not receive definitive follow-up
-sampling.
-
-The delayed-neoplasia outcome is therefore retained as an exploratory measure of the consequences of
-incomplete follow-up after failed office EMB, but it is not used as a comparative effectiveness
-endpoint between office and combined EMB in the primary analysis. The joint "combined EMB is cheaper
-AND has no greater delayed-neoplasia risk" probability (69.3% in the 1,000-draw run above) is
-mathematically identical to the cost-only "combined EMB is cheaper" probability for exactly this
-reason -- it adds no independent information and should not be reported as a distinct finding. The
-genuine, non-degenerate clinical-risk comparison from that same run is the major-adverse-event one:
-combined EMB had no greater D&C-rescue-driven major-AE exposure than office EMB in 97.8% of draws
-(mean 0.67 vs. 2.12 events per 1,000), which is not true by construction and does reflect real overlap
-in the underlying escalation-probability distributions.
+**The major-adverse-event comparison remains the genuine, non-degenerate clinical-risk finding.**
+Combined EMB had substantially lower D&C-rescue-driven major-AE exposure than office EMB (mean 0.35
+vs. 2.51 events per 1,000 in the current run), which is not true by construction -- it reflects real
+differences in each arm's probability of ultimately requiring D&C, and office EMB's mean AE exposure
+rose further once the repeat-attempt structure's narrower escalation-probability range replaced the
+old parameter's occasionally-generous PSA draws (see the update note above).
 
 ## The incremental-cost principle
 
@@ -129,17 +140,21 @@ failure rate in this repository), and `hysteroscopy_failure_rate_lynch_range` is
 
 ## Two escalation probabilities, and why they are not the same parameter
 
-- **Office arm:** `emb_failure_lynch` (a pooled 13.3% estimate across three Lynch-specific
-  surveillance studies confirmed genuinely Pipelle-specific by direct primary-source verification --
-  see the correction note above) is multiplied by `office_to_dnc_escalation_fraction`
-  (**provisional**, fixed at 100%, i.e. every failed office attempt is assumed to escalate to D&C
-  rather than, say, a repeat office attempt). No study reports this specific repeat-vs-escalate split
-  for the standalone office population, even now that full text of all four candidate Lynch
-  EMB-failure studies has been obtained via institutional access (2026-08-31). Nebgen et al. 2014's
-  MD Anderson combined-screening protocol grounds the 100% assumption in an analogous context -- its
-  written protocol escalates every EMB failure straight to D&C with no repeat-office step -- but that
-  describes the combined arm, not standalone office EMB, so this remains a placeholder for this
-  parameter's actual target population. See `docs/data_sources.md` for the full search.
+- **Office arm, superseded 2026-09-02:** `emb_failure_lynch` (a pooled 13.3% estimate across three
+  Lynch-specific surveillance studies confirmed genuinely Pipelle-specific by direct primary-source
+  verification -- see the correction note above) is combined with two sourced parameters,
+  `office_repeat_attempt_fraction` (5%, an expert clinical estimate) and
+  `office_repeat_attempt_success_probability` (25%, exact binomial 95% CI 3.2%-65.1%), reproducing Yi
+  et al. 2018's own decision-tree structure for a failed Pipelle attempt: either a repeat office
+  attempt (5% of failures, succeeding 25% of the time) or direct escalation to D&C. This replaces the
+  single **provisional** `office_to_dnc_escalation_fraction` parameter (fixed at 100%, i.e. every
+  failed office attempt assumed to escalate to D&C with no repeat-attempt pathway at all), which is
+  now superseded and retained in `config/model_parameters.csv` only as a historical record -- see that
+  parameter's own notes for the full supersession rationale. No study directly measures this
+  repeat-vs-escalate split in a Lynch-specific standalone-office population; Yi et al. 2018 and
+  Adambekov et al. 2017 are both general (non-Lynch) postmenopausal-bleeding/gynecologic populations.
+  See `docs/data_sources.md` for the full search and `docs/ae_cost_evidence_table.md`-style reasoning
+  applied to these two parameters in `config/model_parameters.csv`'s own notes.
 - **Combined arm:** `combined_to_dnc_probability` (1.8%, i.e. 2/111) is Nebgen et al.'s *directly
   observed* escalation-to-procedure rate in the combined-screening cohort -- it does not need a
   separate escalation-fraction assumption stacked on top, because it already measures "proceeded to
@@ -162,21 +177,22 @@ Running `analysis/01_base_case.R` under current parameters (many of them still p
 `docs/data_sources.md`) produces:
 
 - Combined EMB: **$506.11** per patient
-- Office EMB: **$766.62** per patient
+- Office EMB: **$761.94** per patient (includes the office repeat-attempt structure wired in
+  2026-09-02 -- see "Interpretation of delayed-neoplasia outcomes" above)
 - Operative D&C: **$3,839.81** per patient (includes a partial, management-pathway-weighted adverse-event
   cost for uterine perforation, wired in 2026-09-01 -- see `docs/ae_cost_evidence_table.md` for the
   full sourcing and what remains deliberately excluded)
-- Combined EMB is **$260.51 (34.0%) cheaper** than office EMB
+- Combined EMB is **$255.83 (33.6%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~12.8 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
+  stays below **~12.7 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
   meaning the base case's own room-time assumption is now comfortably inside the threshold rather
   than close to its edge
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **~81%** of 1,000 probabilistic-sensitivity draws
-  (`Rscript analysis/03_probabilistic_sensitivity.R`; this figure moves a few points run to run since
-  the script is unseeded, consistent with `office_to_dnc_escalation_fraction` and
-  `combined_to_dnc_probability` both genuinely varying in PSA -- see their correction notes below)
+- Combined EMB was cost-saving vs. office EMB in **~91%** of 1,000 probabilistic-sensitivity draws
+  (`Rscript analysis/03_probabilistic_sensitivity.R`; `run_probabilistic_sensitivity()` is seeded by
+  default as of 2026-09-01 -- see `docs/testing_philosophy.md` -- so this is reproducible run to run,
+  not an unseeded estimate)
 
 (Updated 2026-08-28 across six steps: `dnc_facility_or_asc_fee`, `dnc_anesthesia_cost`,
 `coordination_cost`'s wage component, `office_visit_em_cost`/`dnc_preop_clinic_visit_cost` were each
@@ -299,7 +315,7 @@ locality [Arkansas], a high-cost locality [Manhattan]) using real CMS GPCI and O
 see `docs/data_sources.md` for the full methodology, citations, and a disclosed limitation (physician
 GPCI locality and hospital OPPS wage-index geography are two different CMS systems that don't share a
 common unit). Result: combined EMB remained the least expensive strategy in all 4 of 4 localities
-tested, with its advantage over office EMB *widening* from $211.24 in the low-cost locality to $354.61
+tested, with its advantage over office EMB *widening* from $207.12 in the low-cost locality to $348.75
 in the high-cost locality. This is a deterministic analysis, deliberately kept out of
 `run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
 parameter-uncertainty question the way a study's confidence interval is.
@@ -313,12 +329,14 @@ parameter-uncertainty question the way a study's confidence interval is.
   inadequate/nondiagnostic" as separate failure modes, even though `emb_failure_general_adambekov_2017`
   in `config/model_parameters.csv` documents that distinction (8/201 access failures vs. 37/201
   inadequate specimens) for a future refinement.
-- `office_to_dnc_escalation_fraction`'s 100% base case is conservative in one direction (it assumes
-  no repeat office attempts) but its effect on the model's conclusion has not been separately
-  quantified -- it is included in the one-way sensitivity set precisely so this can be checked.
-  `compute_strategy_clinical_outcomes()` (see the section above) now gives that check a clinical
-  consequence, not just a cost delta: below 100%, it quantifies a nonzero delayed-diagnosis
-  probability rather than leaving the risk of the conservative assumption unstated.
+- **RELAXED 2026-09-02** (previously listed here as not-yet-relaxed): the office arm's "no repeat
+  attempts, every failure escalates to D&C" assumption is superseded by the
+  `office_repeat_attempt_fraction`/`office_repeat_attempt_success_probability` structure -- see
+  "Interpretation of delayed-neoplasia outcomes" above. This traded one simplifying assumption for a
+  narrower one: the new parameters are sourced but from a small (n=8), general (non-Lynch) evidence
+  base, and the structural assumption that a failed *repeat* attempt always escalates to D&C (rather
+  than sometimes remaining unresolved) is itself unverified for either population -- it is simply what
+  Yi et al. 2018's own decision tree assumes.
 - D&C's own inadequate-sampling risk is still not modeled (no escalation branch of its own, same
   gap noted above); `hysteroscopy_failure_rate_lynch_range` (`future_extension`) remains the
   candidate parameter for whoever adds it. The new adverse-event probabilities

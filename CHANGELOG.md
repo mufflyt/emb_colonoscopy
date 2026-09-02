@@ -5,6 +5,66 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (office arm's escalation fraction replaced with a real repeat-attempt structure)
+
+### Added
+- `config/model_parameters.csv`: two new parameters -- `office_repeat_attempt_fraction` (5%, range
+  0-6%, triangular, Yi et al. 2018's own decision-tree logic: the complement of their "P(moving to
+  D&C if 1st attempted Pipelle failed) = 0.95") and `office_repeat_attempt_success_probability` (25%,
+  exact binomial 95% CI 3.2%-65.1%, beta, from Adambekov et al. 2017's Table 1: 2 of 8 patients with a
+  documented history of prior Pipelle failure succeeded on the attempt studied -- independently
+  confirmed as the exact subgroup Yi et al. 2018 cite for the identical purpose in their own methods
+  text, not merely a similar number from a different source).
+
+### Changed
+- `R/strategy_costs.R::compute_office_emb_strategy_cost()`: replaced the single-parameter
+  `office_to_dnc_escalation_fraction` (fixed at 100%, i.e. every failure assumed to escalate straight
+  to D&C) with the two-parameter repeat-attempt structure above. On failure: either a repeat office
+  visit (5% of failures, costing the same $255.93 as the initial visit since it bills as an
+  established-patient encounter) that succeeds 25% of the time, or direct escalation to D&C. New
+  return fields `repeat_attempt_probability`/`repeat_visit_cost`.
+- `R/diagnostic_yield.R::compute_strategy_clinical_outcomes()`: `office_unresolved_probability` is now
+  hardcoded to 0, not derived from `office_to_dnc_escalation_fraction`. Yi et al. 2018's own decision
+  tree has no branch where a failed repeat attempt is left unresolved ("the physician will then move
+  to the D&C route"), so `office_neoplasia_delayed_probability` is 0 in every draw now, matching the
+  combined arm -- **this eliminates what was previously an asymmetric finding** (office arm: mean 1.55
+  delayed-neoplasia events per 1,000 in the prior run; combined arm: always 0 "by construction"). Both
+  arms are now 0.00 for the same structural reason: a genuine null result under current evidence, not
+  proof either arm's true risk is zero -- see `docs/methods_notes.md`'s "Interpretation of
+  delayed-neoplasia outcomes" for the full account.
+- `R/diagnostic_yield.R::compute_diagnostic_yield()`: added a `office_repeat_success_probability`
+  detection-probability branch (a successful repeat attempt is still detected at
+  `office_sensitivity`, not `dnc_sensitivity`) -- this branch did not exist before.
+- `office_to_dnc_escalation_fraction`: marked SUPERSEDED in its own notes and recategorized to
+  `reference_only` (no longer consumed by any function); retained in the parameter table as a
+  historical record rather than deleted, per this project's convention.
+- Updated `tests/testthat/test-strategy-costs.R`, `test-independent-confirmation.R`, and
+  `test-diagnostic-yield.R` for the new structure; replaced two tests that specifically exercised the
+  old escalation-fraction mechanism (a monotonicity test and an independent-confirmation test, both
+  built around "lower escalation fraction -> nonzero delayed-neoplasia") with equivalent tests for the
+  new mechanism. Mutation-tested: (1) zeroed `repeat_attempt_probability`/`repeat_visit_cost`,
+  confirmed the expected test failures, restored; (2) reintroduced a nonzero
+  `office_unresolved_probability`, confirmed all four affected assertions failed with the expected
+  signature, restored.
+- Regenerated the entire analysis pipeline and re-synced every changed number across
+  `manuscript/manuscript.qmd` (Abstract, Methods -- added reference 15 for Adambekov et al. 2017 --
+  Results, and a substantially rewritten Discussion "principal limitation" paragraph reflecting the
+  now-symmetric null result instead of an office-arm-specific one), `manuscript/cheers_checklist.qmd`,
+  `docs/manuscript_methods_results.md`, `docs/methods_notes.md` (rewrote "Interpretation of
+  delayed-neoplasia outcomes" and "Two escalation probabilities" sections), `docs/data_sources.md`,
+  `docs/CHEERS_2022_checklist.md`, and `README.md` (new "Office repeat-attempt structure" section):
+  base case ($506.11/$761.94/$3,839.81, office arm cheaper by $4.68 from the prior run), one-way
+  sensitivity ranges, thresholds (12.7 min, 6.6% failure, $278 coordination cost), budget impact,
+  geographic sensitivity ($207.12-$348.75), and PSA (90.5% cheapest, up from 81.4% -- office EMB's PSA
+  mean cost rose substantially, from $759.34 vs. the prior $683.44, because the old
+  `office_to_dnc_escalation_fraction`'s wide `triangular(0.5, 1, 1)` distribution let PSA draws cut
+  escalation probability by up to half, while the new structure's maximum reduction is under 4% even
+  at its 95% CI bounds -- a narrower, better-disciplined range, not a bug).
+- Flagged (not fixed, out of scope for this change): references 12 (Yi et al. 2018) and 15 (Adambekov
+  et al. 2017) are now cited in the Methods "Clinical probabilities" paragraph before their
+  validation-paragraph/first-numbered-list appearance later in Methods, adding to the pre-existing
+  reference-6-before-references-1-5 citation-ordering issue already flagged 2026-09-01.
+
 ## 2026-09-01 (wired the sourced portion of the AE-cost evidence table into compute_dnc_strategy_cost())
 
 ### Added

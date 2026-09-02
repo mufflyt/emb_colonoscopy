@@ -75,15 +75,17 @@ test_that("compute_strategy_clinical_outcomes returns one row per strategy with 
   }
 })
 
-test_that("compute_strategy_clinical_outcomes has no unresolved-failure/delayed-neoplasia risk for combined_emb or dnc", {
-  # Neither arm has an observed "failed and not rescued" sub-population in
-  # this repository's evidence base -- see the function's docblock.
+test_that("compute_strategy_clinical_outcomes has no unresolved-failure/delayed-neoplasia risk for any strategy", {
+  # combined_emb and dnc never had an observed "failed and not rescued"
+  # sub-population in this repository's evidence base. office_emb joined
+  # them 2026-09-02: Yi et al. 2018's decision tree has no unresolved
+  # branch for a failed repeat Pipelle attempt either -- see the function's
+  # docblock and R/strategy_costs.R.
   model_parameters <- test_model_parameters()
   outcomes <- compute_strategy_clinical_outcomes(model_parameters)
 
-  non_office <- outcomes[outcomes$strategy != "office_emb", ]
-  expect_true(all(non_office$unresolved_sampling_probability == 0))
-  expect_true(all(non_office$neoplasia_delayed_probability == 0))
+  expect_true(all(outcomes$unresolved_sampling_probability == 0))
+  expect_true(all(outcomes$neoplasia_delayed_probability == 0))
 })
 
 test_that("compute_strategy_clinical_outcomes: dnc's own major-AE probability equals dnc_overall_complication_probability", {
@@ -94,26 +96,55 @@ test_that("compute_strategy_clinical_outcomes: dnc's own major-AE probability eq
   expect_equal(dnc_ae, get_parameter_value(model_parameters, "dnc_overall_complication_probability"))
 })
 
-test_that("MONOTONICITY: lowering office_to_dnc_escalation_fraction increases office EMB's delayed-neoplasia risk", {
+test_that("office EMB's delayed-neoplasia risk is 0 regardless of repeat-attempt parameter values", {
+  # Regression guard for the 2026-09-02 restructuring: unlike the old
+  # office_to_dnc_escalation_fraction mechanism (where a PSA draw below 1.0
+  # mechanically produced a nonzero "unresolved" probability),
+  # office_unresolved_probability is now hardcoded to 0 in
+  # compute_strategy_clinical_outcomes(), because Yi et al. 2018's own
+  # decision tree has no unresolved branch -- a failed repeat attempt always
+  # proceeds to D&C. This must hold even at the extremes of the new
+  # parameters' plausible ranges, not just at their base values.
   model_parameters <- test_model_parameters()
 
-  full_escalation <- override_model_parameters(
-    model_parameters, list(office_to_dnc_escalation_fraction = 1.0)
+  low_repeat_success <- override_model_parameters(
+    model_parameters, list(office_repeat_attempt_success_probability = 0.03)
   )
-  partial_escalation <- override_model_parameters(
-    model_parameters, list(office_to_dnc_escalation_fraction = 0.5)
+  high_repeat_success <- override_model_parameters(
+    model_parameters, list(office_repeat_attempt_success_probability = 0.99)
   )
 
-  full_outcomes <- compute_strategy_clinical_outcomes(full_escalation)
-  partial_outcomes <- compute_strategy_clinical_outcomes(partial_escalation)
+  low_outcomes <- compute_strategy_clinical_outcomes(low_repeat_success)
+  high_outcomes <- compute_strategy_clinical_outcomes(high_repeat_success)
 
-  full_delayed <- full_outcomes$neoplasia_delayed_probability[full_outcomes$strategy == "office_emb"]
-  partial_delayed <- partial_outcomes$neoplasia_delayed_probability[
-    partial_outcomes$strategy == "office_emb"
-  ]
+  expect_equal(
+    low_outcomes$neoplasia_delayed_probability[low_outcomes$strategy == "office_emb"], 0
+  )
+  expect_equal(
+    high_outcomes$neoplasia_delayed_probability[high_outcomes$strategy == "office_emb"], 0
+  )
+})
 
-  expect_equal(full_delayed, 0)
-  expect_true(partial_delayed > full_delayed)
+test_that("MONOTONICITY: a higher office_repeat_attempt_success_probability decreases office EMB's rescue_dnc_probability", {
+  # A more successful repeat-attempt pathway means fewer failures ultimately
+  # need D&C -- the real monotonicity property of the new repeat-attempt
+  # structure, replacing the old escalation-fraction monotonicity test.
+  model_parameters <- test_model_parameters()
+
+  low_repeat_success <- override_model_parameters(
+    model_parameters, list(office_repeat_attempt_success_probability = 0.05)
+  )
+  high_repeat_success <- override_model_parameters(
+    model_parameters, list(office_repeat_attempt_success_probability = 0.90)
+  )
+
+  low_outcomes <- compute_strategy_clinical_outcomes(low_repeat_success)
+  high_outcomes <- compute_strategy_clinical_outcomes(high_repeat_success)
+
+  low_rescue <- low_outcomes$rescue_dnc_probability[low_outcomes$strategy == "office_emb"]
+  high_rescue <- high_outcomes$rescue_dnc_probability[high_outcomes$strategy == "office_emb"]
+
+  expect_true(low_rescue > high_rescue)
 })
 
 test_that("MONOTONICITY: a higher office EMB failure rate increases D&C adverse-event exposure via the rescue pathway", {
@@ -131,44 +162,45 @@ test_that("MONOTONICITY: a higher office EMB failure rate increases D&C adverse-
   expect_true(high_ae > low_ae)
 })
 
-test_that("INDEPENDENT CONFIRMATION: office EMB's delayed-neoplasia-per-1000 at a sensitivity-scenario escalation fraction", {
+test_that("INDEPENDENT CONFIRMATION: office EMB's rescue_dnc_probability at a sensitivity-scenario repeat-success rate", {
   # Meta-rule (docs/testing_philosophy.md, Rule 2): a finding capable of
-  # changing the study's frame -- here, "under a lower D&C-escalation
-  # assumption, office EMB leaves some patients with a delayed cancer/
-  # precancer diagnosis" -- must be re-derived via a path that never calls
+  # changing the study's frame -- here, "the repeat-attempt structure
+  # reduces office EMB's D&C-rescue probability below its raw failure
+  # probability" -- must be re-derived via a path that never calls
   # compute_strategy_clinical_outcomes(), the function that originally
   # produced it.
   model_parameters <- test_model_parameters()
   scenario_parameters <- override_model_parameters(
-    model_parameters, list(office_to_dnc_escalation_fraction = 0.7)
+    model_parameters, list(office_repeat_attempt_success_probability = 0.5)
   )
 
   independent_failure <- get_parameter_value(scenario_parameters, "emb_failure_lynch")
-  independent_escalation_fraction <- get_parameter_value(
-    scenario_parameters, "office_to_dnc_escalation_fraction"
+  independent_repeat_attempt_fraction <- get_parameter_value(
+    scenario_parameters, "office_repeat_attempt_fraction"
   )
-  independent_neoplasia_after_failed_sample <- get_parameter_value(
-    scenario_parameters, "cancer_or_precancer_after_failed_sample"
+  independent_repeat_attempt_success_probability <- get_parameter_value(
+    scenario_parameters, "office_repeat_attempt_success_probability"
   )
 
-  independent_unresolved <- independent_failure * (1 - independent_escalation_fraction)
-  independent_delayed_probability <- independent_unresolved * independent_neoplasia_after_failed_sample
-  independent_delayed_per_1000 <- 1000 * independent_delayed_probability
+  independent_rescue_probability <- independent_failure * (
+    1 - independent_repeat_attempt_fraction * independent_repeat_attempt_success_probability
+  )
 
   pipeline_outcomes <- compute_strategy_clinical_outcomes(scenario_parameters)
-  pipeline_delayed_per_1000 <- pipeline_outcomes$neoplasia_delayed_per_1000[
+  pipeline_rescue_probability <- pipeline_outcomes$rescue_dnc_probability[
     pipeline_outcomes$strategy == "office_emb"
   ]
 
-  expect_equal(independent_delayed_per_1000, pipeline_delayed_per_1000, tolerance = 1e-9)
+  expect_equal(independent_rescue_probability, pipeline_rescue_probability, tolerance = 1e-9)
 
-  # The actual finding, re-derived independently: under this sensitivity
-  # scenario, office EMB's delayed-neoplasia risk is strictly positive.
+  # The actual finding, re-derived independently: the repeat-attempt
+  # structure strictly reduces D&C-rescue probability below raw failure
+  # probability, whenever the repeat pathway has any nonzero reach.
   expect_true(
-    independent_delayed_per_1000 > 0,
+    independent_rescue_probability < independent_failure,
     label = sprintf(
-      "Independently-derived office EMB delayed-neoplasia rate (%.3f per 1,000) is positive under a 70%% escalation-fraction scenario",
-      independent_delayed_per_1000
+      "Independently-derived office EMB rescue probability (%.4f) is below raw failure probability (%.4f)",
+      independent_rescue_probability, independent_failure
     )
   )
 })

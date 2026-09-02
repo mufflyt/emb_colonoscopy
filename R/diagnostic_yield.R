@@ -42,12 +42,27 @@
 #' **Escalation consistency, by design:** both functions reuse the exact
 #' same escalation parameters already wired into
 #' `compute_office_emb_strategy_cost()` and `compute_combined_emb_strategy_cost()`
-#' (`emb_failure_lynch`, `office_to_dnc_escalation_fraction`,
-#' `combined_to_dnc_probability`), rather than introducing a second,
-#' differently-sourced escalation probability. Using two different
-#' escalation numbers for cost and for clinical outcomes in the same
-#' strategy would be internally inconsistent and would let the two halves of
-#' the model quietly disagree about how often a failed sample is rescued.
+#' (`emb_failure_lynch`, `office_repeat_attempt_fraction`,
+#' `office_repeat_attempt_success_probability`, `combined_to_dnc_probability`),
+#' rather than introducing a second, differently-sourced escalation
+#' probability. Using two different escalation numbers for cost and for
+#' clinical outcomes in the same strategy would be internally inconsistent
+#' and would let the two halves of the model quietly disagree about how
+#' often a failed sample is rescued.
+#'
+#' **`office_unresolved_probability` is 0, by design, as of 2026-09-02.**
+#' Before that date, this was a nonzero PSA artifact of the old single-parameter
+#' `office_to_dnc_escalation_fraction` (a `triangular(0.5, 1, 1)` distribution
+#' whose PSA draws below 1.0 mechanically implied "not escalated, therefore
+#' unresolved," even though no source actually described a distinct
+#' unresolved/no-further-action pathway). The current two-parameter
+#' repeat-attempt structure is built directly from Yi et al. 2018's own
+#' decision tree, which has no such branch: a failed repeat Pipelle attempt
+#' always proceeds to D&C in their model ("the physician will then move to
+#' the D&C route"). `office_neoplasia_delayed_probability` is therefore 0 in
+#' every draw now, not just in the base case -- see
+#' `docs/methods_notes.md` and the manuscript's Discussion for how this
+#' changed the office-arm delayed-neoplasia finding.
 #' The newer, more granular `office_failed_emb_further_workup_fraction`
 #' parameter (Slaager et al. 2025) is intentionally NOT wired in here for
 #' the same reason -- it measures a different clinical pathway (further
@@ -82,10 +97,13 @@
 #' `docs/methods_notes.md`'s "Simplifying assumptions not yet relaxed"
 #' section.
 #'
-#' For the office arm:
-#'   P(rescue D&C)            = P(office failure) * P(D&C after failure)
-#'   P(unresolved failure)    = P(office failure) * (1 - P(D&C after failure))
-#'   P(neoplasia delayed)     = P(unresolved failure) * P(cancer/precancer | failed sample)
+#' For the office arm, as of 2026-09-02 (see `office_repeat_attempt_fraction`/
+#' `office_repeat_attempt_success_probability` in `config/model_parameters.csv`
+#' and R/strategy_costs.R for the full derivation):
+#'   P(rescue D&C) = P(office failure) x [1 - P(repeat attempted) x P(repeat succeeds)]
+#'   P(unresolved failure) = 0 (Yi et al. 2018's own decision tree has no
+#'     branch where a failed repeat attempt is simply left unresolved)
+#'   P(neoplasia delayed)  = P(unresolved failure) * P(cancer/precancer | failed sample) = 0
 #'
 #' The combined arm's `combined_to_dnc_probability` is used as-is (per
 #' `docs/methods_notes.md`'s explicit note that it is a directly-observed
@@ -116,17 +134,22 @@
 compute_strategy_clinical_outcomes <- function(model_parameters) {
   base::message("Computing strategy clinical outcomes.")
 
-  # emb_failure_lynch, office_to_dnc_escalation_fraction: same parameters
+  # emb_failure_lynch, office_repeat_attempt_fraction,
+  # office_repeat_attempt_success_probability: same parameters
   # compute_office_emb_strategy_cost() uses -- see R/strategy_costs.R for
-  # full citations (Elmasry/Lecuru/Woolderink; Nebgen 2014's protocol
-  # quote and Yi et al. 2018's Table 1 estimate). Reused verbatim here
-  # rather than re-derived, per this file's escalation-consistency design.
+  # full citations (Elmasry/Lecuru/Woolderink; Yi et al. 2018's decision
+  # tree; Adambekov et al. 2017's repeat-attempt success subgroup). Reused
+  # verbatim here rather than re-derived, per this file's
+  # escalation-consistency design.
   office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
-  office_escalation_fraction <- get_parameter_value(
-    model_parameters, "office_to_dnc_escalation_fraction"
+  office_repeat_attempt_fraction <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_fraction"
   )
-  office_rescue_probability <- office_failure_probability * office_escalation_fraction
-  office_unresolved_probability <- office_failure_probability * (1 - office_escalation_fraction)
+  office_repeat_attempt_success_probability <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_success_probability"
+  )
+  office_rescue_probability <- office_failure_probability *
+    (1 - office_repeat_attempt_fraction * office_repeat_attempt_success_probability)
 
   # cancer_or_precancer_after_failed_sample: 7% -- a general (non-Lynch)
   # postmenopausal-bleeding meta-analysis (PubMed 26748390), the same
@@ -134,10 +157,16 @@ compute_strategy_clinical_outcomes <- function(model_parameters) {
   # config/model_parameters.csv. Indirect evidence: not Lynch-specific,
   # and no verbatim sentence from this source has been directly re-verified
   # in this repository's current session (see config/model_parameters.csv's
-  # own row for the full citation trail).
+  # own row for the full citation trail). Retained here even though it is
+  # currently multiplied against a probability that is always 0 (see the
+  # file-level docblock's "office_unresolved_probability is 0, by design"
+  # note) -- kept wired rather than deleted so a future, better-sourced
+  # unresolved-pathway parameter can be dropped in without restructuring
+  # this function again.
   neoplasia_after_failed_sample <- get_parameter_value(
     model_parameters, "cancer_or_precancer_after_failed_sample"
   )
+  office_unresolved_probability <- 0
   office_neoplasia_delayed_probability <-
     office_unresolved_probability * neoplasia_after_failed_sample
 
@@ -193,11 +222,12 @@ compute_strategy_clinical_outcomes <- function(model_parameters) {
 #' is present
 #'
 #' Models each strategy as: initial sampling attempt (applying that
-#' strategy's own sensitivity), or -- on failure/escalation -- a D&C rescue
-#' attempt (applying D&C's sensitivity). A residual branch where a failed
-#' office EMB does NOT escalate to D&C contributes zero detection
-#' probability, matching `compute_office_emb_strategy_cost()`'s own
-#' escalation-cost logic.
+#' strategy's own sensitivity), or -- on failure -- either a successful
+#' repeat office attempt (office EMB only, applying office sensitivity again)
+#' or a D&C rescue attempt (applying D&C's sensitivity), matching
+#' `compute_office_emb_strategy_cost()`'s own branching logic exactly. There
+#' is no residual "unresolved, no attempt applies" branch as of 2026-09-02 --
+#' see the file-level docblock's note on why.
 #'
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @param disease Character scalar, `"cancer"` or `"precancer"` -- selects
@@ -239,13 +269,23 @@ compute_diagnostic_yield <- function(
     model_parameters, base::paste0("dnc_", disease, "_sensitivity")
   )
 
-  # emb_failure_lynch, office_to_dnc_escalation_fraction,
-  # combined_to_dnc_probability: see R/strategy_costs.R for full citations.
+  # emb_failure_lynch, office_repeat_attempt_fraction,
+  # office_repeat_attempt_success_probability, combined_to_dnc_probability:
+  # see R/strategy_costs.R for full citations.
   office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
-  office_escalation_fraction <- get_parameter_value(
-    model_parameters, "office_to_dnc_escalation_fraction"
+  office_repeat_attempt_fraction <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_fraction"
   )
-  office_escalation_probability <- office_failure_probability * office_escalation_fraction
+  office_repeat_attempt_success_probability <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_success_probability"
+  )
+  # A successful repeat Pipelle attempt is still a Pipelle-type sample, so
+  # it is detected at office_sensitivity, not dnc_sensitivity -- this branch
+  # did not exist before 2026-09-02's repeat-attempt structure.
+  office_repeat_success_probability <- office_failure_probability *
+    office_repeat_attempt_fraction * office_repeat_attempt_success_probability
+  office_escalation_probability <- office_failure_probability *
+    (1 - office_repeat_attempt_fraction * office_repeat_attempt_success_probability)
 
   combined_escalation_probability <- get_parameter_value(
     model_parameters, "combined_to_dnc_probability"
@@ -253,6 +293,7 @@ compute_diagnostic_yield <- function(
 
   office_detection_probability <-
     (1 - office_failure_probability) * office_sensitivity +
+    office_repeat_success_probability * office_sensitivity +
     office_escalation_probability * dnc_sensitivity
 
   combined_detection_probability <-

@@ -55,10 +55,25 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
     get_parameter_value(model_parameters, "office_visit_em_cost") +
     get_parameter_value(model_parameters, "emb_office_professional_cost") +
     get_parameter_value(model_parameters, "emb_pathology_cost")
-  independent_office_escalation_probability <-
-    get_parameter_value(model_parameters, "emb_failure_lynch") *
-    get_parameter_value(model_parameters, "office_to_dnc_escalation_fraction")
+  # office_repeat_attempt_fraction / office_repeat_attempt_success_probability
+  # superseded office_to_dnc_escalation_fraction 2026-09-02 -- see
+  # R/strategy_costs.R for the full derivation and citations.
+  independent_office_failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
+  independent_office_repeat_attempt_fraction <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_fraction"
+  )
+  independent_office_repeat_attempt_success_probability <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_success_probability"
+  )
+  independent_office_repeat_attempt_probability <-
+    independent_office_failure_probability * independent_office_repeat_attempt_fraction
+  independent_office_repeat_visit_cost <-
+    independent_office_repeat_attempt_probability * independent_office_initial_cost
+  independent_office_escalation_probability <- independent_office_failure_probability * (
+    1 - independent_office_repeat_attempt_fraction * independent_office_repeat_attempt_success_probability
+  )
   independent_office_cost <- independent_office_initial_cost +
+    independent_office_repeat_visit_cost +
     independent_office_escalation_probability * independent_dnc_cost_at_zero_fee
 
   # -- combined EMB expected cost, summed directly from raw parameters,

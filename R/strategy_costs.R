@@ -166,7 +166,8 @@ compute_dnc_strategy_cost <- function(
 #' @param dnc_expected_cost Numeric scalar. Expected D&C cost, used as the
 #'   rescue-procedure cost for failed office EMB attempts.
 #' @return A list with `components`, `escalation_probability`,
-#'   `escalation_cost`, `initial_cost`, and `expected_total_cost`.
+#'   `escalation_cost`, `repeat_attempt_probability`, `repeat_visit_cost`,
+#'   `initial_cost`, and `expected_total_cost`.
 compute_office_emb_strategy_cost <- function(
   model_parameters,
   dnc_expected_cost,
@@ -202,25 +203,44 @@ compute_office_emb_strategy_cost <- function(
   # breakdown -- these are table-derived counts, not a single quotable
   # narrative sentence in any of the three papers.
   failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
-  # office_to_dnc_escalation_fraction: PROVISIONAL, no direct study of the
-  # standalone office population found. Grounded by two adjacent citations
-  # (see config/model_parameters.csv): Nebgen et al. 2014 (PMC4389779), a
-  # different (combined-arm) population, states its protocol verbatim: "If
-  # cervical stenosis or insufficient endometrial tissue was encountered,
-  # hysteroscopy and dilation and curettage were scheduled" -- i.e. no
-  # repeat-office step. Yi et al. 2018 (Gynecol Oncol 150:112-118, PubMed
-  # 29747864), Table 1, reports: "P (moving to D&C if 1st attempted Pipelle
-  # failed) = 0.95 (range 0.94-1)" for a general (non-Lynch) population.
-  escalation_fraction <- get_parameter_value(
-    model_parameters, "office_to_dnc_escalation_fraction"
+
+  # office_repeat_attempt_fraction / office_repeat_attempt_success_probability:
+  # reproduce Yi et al. 2018's (Gynecol Oncol 150:112-118, PMID 29747864)
+  # actual decision-tree structure for a failed Pipelle attempt, in place of
+  # the single-parameter "escalation fraction" this repository used before
+  # 2026-09-02 (office_to_dnc_escalation_fraction, now superseded -- see
+  # config/model_parameters.csv). Yi's tree: on failure, the physician either
+  # moves directly to D&C (95%, office_repeat_attempt_fraction's complement)
+  # or attempts a second Pipelle (5%); a second Pipelle attempt succeeds 25%
+  # of the time (Adambekov et al. 2017, PMID 27913154, Table 1: 2/8 patients
+  # with a documented history of prior biopsy failure succeeded on the
+  # attempt studied) or, per Yi's own text, "the physician will then move to
+  # the D&C route" -- i.e. Yi's tree has NO branch where a failure is simply
+  # left unresolved. This repository's clinical-outcome function
+  # (compute_strategy_clinical_outcomes(), R/diagnostic_yield.R) mirrors that:
+  # office_unresolved_probability is 0 under this structure, not a residual
+  # PSA artifact of a single escalation-fraction parameter.
+  repeat_attempt_fraction <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_fraction"
   )
-  escalation_probability <- failure_probability * escalation_fraction
+  repeat_attempt_success_probability <- get_parameter_value(
+    model_parameters, "office_repeat_attempt_success_probability"
+  )
+
+  repeat_attempt_probability <- failure_probability * repeat_attempt_fraction
+  repeat_visit_cost <- repeat_attempt_probability * initial_cost
+
+  # P(escalates to D&C) = P(no repeat attempted) + P(repeat attempted AND fails)
+  #                      = failure_probability * (1 - repeat_attempt_fraction * repeat_attempt_success_probability)
+  escalation_probability <- failure_probability *
+    (1 - repeat_attempt_fraction * repeat_attempt_success_probability)
   escalation_cost <- escalation_probability * dnc_expected_cost
 
-  expected_total_cost <- initial_cost + escalation_cost
+  expected_total_cost <- initial_cost + repeat_visit_cost + escalation_cost
 
   base::message(
     "  Office EMB initial cost: $", base::round(initial_cost, 2),
+    "; repeat-attempt probability: ", base::round(repeat_attempt_probability, 4),
     "; escalation probability: ", base::round(escalation_probability, 4),
     "; expected total: $", base::round(expected_total_cost, 2)
   )
@@ -229,6 +249,8 @@ compute_office_emb_strategy_cost <- function(
     components = components,
     escalation_probability = escalation_probability,
     escalation_cost = escalation_cost,
+    repeat_attempt_probability = repeat_attempt_probability,
+    repeat_visit_cost = repeat_visit_cost,
     initial_cost = initial_cost,
     expected_total_cost = expected_total_cost
   )

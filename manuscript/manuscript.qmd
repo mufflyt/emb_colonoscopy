@@ -84,16 +84,16 @@ analyses testing the model's assumption of equivalent diagnostic
 effectiveness across strategies.
 
 **Results:** In the base case, combined biopsy cost an estimated $506.11 per
-patient, compared with $766.62 for standalone office biopsy and $3,839.81
-for operative D&C. Combined biopsy was $260.51 (34.0%) less expensive than
-standalone office biopsy and was cost-saving in 81.4% of probabilistic
+patient, compared with $761.94 for standalone office biopsy and $3,839.81
+for operative D&C. Combined biopsy was $255.83 (33.6%) less expensive than
+standalone office biopsy and was cost-saving in 90.5% of probabilistic
 sensitivity analysis draws. Combined biopsy remained the least expensive
 strategy across all four geographic localities tested, with its advantage
-over standalone office biopsy widening from $211.24 in a low-cost locality
-to $354.61 in a high-cost locality. Clinical-outcome sensitivity analysis
+over standalone office biopsy widening from $207.12 in a low-cost locality
+to $348.75 in a high-cost locality. Clinical-outcome sensitivity analysis
 found combined biopsy carried substantially lower exposure to
-D&C-rescue-driven adverse events than standalone office biopsy (mean 0.36
-vs 2.15 events per 1,000 patients).
+D&C-rescue-driven adverse events than standalone office biopsy (mean 0.35
+vs 2.51 events per 1,000 patients).
 
 **Conclusion:** [DRAFT -- directly supported by data, no "further research
 needed" language, per journal requirement] Endometrial biopsy performed
@@ -208,12 +208,19 @@ incremental to the already-planned colonoscopy were included.
 Clinical probabilities were drawn preferentially from Lynch-syndrome-specific
 literature. The office biopsy failure probability was pooled from three
 studies confirmed genuinely specific to the Pipelle device by direct
-full-text verification (22 of 166 attempts, 13.3%).^1-3^ The combined-arm
-probability of escalation to D&C was the directly observed rate from a
-10.5-year, 111-visit combined-screening cohort (2 of 111 visits, 1.8%).^4^
-The combined arm's incremental procedure time (median 5 minutes, range 1-12
-minutes) and incremental anesthesia requirement (no increase in dosing) were
-drawn from a prospective feasibility study of the combined procedure.^5^
+full-text verification (22 of 166 attempts, 13.3%).^1-3^ After a failed
+office attempt, we modeled two pathways rather than assuming universal
+escalation to D&C: a repeat office attempt, estimated to occur in 5% of
+failures based on a Pipelle decision-tree model's expert clinical
+estimate,^12^ succeeding 25% of the time based on that same general
+Pipelle-sampling population's own reported outcome among patients with a
+documented prior sampling failure,^15^ or direct escalation to D&C. The
+combined-arm probability of escalation to D&C was the directly observed rate
+from a 10.5-year, 111-visit combined-screening cohort (2 of 111 visits,
+1.8%).^4^ The combined arm's incremental procedure time (median 5 minutes,
+range 1-12 minutes) and incremental anesthesia requirement (no increase in
+dosing) were drawn from a prospective feasibility study of the combined
+procedure.^5^
 
 We conducted five complementary sensitivity analyses. First, deterministic
 one-way sensitivity analysis varied each of ten parameters individually
@@ -254,15 +261,18 @@ composite of uterine perforation, cervical false passage, and severe
 hemorrhage, pooled from a cohort of 5,359 nonobstetric D&Cs)^9^ as a
 function of that strategy's probability of ultimately requiring D&C, either
 as the primary procedure or as a rescue procedure after a failed sampling
-attempt. Second, for the office-biopsy arm, we estimated the probability of
-a failed sampling attempt that is not rescued to D&C, combined with the
+attempt. Second, we estimated each arm's probability of a failed sampling
+attempt going undiagnosed for cancer or precancer, combined with the
 probability of cancer or precancer among women with a failed or insufficient
 sample, drawn from a general (non-Lynch) postmenopausal-bleeding
-meta-analysis.^10^ We were unable to construct a symmetric estimate for the
-combined-biopsy arm, because the available combined-screening literature
-reports a directly observed escalation-to-D&C probability but does not
-separately report the fraction of combined-biopsy failures, if any, that go
-unresolved without follow-up sampling; this limitation is addressed in the
+meta-analysis.^10^ Under the repeat-attempt-or-D&C structure described
+above, the office arm's failed attempts are accounted for entirely by
+either a successful repeat or escalation to D&C, leaving no probability
+mass for a sample that is neither adequately resampled nor escalated; the
+combined arm's directly observed escalation rate similarly accounts for
+essentially all combined-biopsy failures. Neither arm therefore retained an
+estimable undiagnosed-failure probability under current evidence; this null
+result, and what it does and does not imply, is addressed in the
 Discussion.
 
 The geographic sensitivity analysis characterizes setting-level
@@ -296,48 +306,50 @@ checklist is provided as Supplemental Digital Content.
 ## Results
 
 In the base case, combined biopsy cost an estimated $506.11 per patient,
-compared with $766.62 for standalone office biopsy and $3,839.81 for
-operative D&C. Combined biopsy was $260.51 (34.0%) less expensive than
+compared with $761.94 for standalone office biopsy and $3,839.81 for
+operative D&C. Combined biopsy was $255.83 (33.6%) less expensive than
 office biopsy, and both office-based strategies were substantially less
 expensive than D&C, which was more costly than both alternatives at every
 facility fee tested, including a facility fee of $0.
 
 The combined-vs-office cost difference was most sensitive to the office
-biopsy failure probability (range -$145.32 to -$517.78 across its 10.3%-20.0%
-bound) and the combined arm's incremental procedure time (range -$394.25 to
--$26.46 across its observed 1-12 minute range). At the upper end of the
+biopsy failure probability (range -$141.69 to -$510.74 across its 10.3%-20.0%
+bound) and the combined arm's incremental procedure time (range -$389.57 to
+-$21.78 across its observed 1-12 minute range). At the upper end of the
 observed time range, the combined arm's advantage over office biopsy
-narrowed to $26.46 but did not reverse.
+narrowed to $21.78 but did not reverse.
 
 Across 1,000 probabilistic-sensitivity draws, combined biopsy had a mean
-cost of $540.65 (SD $115.56) and office biopsy a mean cost of $683.44 (SD
-$116.94). Combined biopsy was the least expensive strategy in 81.4% of
+cost of $541.57 (SD $116.63) and office biopsy a mean cost of $759.34 (SD
+$117.35). Combined biopsy was the least expensive strategy in 90.5% of
 draws; D&C was never the least expensive strategy in any draw. Combined
 biopsy remained the least expensive strategy as long as the incremental
-colonoscopy-suite time stayed below approximately 12.8 minutes and as long
-as the office biopsy failure probability stayed above approximately 6.5%.
+colonoscopy-suite time stayed below approximately 12.7 minutes and as long
+as the office biopsy failure probability stayed above approximately 6.6%.
 At illustrative cohort sizes of 10 to 1,000 patients screened annually,
 adopting combined biopsy over standalone office biopsy was projected to
-save $2,605 to $260,511 per year.
+save $2,558 to $255,829 per year.
 
 Combined biopsy remained the least expensive strategy in all four localities
-tested. Its advantage over office biopsy ranged from $211.24 per patient in
-the low-cost locality to $275.79 in the mid-cost locality to $354.61 per
+tested. Its advantage over office biopsy ranged from $207.12 per patient in
+the low-cost locality to $270.95 in the mid-cost locality to $348.75 per
 patient in the high-cost locality -- that is, the combined-arm cost
 advantage widened, rather than narrowed or reversed, at the high-cost
 extreme.
 
 D&C-rescue-driven major-adverse-event exposure was substantially lower for
-combined biopsy (mean 0.36 events per 1,000 patients) than for office
-biopsy (mean 2.15 per 1,000), reflecting the combined arm's lower
+combined biopsy (mean 0.35 events per 1,000 patients) than for office
+biopsy (mean 2.51 per 1,000), reflecting the combined arm's lower
 probability of ultimately requiring D&C. D&C itself carried a mean
-adverse-event exposure of 19.18 per 1,000. The office-biopsy arm's estimated
-delayed-neoplasia risk (a failed sample not rescued to D&C that represents
-cancer or precancer) had a mean of 1.55 per 1,000 patients. The
-combined-biopsy arm's estimated delayed-neoplasia risk was 0.00 in all 1,000
-draws by construction, not because the underlying risk is known to be zero
-(see Discussion); we therefore report this as an exploratory,
-office-arm-specific finding rather than a head-to-head comparison.
+adverse-event exposure of 19.18 per 1,000. Neither arm retained an
+estimable delayed-neoplasia risk (a failed sample that is neither
+adequately resampled nor rescued to D&C, and that represents cancer or
+precancer): both the office-biopsy arm's repeat-attempt-or-D&C pathway and
+the combined-biopsy arm's directly observed escalation rate accounted for
+essentially all failed samples across all 1,000 draws, leaving 0.00
+delayed-neoplasia probability for both strategies. This is a null result
+under current evidence, not a finding that either strategy's true risk is
+zero (see Discussion).
 
 ## Discussion
 
@@ -364,30 +376,32 @@ gastroenterology and gynecology scheduling can be coordinated.
 
 This model's principal limitation is that its cost-minimization design
 formally assumes equivalent diagnostic effectiveness across strategies, and
-our attempt to test that assumption directly was only partly successful.
-For standalone office biopsy, we could estimate a delayed-neoplasia risk
-because the literature reports both a failure probability and a plausible
-range for what fraction of failures are rescued to D&C. For combined
-biopsy, the available literature reports only a directly observed
-escalation-to-D&C probability; it does not separately report the fraction
-of combined-biopsy failures, if any, that go unresolved without any
-follow-up sampling. Our model therefore could not estimate a
-combined-biopsy delayed-neoplasia risk at all, rather than estimating one
-and finding it to be low -- an absence of evidence, not evidence of
-absence, that we deliberately did not paper over by assuming a value. What
-would resolve this is a straightforward addition to existing or future
-combined-screening cohort studies: reporting, in addition to the rate of
-escalation to D&C, the total number of combined-biopsy attempts, the number
-yielding an insufficient specimen, and the pathway (repeat sampling, D&C,
-or no further sampling) each of those patients received.
+our attempt to test that assumption directly did not detect a difference to
+report. Both arms' failure-resolution pathways -- the office arm's
+repeat-attempt-or-D&C structure and the combined arm's directly observed
+escalation rate -- are built from literature that accounts for essentially
+all failed attempts, leaving no probability mass for a sample that is
+neither adequately resampled nor escalated to D&C. This is a genuine
+absence of evidence for a differential risk between strategies, not
+evidence that their true risks are equal: none of the underlying studies --
+a Pipelle decision-tree model's own repeat-attempt estimates, the general
+(non-Lynch) Pipelle-failure literature they draw a repeat-success rate
+from, or the combined-screening cohort -- was designed to detect or report
+a distinct unresolved-failure outcome, so a real difference between
+strategies could exist without being visible to this analysis. What would
+resolve this is a study, in either population, that follows sampling
+failures forward far enough to confirm whether every patient with a failed
+attempt eventually received either an adequate repeat sample or D&C, rather
+than assuming or inferring it from aggregate escalation rates.
 
-Other limitations warrant explicit statement. The fraction of failed
-standalone office biopsies that escalate to D&C, rather than a repeat
-office attempt, was fixed at 100% in the base case; this is a conservative
-assumption grounded in an analogous combined-screening protocol and a
-non-Lynch decision-tree model's expert estimate, not a direct measurement
-in the standalone-office population, and its effect was therefore tested in
-sensitivity analysis rather than treated as fixed. Operative D&C's own risk
+Other limitations warrant explicit statement. The office arm's
+repeat-attempt structure rests on a small, non-Lynch evidence base: the 5%
+repeat-attempt probability is an expert clinical estimate from a Pipelle
+decision-tree model, not a direct measurement, and the 25% repeat-attempt
+success probability comes from a subgroup of only 8 patients in a single
+U.S. health system's Pipelle-failure cohort. Both parameters' effects were
+tested in sensitivity analysis rather than treated as fixed, but neither is
+a direct measurement in a Lynch surveillance population. Operative D&C's own risk
 of an inadequate specimen was not modeled, so its cost is likely a
 conservative (lower-bound) estimate relative to a strategy that sometimes
 requires its own repeat procedure. The base-case D&C cost partially
@@ -447,13 +461,25 @@ Med Sci paper by an overlapping author subset that Hefler et al. 2009
 (reference 9) itself cites in its own reference list -- the two are easy to
 conflate; confirmed as distinct papers directly on PubMed.
 
-KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01, not yet fixed):
+Reference 15 (Adambekov, Goughnour, Mansuria, Donnellan, Elishaev,
+Villanueva, Edwards, Bovbjerg, Linkov, Gynecol Oncol 2017;144:324-328,
+PMID 27913154) added 2026-09-02, when the office arm's repeat-attempt
+structure was wired in. Table 1's "history of prior biopsy failure" row
+(2/8 = 25.0% success) is the source of the repeat-attempt success
+probability; independently confirmed as the exact same subgroup Yi et al.
+2018 (reference 12) cites for the identical purpose in their own methods
+text, not merely a similar number from a different source.
+
+KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01/02, not yet fixed):
 reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
-paragraph before references 1-5 first appear later in the same section, so
-citation numbering is not strictly in first-appearance order throughout.
-Flagged rather than silently fixed or silently left unmentioned -- a full
-renumbering pass touches every in-text marker and was out of scope for this
-change; do before submission. -->
+paragraph before references 1-5 first appear later in the same section, and
+references 12 and 15 (Yi et al. 2018; Adambekov et al. 2017) are now cited
+in the "Clinical probabilities" paragraph before their validation-paragraph/
+first-numbered appearance later in Methods -- citation numbering is not
+strictly in first-appearance order throughout. Flagged rather than silently
+fixed or silently left unmentioned -- a full renumbering pass touches every
+in-text marker and was out of scope for these changes; do before
+submission. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -502,6 +528,10 @@ change; do before submission. -->
     2022;29:535-548.
 14. Ben-Baruch G, Menczer J, Frenkel Y, Serr DM. Laparoscopy in the
     management of uterine perforation. J Reprod Med 1982;27:73-76.
+15. Adambekov S, Goughnour SL, Mansuria S, Donnellan N, Elishaev E,
+    Villanueva HJ, Edwards RP, Bovbjerg DH, Linkov F. Patient and provider
+    factors associated with endometrial Pipelle sampling failure. Gynecol
+    Oncol 2017;144:324-328.
 
 <!-- ACOG Committee Opinion 800, Sakna/Nabhan 2023, and Namazov 2017 support
 the secondary (Pipelle-vs-D&C sensitivity/specificity) analysis, which is

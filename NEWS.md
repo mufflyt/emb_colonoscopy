@@ -3,6 +3,34 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (a real repeat-attempt pathway, and it quietly closed a finding that shouldn't have been open)
+
+Built the repeat-office-biopsy pathway from yesterday's research: after a failed office attempt, 5% of
+patients get a repeat Pipelle (an expert estimate from a published decision-tree model), and that
+repeat succeeds 25% of the time -- a number that traces to just 8 patients in a single hospital
+system's data, the smallest sample this project has built anything on, and the CI reflects it (3% to
+65%). Both numbers replaced a single, much cruder assumption this model had used since the start: that
+100% of failures go straight to D&C, no exceptions.
+
+That change had a side effect worth stating plainly: it erases a finding the manuscript has been
+reporting for days -- that standalone office biopsy carries a real, nonzero risk of a cancer diagnosis
+being missed and delayed, while the combined strategy doesn't. That asymmetry turns out to have been
+an artifact of how the old assumption was built, not a real clinical difference. The decision-tree
+paper this repeat-attempt structure comes from is explicit that a failed second attempt always ends up
+at D&C either way -- no scenario where a sample is just left unresolved. Once that's how the office arm
+is modeled too, both arms land on exactly zero, for the same reason. That's not evidence either
+strategy is actually risk-free; it just means neither the office-repeat-attempt literature nor the
+combined-screening literature was built to measure this specific gap, so this model can't see it
+either. Said so directly in the manuscript rather than let a number quietly change without the reason
+attached.
+
+Smaller, real side effect: the repeat-attempt structure is much less generous to office EMB's cost in
+Monte Carlo runs than the assumption it replaced was, so office EMB's average simulated cost went up
+even though its point-estimate cost went down slightly. Both directions are correct; they're answering
+slightly different questions (what happens at the most likely parameter values, versus what happens
+averaged across the full range of uncertainty), and the old assumption's uncertainty range was wider
+than the evidence actually supported.
+
 ## 2026-09-01 (the adverse-event cost is live now -- for the third of perforations it can actually price)
 
 Followed up on this morning's evidence table by wiring the sourced part of it in. D&C's own cost now
