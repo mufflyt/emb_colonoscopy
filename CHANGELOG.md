@@ -5,6 +5,15 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (stated explicitly what NCCN does and doesn't specify)
+
+### Changed
+- `manuscript/manuscript.qmd`, Introduction: added "This guideline specifies timing and eligibility,
+  not delivery method." right after the NCCN citation, making explicit that NCCN governs *when* to
+  screen (interval, starting age) but takes no position on *how* to deliver the biopsy
+  (standalone office visit vs. combined with colonoscopy vs. operative D&C as a fallback) -- the
+  question this model exists to answer. Introduction now 241/250 words.
+
 ## 2026-09-02 (cited the current NCCN guideline in the Introduction)
 
 ### Added

@@ -131,7 +131,8 @@ endometrial cancer risk approaching that of colorectal cancer in affected
 women and, in some carriers, presenting before a colorectal cancer
 diagnosis. The National Comprehensive Cancer Network recommends
 gynecologic surveillance with endometrial biopsy every 1-2 years beginning
-at age 30-35, alongside interval colonoscopy.^16^ Office endometrial biopsy
+at age 30-35, alongside interval colonoscopy.^16^ This guideline specifies
+timing and eligibility, not delivery method. Office endometrial biopsy
 is the standard sampling method but is frequently painful, requires a
 dedicated clinic visit distinct from the surveillance colonoscopy, and can
 fail to obtain an adequate specimen.
