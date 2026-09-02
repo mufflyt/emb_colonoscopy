@@ -5,6 +5,22 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (cited the current NCCN guideline in the Introduction)
+
+### Added
+- `manuscript/manuscript.qmd`: reference 16, National Comprehensive Cancer Network's *Genetic/Familial
+  High-Risk Assessment: Colorectal, Endometrial, Esophageal, and Gastric Cancer* guideline, Version
+  1.2026 (released June 16, 2026). Resolves a DRAFT comment flagged since the Introduction was first
+  drafted ("cite current NCCN guideline version/year explicitly once confirmed"). The Introduction's
+  surveillance sentence now states the specific recommendation (endometrial biopsy every 1-2 years
+  beginning at age 30-35, alongside interval colonoscopy) rather than the vaguer "regular intervals
+  beginning in the third or fourth decade of life." Verified via a genetic-counseling organization's
+  professional summary of the guideline update and cross-checked against a January 2026 peer-reviewed
+  review's independent description of the same Lynch-derived surveillance interval -- explicitly NOT a
+  direct read of the primary NCCN PDF, which is gated behind a free-account login this session did not
+  create; flagged in-file for a direct primary-source check before submission if institutional NCCN
+  access is available.
+
 ## 2026-09-02 (office arm's escalation fraction replaced with a real repeat-attempt structure)
 
 ### Added

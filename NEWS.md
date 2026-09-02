@@ -3,6 +3,17 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (the NCCN citation the Introduction had been waiting on)
+
+Closed out a loose end that had been sitting in the manuscript as a draft comment since the
+Introduction was first written: which NCCN guideline, and which version, actually backs the claim
+that Lynch syndrome patients get periodic endometrial biopsy surveillance. It's the current
+Genetic/Familial High-Risk Assessment guideline, Version 1.2026 (June 2026), and the specific
+recommendation is biopsy every 1-2 years starting at age 30-35 -- confirmed through a professional
+summary and a recent independent review rather than the primary PDF itself, which sits behind a login
+this session didn't create. Worth a direct check against the primary document before submission if
+there's institutional access to it.
+
 ## 2026-09-02 (a real repeat-attempt pathway, and it quietly closed a finding that shouldn't have been open)
 
 Built the repeat-office-biopsy pathway from yesterday's research: after a failed office attempt, 5% of

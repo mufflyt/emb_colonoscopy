@@ -112,8 +112,14 @@ verification needed on this point before submission. -->
 ## Introduction
 
 <!-- DRAFT -- clinical/policy framing below is a reasonable first pass, not
-confirmed by the author. In particular: cite current NCCN guideline version/
-year explicitly once confirmed, and confirm whether this practice performs
+confirmed by the author. NCCN guideline version/year now cited (reference
+16, Version 1.2026, released June 16, 2026) -- verified via a genetic
+counseling organization's professional summary and cross-checked against a
+January 2026 peer-reviewed review's description of the same
+Lynch-derived surveillance interval, NOT a direct read of the primary NCCN
+PDF (gated behind a free-account login this session did not create); worth
+a direct primary-source check before submission if institutional NCCN
+access is available. Still open: confirm whether this practice performs
 combined screening routinely (informs how the "gap this model fills"
 paragraph is framed -- as motivating adoption vs. justifying an existing
 practice). -->
@@ -123,9 +129,9 @@ variants in the DNA mismatch repair genes that confers a substantially
 elevated lifetime risk of colorectal and endometrial cancer, with
 endometrial cancer risk approaching that of colorectal cancer in affected
 women and, in some carriers, presenting before a colorectal cancer
-diagnosis. Consensus guidelines recommend gynecologic surveillance with
-endometrial biopsy at regular intervals beginning in the third or fourth
-decade of life, alongside interval colonoscopy. Office endometrial biopsy
+diagnosis. The National Comprehensive Cancer Network recommends
+gynecologic surveillance with endometrial biopsy every 1-2 years beginning
+at age 30-35, alongside interval colonoscopy.^16^ Office endometrial biopsy
 is the standard sampling method but is frequently painful, requires a
 dedicated clinic visit distinct from the surveillance colonoscopy, and can
 fail to obtain an adequate specimen.
@@ -472,14 +478,15 @@ text, not merely a similar number from a different source.
 
 KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01/02, not yet fixed):
 reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
-paragraph before references 1-5 first appear later in the same section, and
+paragraph before references 1-5 first appear later in the same section;
 references 12 and 15 (Yi et al. 2018; Adambekov et al. 2017) are now cited
 in the "Clinical probabilities" paragraph before their validation-paragraph/
-first-numbered appearance later in Methods -- citation numbering is not
-strictly in first-appearance order throughout. Flagged rather than silently
-fixed or silently left unmentioned -- a full renumbering pass touches every
-in-text marker and was out of scope for these changes; do before
-submission. -->
+first-numbered appearance later in Methods; and reference 16 (NCCN Version
+1.2026) is cited in the Introduction -- textually the very first citation
+in the document -- while numbered last. Citation numbering is not strictly
+in first-appearance order throughout. Flagged rather than silently fixed or
+silently left unmentioned -- a full renumbering pass touches every in-text
+marker and was out of scope for these changes; do before submission. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -532,6 +539,11 @@ submission. -->
     Villanueva HJ, Edwards RP, Bovbjerg DH, Linkov F. Patient and provider
     factors associated with endometrial Pipelle sampling failure. Gynecol
     Oncol 2017;144:324-328.
+16. National Comprehensive Cancer Network. NCCN Clinical Practice
+    Guidelines in Oncology: Genetic/Familial High-Risk Assessment:
+    Colorectal, Endometrial, Esophageal, and Gastric Cancer. Version
+    1.2026. Available at: https://www.nccn.org/guidelines. Accessed
+    September 2, 2026.
 
 <!-- ACOG Committee Opinion 800, Sakna/Nabhan 2023, and Namazov 2017 support
 the secondary (Pipelle-vs-D&C sensitivity/specificity) analysis, which is
