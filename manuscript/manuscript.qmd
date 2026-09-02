@@ -122,7 +122,39 @@ a direct primary-source check before submission if institutional NCCN
 access is available. Still open: confirm whether this practice performs
 combined screening routinely (informs how the "gap this model fills"
 paragraph is framed -- as motivating adoption vs. justifying an existing
-practice). -->
+practice).
+
+"(NCCN category 2A)" added 2026-09-02, sourced differently and more
+directly than the rest of this citation: fetched the actual NCCN
+Genetic/Familial High-Risk Assessment: Colorectal PDF text (not a
+secondary summary) for two official mirrors that are not login-gated --
+Version 3.2017 (tri-kobe.org) and Version 1.2024 (henryford.com, printed
+09/11/2024) -- both confirmed directly via `pdftotext`. Both versions
+carry the endometrial-biopsy-surveillance bullet ("Screening via
+endometrial biopsy every 1-2 y starting at age 30-35 y can be considered")
+with no category-override marker, immediately under each page's own
+footer note "All recommendations are category 2A unless otherwise
+indicated" -- i.e., the recommendation is category 2A by NCCN's own
+stated default, confirmed by direct primary text in both versions. NOT
+directly confirmed in the specific version cited elsewhere in this
+manuscript (Version 1.2026): the current version's PDF remains
+login-gated and no non-login mirror of it could be located this session.
+The recommendation's wording is verbatim-identical (down to the "may be
+considered" hedge and the TVUS paragraph that follows it) across all three
+versions spanning 2017-2024, which is why category 2A is asserted here
+rather than flagged as unverified -- but this is an inference from
+version-to-version stability, not a direct read of 1.2026 itself. Direct
+primary-source PDFs saved this session:
+`nccn_colorectal_v3.2017.txt`/`nccn_colorectal_v1.2024.txt` equivalents
+were extracted to scratch, not committed to the repo. Re-verify directly
+against Version 1.2026 before submission if institutional NCCN access
+becomes available. -->
+
+<!-- The two locally-fetched NCCN PDFs (Version 3.2017 via tri-kobe.org,
+Version 1.2024 via henryford.com) were saved only to this session's tool
+cache and /tmp scratch space, not to the repository, per this project's
+convention of not committing large fetched primary-source binaries. -->
+
 
 Lynch syndrome is an autosomal dominant condition caused by pathogenic
 variants in the DNA mismatch repair genes that confers a substantially
@@ -131,8 +163,9 @@ endometrial cancer risk approaching that of colorectal cancer in affected
 women and, in some carriers, presenting before a colorectal cancer
 diagnosis. The National Comprehensive Cancer Network recommends
 gynecologic surveillance with endometrial biopsy every 1-2 years beginning
-at age 30-35, alongside interval colonoscopy.^16^ This guideline specifies
-timing and eligibility, not delivery method. Office endometrial biopsy
+at age 30-35, alongside interval colonoscopy (NCCN category 2A).^16^ This
+guideline specifies timing and eligibility, not delivery method. Office
+endometrial biopsy
 is the standard sampling method but is frequently painful, requires a
 dedicated clinic visit distinct from the surveillance colonoscopy, and can
 fail to obtain an adequate specimen.

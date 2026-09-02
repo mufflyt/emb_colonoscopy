@@ -5,6 +5,26 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (added NCCN's evidence category for the endometrial biopsy recommendation, verified directly against primary-source PDF text)
+
+### Added
+- `manuscript/manuscript.qmd`, Introduction: added "(NCCN category 2A)" immediately after the
+  endometrial-biopsy surveillance recommendation. Verified more directly than the rest of the NCCN
+  citation: rather than relying on a secondary summary, fetched the actual NCCN Genetic/Familial
+  High-Risk Assessment: Colorectal guideline PDF text from two non-login-gated mirrors -- Version
+  3.2017 (tri-kobe.org) and Version 1.2024 (henryford.com) -- and confirmed via direct `pdftotext`
+  extraction that both versions' endometrial-biopsy-surveillance bullet carries no category-override
+  marker, sitting directly under each page's own footer note "All recommendations are category 2A
+  unless otherwise indicated." The recommendation's exact wording is unchanged across all three
+  versions spanning 2017-2024 (and matches the 2026 wording already confirmed via secondary sources),
+  which is why category 2A is asserted here rather than left unverified -- but this is inferred from
+  version-to-version stability, not a direct read of the specific Version 1.2026 already cited
+  elsewhere in the manuscript (whose PDF remains login-gated; no non-login mirror of that exact version
+  could be located). Full disclosure and the specific source URLs are in the Introduction's own DRAFT
+  comment. Introduction now 244/250 words. Neither fetched PDF was committed to the repository (fetched
+  to session tool cache / scratch only, per this project's convention against committing large fetched
+  primary-source binaries).
+
 ## 2026-09-02 (added NCCN's TVUS position to Methods; fixed a stale Adambekov citation the earlier Kandil swap had missed)
 
 ### Added

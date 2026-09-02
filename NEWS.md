@@ -3,6 +3,22 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (actually read the NCCN PDF this time, instead of a summary of it)
+
+Went back to strengthen the NCCN citation the Introduction leans on, and did it properly this time:
+instead of trusting a professional summary of what the guideline says, fetched the real guideline PDF
+text directly -- twice, from two different non-login-gated hospital/mirror copies (a 2017 edition and
+a 2024 edition) -- and read the actual page where the endometrial-biopsy recommendation lives. NCCN
+labels its recommendations by evidence strength, and by its own stated default, anything not
+specifically flagged otherwise is "category 2A." The biopsy recommendation isn't flagged otherwise in
+either copy, so it's 2A -- and now the Introduction says so.
+
+One honest caveat: the exact guideline edition already cited in the manuscript (the 2026 one) still
+isn't directly readable -- it's behind the same login wall as before. What's readable are the 2017 and
+2024 editions, and the recommendation's wording hasn't changed a word between them, which is why 2A is
+stated as fact rather than hedged. But that's an inference from years of stability, not a direct read
+of the 2026 text itself, and the manuscript says so plainly in its own margin notes.
+
 ## 2026-09-02 (why isn't ultrasound one of the strategies? plus a citation that slipped through)
 
 Added a sentence to the Methods answering a question a reviewer would likely ask: why doesn't this
