@@ -1,0 +1,7 @@
+strategy,disease,escalation_probability,detection_probability
+office_emb,cancer,0.1280125,0.787569325
+combined_emb,cancer,0.018,0.7759079999999999
+dnc,cancer,0,0.88
+office_emb,precancer,0.1280125,0.74768075
+combined_emb,precancer,0.018,0.74108
+dnc,precancer,0,0.8

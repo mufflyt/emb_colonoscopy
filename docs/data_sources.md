@@ -468,8 +468,14 @@ costless conservative assumption.
 
 ## Diagnostic-yield and clinical-outcome extension (2026-08-31)
 
-`R/diagnostic_yield.R` adds 15 new parameters, all `future_extension` category/strategy (not wired
-into `R/strategy_costs.R`), plus two `reference_only` adverse-event cost anchors. Every citation below
+`R/diagnostic_yield.R` adds 15 new parameters, originally all `future_extension` category/strategy
+(not wired into `R/strategy_costs.R`), plus two `reference_only` adverse-event cost anchors.
+**Updated 2026-09-02:** the four sensitivity parameters actually consumed by `compute_diagnostic_yield()`
+(`office_emb_cancer_sensitivity`, `dnc_cancer_sensitivity`, `office_emb_precancer_sensitivity`,
+`dnc_precancer_sensitivity`) were recategorized to `probability`/`office_emb` or `probability`/`dnc`
+once that function was actually wired into `analysis/13_diagnostic_yield.R` and reported in the
+manuscript; the remaining 11 parameters (including the two cancer-specificity companions, still never
+read by any function) remain `future_extension`. Every citation below
 was independently verified against the primary source directly (PubMed abstract, or full open-access
 text where available), not accepted from a secondary AI-generated literature summary a collaborator
 initially supplied -- that summary's "office EMB failure" figures (6/25, 12/116, 2/17, 5/25 -> 13.7%)

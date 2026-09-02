@@ -334,6 +334,15 @@ estimable undiagnosed-failure probability under current evidence; this null
 result, and what it does and does not imply, is addressed in the
 Discussion.
 
+As a separate, deterministic check on the same equivalent-effectiveness
+assumption, we also computed each strategy's overall probability of
+detecting a true cancer or endometrial hyperplasia, combining each arm's
+sampling-escalation probabilities with published Pipelle and D&C
+sensitivities from a general (non-Lynch) diagnostic-accuracy
+meta-analysis.^17^ This calculation is a point estimate only, not
+integrated into the probabilistic sensitivity analysis; see Discussion for
+its limitations.
+
 The geographic sensitivity analysis characterizes setting-level
 heterogeneity (how the base-case conclusion varies by practice location);
 it does not characterize patient-level heterogeneity, which was not
@@ -410,6 +419,15 @@ delayed-neoplasia probability for both strategies. This is a null result
 under current evidence, not a finding that either strategy's true risk is
 zero (see Discussion).
 
+The secondary detection-probability check found each strategy's overall
+probability of detecting a true cancer was 78.8% for office biopsy, 77.6%
+for combined biopsy, and 88.0% for D&C; for atypical endometrial
+hyperplasia, the corresponding probabilities were 74.8%, 74.1%, and 80.0%.
+D&C's point estimate was the highest of the three for both conditions, but
+its underlying sensitivity carries a very wide 95% confidence interval
+(28.1%-99.3%, from only 5 pooled studies), compared with 56.5%-90.0% for
+Pipelle; this ordering is therefore far from established (see Discussion).
+
 ## Discussion
 
 <!-- DRAFT -- clinical/policy framing is a reasonable first pass, not
@@ -434,24 +452,25 @@ biopsy -- a combination that should make it an attractive default where
 gastroenterology and gynecology scheduling can be coordinated.
 
 This model's principal limitation is that its cost-minimization design
-formally assumes equivalent diagnostic effectiveness across strategies, and
-our attempt to test that assumption directly did not detect a difference to
-report. Both arms' failure-resolution pathways -- the office arm's
-repeat-attempt-or-D&C structure and the combined arm's directly observed
-escalation rate -- are built from literature that accounts for essentially
+formally assumes equivalent diagnostic effectiveness across strategies. We
+tested that assumption two ways, with different results. First, whether a
+failed sample goes entirely undiagnosed: both arms' failure-resolution
+pathways -- the office arm's repeat-attempt-or-D&C structure and the
+combined arm's directly observed escalation rate -- account for essentially
 all failed attempts, leaving no probability mass for a sample that is
-neither adequately resampled nor escalated to D&C. This is a genuine
-absence of evidence for a differential risk between strategies, not
-evidence that their true risks are equal: none of the underlying studies --
-a Pipelle decision-tree model's own repeat-attempt estimates, the general
-(non-Lynch) Pipelle-failure literature they draw a repeat-success rate
-from, or the combined-screening cohort -- was designed to detect or report
-a distinct unresolved-failure outcome, so a real difference between
-strategies could exist without being visible to this analysis. What would
-resolve this is a study, in either population, that follows sampling
-failures forward far enough to confirm whether every patient with a failed
-attempt eventually received either an adequate repeat sample or D&C, rather
-than assuming or inferring it from aggregate escalation rates.
+neither resampled nor escalated to D&C. This is a genuine absence of
+evidence for a differential risk, not evidence the risks are equal: none of
+the underlying studies was designed to detect a distinct unresolved-failure
+outcome, so a real difference could exist without being visible here.
+Second, each strategy's overall detection probability for a true cancer or
+precancer, combining escalation probabilities with published (non-Lynch)
+Pipelle and D&C sensitivities, suggested D&C's point estimate exceeds
+office and combined biopsy's (see Results) -- but D&C's own sensitivity
+carries a 95% confidence interval spanning 28.1%-99.3%, so this difference
+is far from established. What would resolve either test is a study that
+follows sampling failures and their eventual diagnoses forward in a
+Lynch-specific population, rather than inferring effectiveness from
+general-population sensitivities or aggregate escalation rates.
 
 Other limitations warrant explicit statement. The office arm's
 repeat-attempt structure rests on a non-Lynch evidence base: the 5%
@@ -476,8 +495,8 @@ source described its management pathway without relying on a clinically
 unrelated economic model, which we avoided. The per-1,000 adverse-event
 and delayed-neoplasia exposures reported above remain unmonetized
 clinical counts, not cost inputs. Finally, several
-inputs -- the diagnostic sensitivity values used in a secondary analysis not
-reported in detail here, and the D&C and hysteroscopy adverse-event
+inputs -- the diagnostic sensitivity values underlying the detection-probability
+analysis above, and the D&C and hysteroscopy adverse-event
 probabilities -- are drawn from general, non-Lynch populations rather than
 from women undergoing Lynch syndrome surveillance specifically, because
 Lynch-specific data for these particular parameters were not identified in
@@ -537,6 +556,18 @@ was removed from the reference list rather than kept as an uncited entry;
 see `config/model_parameters.csv`'s own notes for the full replacement
 rationale and the reconstructed-CI caveat.
 
+Reference 17 (Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan
+AF, BMJ Open 2023;13(6):e072124, PMID 37355271) added 2026-09-02, when
+`compute_diagnostic_yield()` -- an existing, unit-tested function that had
+never previously been called by any analysis script or reported in the
+manuscript -- was wired into `analysis/13_diagnostic_yield.R` and reported
+as a supplementary Results paragraph. Verified directly against the PMC
+open-access full text (PMC10314649): sensitivity/specificity figures for
+Pipelle and conventional D&C match exactly what was already coded into
+`R/diagnostic_yield.R` (added in an earlier session), confirming that
+earlier code comment's "verified directly from the full text" claim
+independently rather than trusting it as-is.
+
 KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01/02, not yet fixed):
 reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
 paragraph before references 1-5 first appear later in the same section;
@@ -544,10 +575,11 @@ references 12 and 15 (Yi et al. 2018; Kandil et al. 2014) are now cited
 in the "Clinical probabilities" paragraph before their validation-paragraph/
 first-numbered appearance later in Methods; and reference 16 (NCCN Version
 1.2026) is cited in the Introduction -- textually the very first citation
-in the document -- while numbered last. Citation numbering is not strictly
-in first-appearance order throughout. Flagged rather than silently fixed or
-silently left unmentioned -- a full renumbering pass touches every in-text
-marker and was out of scope for these changes; do before submission. -->
+in the document -- while numbered second-to-last. Citation numbering is not
+strictly in first-appearance order throughout. Flagged rather than silently
+fixed or silently left unmentioned -- a full renumbering pass touches every
+in-text marker and was out of scope for these changes; do before
+submission. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -604,13 +636,19 @@ marker and was out of scope for these changes; do before submission. -->
     Colorectal, Endometrial, Esophageal, and Gastric Cancer. Version
     1.2026. Available at: https://www.nccn.org/guidelines. Accessed
     September 2, 2026.
+17. Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan AF.
+    Diagnostic accuracy of endometrial sampling tests for detecting
+    endometrial cancer: a systematic review and meta-analysis. BMJ Open
+    2023;13(6):e072124.
 
-<!-- ACOG Committee Opinion 800, Sakna/Nabhan 2023, and Namazov 2017 support
-the secondary (Pipelle-vs-D&C sensitivity/specificity) analysis, which is
-not described in the condensed Methods text above -- their full citations
-are already compiled in docs/data_sources.md and config/model_parameters.csv
-(Table 1) and can be added here as references 14-16 if that secondary
-analysis is added back into the main text. -->
+<!-- ACOG Committee Opinion 800 and Namazov et al. 2017 would support a
+D&C/hysteroscopy adverse-event or hysteroscopy-guided-D&C extension if one
+is added later (see hysteroscopy_diagnostic_complication_probability and
+hysteroscopy_failure_rate_lynch_range in config/model_parameters.csv, both
+still future_extension/unwired) -- NOT the detection-probability secondary
+analysis above, which uses only Sakna et al. 2023 (reference 17) and is
+now fully cited. Full ACOG/Namazov citations are already compiled in
+docs/data_sources.md if that separate extension is built later. -->
 
 ## Figures and Tables
 
@@ -665,6 +703,8 @@ PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (explicitly exempted from the
   - tables/manuscript_table9_validation_status.csv
   - tables/geographic_strategy_costs.csv,
     tables/geographic_adjustment_audit.csv
+  - tables/diagnostic_yield.csv (secondary detection-probability analysis,
+    built by analysis/13_diagnostic_yield.R)
 
 If a reviewer or the author prefers a different 5, the most likely swap is
 Figure 3 (geographic) <-> figure2_tornado.jpeg (one-way sensitivity/tornado)

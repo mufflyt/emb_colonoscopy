@@ -5,6 +5,62 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (wired the existing, previously-unreported diagnostic-yield secondary analysis into the pipeline and manuscript)
+
+### Added
+- `analysis/13_diagnostic_yield.R`: new driver script that calls `compute_diagnostic_yield()`
+  (`R/diagnostic_yield.R`) for `disease = "cancer"` and `disease = "precancer"` and saves
+  `tables/diagnostic_yield.csv`. This function has existed and been unit-tested since an earlier
+  session, but no analysis script had ever called it and the manuscript never reported its output --
+  it is a genuinely new *reported* result, not new modeling logic. Result: each strategy's overall
+  probability of detecting a true cancer, combining sampling-escalation with published (non-Lynch)
+  Pipelle/D&C sensitivities (Sakna et al. 2023, BMJ Open, PMID 37355271, verified directly against the
+  PMC open-access full text) -- office biopsy 78.8%, combined biopsy 77.6%, D&C 88.0% for cancer;
+  74.8%/74.1%/80.0% for atypical endometrial hyperplasia. D&C's point estimate is highest for both, but
+  its own sensitivity carries a very wide 95% CI (28.1%-99.3%, pooled from only 5 studies), so this
+  ordering is far from established.
+- `manuscript/manuscript.qmd`: new reference 17 (Sakna et al. 2023); new Methods sentence introducing
+  this secondary check; new Results paragraph reporting the detection probabilities and D&C's wide CI;
+  substantially revised Discussion "principal limitation" paragraph, which previously stated flatly
+  that "our attempt to test that assumption directly did not detect a difference to report" -- now
+  correctly describes TWO tests of the equivalent-effectiveness assumption with different results (the
+  delayed-neoplasia test found a structural null; this new detection-probability test suggests a
+  possible, highly uncertain difference). Discussion tightened elsewhere to net -4 words and stay under
+  the 750-word limit (731/750). `tables/diagnostic_yield.csv` added to the Supplemental Digital Content
+  list.
+- `manuscript/cheers_checklist.qmd`: updated items 12 and 26 to match the new Methods/Discussion text
+  (item 26 previously quoted the now-superseded "did not detect a difference to report" sentence
+  verbatim -- would have been a stale quote if left unchanged).
+- `config/model_parameters.csv`: recategorized the four sensitivity parameters actually consumed by
+  `compute_diagnostic_yield()` (`office_emb_cancer_sensitivity`, `dnc_cancer_sensitivity`,
+  `office_emb_precancer_sensitivity`, `dnc_precancer_sensitivity`) from `future_extension`/
+  `future_extension` to `probability`/`office_emb` or `probability`/`dnc`, since they are now genuinely
+  consumed by a reported analysis. The two cancer-specificity companion parameters remain
+  `future_extension`, since `compute_diagnostic_yield()` still does not use specificity at all.
+- `docs/methods_notes.md`, `docs/data_sources.md`, `README.md`: updated to describe
+  `compute_diagnostic_yield()` as now run and reported, while being explicit that its *scope* is
+  unchanged (still no PSA wiring, no equivalence-margin testing, no false-positive branch) -- only its
+  reporting status changed.
+
+### Fixed
+- Two comment blocks in `manuscript.qmd`'s References section were already stale before this change
+  and would have become more misleading if left alone: one listed "Sakna/Nabhan 2023" as a citation
+  that *could* be added later (now added, so the comment was corrected to describe only what remains
+  genuinely unadded -- ACOG Committee Opinion 800 and Namazov et al. 2017, tied to a still-unbuilt
+  hysteroscopy-D&C extension); the "reference 16... numbered last" note in the citation-ordering
+  comment was updated to "numbered second-to-last" now that reference 17 exists.
+
+### Not done (explicitly out of scope for this change, per user decision)
+- This does NOT address the Discussion's separate, still-open limitation that "operative D&C's own
+  risk of an inadequate specimen was not modeled" (i.e., blind D&C's own SAMPLING-failure/repeat-
+  procedure cost). That is a different question from what this change reports (D&C's own diagnostic
+  FALSE-NEGATIVE rate on an adequately-obtained specimen) and no sourced parameter for it currently
+  exists in this repository -- seriously considered and explicitly deferred this session; see the
+  session's own research notes if picked up later. Also not done:
+  `hysteroscopy_failure_rate_lynch_range`/`hysteroscopy_dc_professional_cost` remain unwired
+  (a hysteroscopy-guided-D&C 4th comparator arm, a larger scope change, was also considered and
+  deferred).
+
 ## 2026-09-02 (added NCCN's evidence category for the endometrial biopsy recommendation, verified directly against primary-source PDF text)
 
 ### Added

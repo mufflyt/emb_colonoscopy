@@ -44,13 +44,34 @@ does and does not mean.
 
 This is still not a full cost-effectiveness analysis: `R/diagnostic_yield.R` also contains
 `compute_diagnostic_yield()`, a broader Pipelle-vs-D&C sensitivity/specificity-based detection-
-probability function (Sakna/Nabhan et al. 2023, BMJ Open), but it is deliberately not built out
-further (no PSA wiring, no equivalence-margin testing) -- reproducing a full diagnostic-accuracy
-decision tree with prevalence, sensitivity/specificity, and a true/false-positive/negative branching
-structure is a substantially larger undertaking (see `docs/validation_notes.md`'s discussion of why
-Yi et al. 2018 could not be reproduced by this repository's cost-only engine) than the narrower
-"does the higher inadequate-sampling probability of office EMB create enough downstream diagnostic
-risk to invalidate pure cost minimization?" question `compute_strategy_clinical_outcomes()` answers.
+probability function (Sakna et al. 2023, BMJ Open, manuscript reference 17) that is deliberately not
+built out further (no PSA wiring, no equivalence-margin testing) -- reproducing a full
+diagnostic-accuracy decision tree with prevalence, sensitivity/specificity, and a true/false-positive/
+negative branching structure is a substantially larger undertaking (see `docs/validation_notes.md`'s
+discussion of why Yi et al. 2018 could not be reproduced by this repository's cost-only engine) than
+the narrower "does the higher inadequate-sampling probability of office EMB create enough downstream
+diagnostic risk to invalidate pure cost minimization?" question `compute_strategy_clinical_outcomes()`
+answers.
+
+**2026-09-02 update: `compute_diagnostic_yield()` is now actually run and reported, though its scope
+is unchanged.** The function itself existed and was unit-tested before this date, but no analysis
+script ever called it and the manuscript never reported its output. `analysis/13_diagnostic_yield.R`
+now calls it for both `disease = "cancer"` and `disease = "precancer"`, saving `tables/diagnostic_yield.csv`
+(Supplemental Digital Content) and feeding a new Results paragraph and an expanded Discussion
+"principal limitation" paragraph. This did NOT add PSA wiring, an equivalence-margin test, or any new
+branching structure -- it is still exactly the point-estimate calculation described above, now
+reported instead of sitting unused. The four sensitivity parameters it consumes
+(`office_emb_cancer_sensitivity`, `dnc_cancer_sensitivity`, `office_emb_precancer_sensitivity`,
+`dnc_precancer_sensitivity`) were recategorized in `config/model_parameters.csv` from
+`future_extension`/`future_extension` to `probability`/`office_emb` or `probability`/`dnc` to reflect
+that they are now genuinely consumed by a reported analysis; the two specificity companions
+(`office_emb_cancer_specificity`, `dnc_cancer_specificity`) remain `future_extension` since
+`compute_diagnostic_yield()` still does not use specificity at all (no false-positive branch exists in
+this narrower calculation). The finding itself -- D&C's point-estimate detection probability exceeds
+office and combined biopsy's for both cancer and AEH -- is real but should not be over-read: it is
+indirect (general, symptomatic, non-Lynch population) evidence, D&C's own sensitivity estimate carries
+an unusually wide 95% CI (28.1%-99.3%, pooled from only 5 studies), and the calculation has no PSA
+uncertainty propagation of its own. See the manuscript's Discussion for the full caveat.
 
 ### Interpretation of delayed-neoplasia outcomes
 

@@ -95,7 +95,10 @@ inadequate-sampling probability leave a meaningful fraction of patients with a d
 diagnosis, and how much D&C-rescue-driven adverse-event exposure does each strategy imply? -- built
 from parameters already resident in this repository plus newly added, real-cited D&C/hysteroscopy
 adverse-event probabilities) and `compute_diagnostic_yield()` (a secondary, broader Pipelle-vs-D&C
-sensitivity/specificity question, deliberately not yet built out further). Neither changes
+detection-probability question, using published Sakna et al. 2023 sensitivities -- deliberately not
+PSA-wired or built into a full diagnostic-accuracy decision tree, but as of 2026-09-02 actually run by
+`analysis/13_diagnostic_yield.R` and reported as a manuscript Results paragraph, rather than sitting
+unused). Neither changes
 `compute_strategy_costs()`'s output; `run_probabilistic_sensitivity()` now carries the clinical-outcome
 columns alongside cost columns for every draw, so cost and clinical-outcome findings share the same
 Monte Carlo realizations. See `docs/data_sources.md` for the full parameter list and citations, and

@@ -3,6 +3,32 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (a finished analysis that had been sitting on the shelf, unreported)
+
+Asked what else could be added to strengthen the model, and the honest answer turned out to be:
+something that was already built. A function testing whether Pipelle and D&C actually detect cancer
+equally well -- not just whether a sample gets obtained, but whether the sample, once obtained,
+correctly catches a cancer that's there -- has existed in this codebase since an earlier session,
+fully tested, using a real published meta-analysis. It was just never actually run, and never made it
+into the manuscript. Fixed that: it's now a real analysis step, with its own output table and its own
+paragraph in the Results.
+
+What it found is worth sitting with rather than glossing over. D&C's own detection rate for cancer
+came out highest of the three strategies (88%, versus about 78% for office and combined biopsy) --
+which, if it held up, would cut against this whole paper's argument that the three strategies are
+diagnostically interchangeable. But the honest caveat matters as much as the finding: the D&C number
+comes from pooling just 5 small studies, and its uncertainty range runs from 28% to 99% -- essentially
+uninformative at the low end. So the Discussion now says plainly: this is a real, if very uncertain,
+signal that the equivalent-effectiveness assumption underlying the whole cost-minimization approach
+isn't as settled as the paper's headline finding might suggest, and it's flagged as exactly the kind
+of question that needs better, Lynch-specific data to actually resolve.
+
+One thing this update deliberately did NOT do: it did not touch a related but different question also
+flagged in the Discussion -- whether D&C itself sometimes fails to get a usable sample at all, the way
+office biopsy sometimes does. That's a genuinely different gap (no source for it exists in this model
+yet), and conflating the two would have been the kind of mistake this project has caught itself making
+before. Kept them separate.
+
 ## 2026-09-02 (actually read the NCCN PDF this time, instead of a summary of it)
 
 Went back to strengthen the NCCN citation the Introduction leans on, and did it properly this time:
