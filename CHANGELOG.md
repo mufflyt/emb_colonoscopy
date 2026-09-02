@@ -5,6 +5,50 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-01 (wired the sourced portion of the AE-cost evidence table into compute_dnc_strategy_cost())
+
+### Added
+- `config/model_parameters.csv`: four new parameters --
+  `dnc_perforation_management_observation_fraction` (0.4423, exact binomial 95% CI 0.3047-0.5867),
+  `dnc_perforation_management_laparoscopy_only_fraction` (0.2115, CI 0.1106-0.347), both from
+  Ben-Baruch et al. 1982 (PMID 6212675); `dnc_perforation_laparoscopy_professional_cost` ($316.30,
+  CPT 49320 professional fee) and `dnc_perforation_laparoscopy_facility_cost` ($6,176, CPT 49320 OPPS
+  facility fee), both from the live CY2026 CMS RVU26C/OPPS Addendum B files. `dnc_perforation_probability`
+  recategorized from `future_extension` to `probability`/`dnc` since it is now actually consumed by a
+  cost function.
+
+### Changed
+- `R/strategy_costs.R::compute_dnc_strategy_cost()`: now includes an
+  `adverse_event_cost_partial_perforation_only` component = `dnc_perforation_probability x
+  [P(observation)x$0 + P(laparoscopy-only)x(laparoscopy professional + facility fee)]`, per
+  `docs/ae_cost_evidence_table.md`. Deliberately a lower-bound partial estimate: immediate laparotomy,
+  laparoscopy-converted-to-laparotomy, the unspecified 5.8%, and severe hemorrhage are excluded,
+  because CPT 49000 (laparotomy) carries OPPS status indicator C (inpatient-only, no facility rate) and
+  no hemorrhage management-pathway source was found. Raised D&C's base-case cost from $3,827.04 to
+  $3,839.81 (+$12.77), with a small pass-through increase to the office ($764.93 -> $766.62) and
+  combined ($505.88 -> $506.11) arms via their escalation-cost terms. Added
+  `tests/testthat/test-strategy-costs.R::"D&C arm includes a partial adverse-event cost..."` and updated
+  `tests/testthat/test-independent-confirmation.R` to re-derive the new component via its own arithmetic.
+  Mutation-tested: hardcoded the component to 0, confirmed both tests failed with the exact expected
+  cascade (D&C's own $12.77, office's $1.70, combined's $0.23), restored, confirmed green.
+- Regenerated the entire analysis pipeline (`analysis/01` through `12`) and re-synced every changed
+  number across `manuscript/manuscript.qmd` (Abstract, Methods, Results, Discussion, References --
+  added reference 14 for Ben-Baruch et al. 1982), `manuscript/cheers_checklist.qmd`,
+  `docs/manuscript_methods_results.md`, `docs/methods_notes.md`, `docs/data_sources.md`, and
+  `README.md`: base case ($506.11/$766.62/$3,839.81), one-way sensitivity ranges, thresholds
+  (12.8 min, $283 coordination cost), budget impact, geographic sensitivity ($211.24-$354.61), and PSA
+  (81.4% cheapest, mean costs $540.65/$683.44, AE means 0.36/2.15/19.18, delayed-neoplasia 1.55).
+  Total parameter count is now 66 (was 62); evidence-tier and provisional-parameter counts in
+  README.md and docs/manuscript_methods_results.md updated accordingly (still 7 of 66 provisional).
+  Discussion's adverse-event-cost limitation sentence rewritten to describe what is now partially
+  monetized versus what remains excluded and why, rather than stating nothing was monetized.
+- `docs/ae_cost_evidence_table.md`: status section updated from "not wired in" to "partially wired in,"
+  with the exact before/after cost impact.
+- Flagged (not fixed, out of scope for this change): a pre-existing citation-ordering issue in
+  `manuscript/manuscript.qmd` -- reference 6 (CMS PFS) is cited in Methods before references 1-5 first
+  appear later in the same section, predating today's changes. Documented in a comment for a dedicated
+  fix before submission.
+
 ## 2026-09-01 (seeded the PSA for reproducibility; built an AE-cost evidence table, not yet wired in)
 
 ### Added

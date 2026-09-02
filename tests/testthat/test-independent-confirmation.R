@@ -25,12 +25,26 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
   # dnc_facility_or_asc_fee under OPPS/ASC payment methodology (MedPAC,
   # ASC payment basics), so compute_dnc_strategy_cost() no longer sums it
   # -- see R/strategy_costs.R and tests/testthat/test-strategy-costs.R.
+  # adverse_event_cost_partial_perforation_only, re-derived independently
+  # (see R/strategy_costs.R and docs/ae_cost_evidence_table.md): only the
+  # two fully-costed perforation management states (observation, $0;
+  # laparoscopy-only, professional + facility fee) are included.
+  independent_ae_cost <-
+    get_parameter_value(model_parameters, "dnc_perforation_probability") * (
+      get_parameter_value(model_parameters, "dnc_perforation_management_observation_fraction") * 0 +
+        get_parameter_value(model_parameters, "dnc_perforation_management_laparoscopy_only_fraction") * (
+          get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_professional_cost") +
+            get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_facility_cost")
+        )
+    )
+
   independent_dnc_cost_at_zero_fee <-
     get_parameter_value(model_parameters, "dc_professional_cost") +
     get_parameter_value(model_parameters, "emb_pathology_cost") +
     0 + # dnc_facility_or_asc_fee set to zero for this check
     get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost") +
-    get_parameter_value(model_parameters, "dnc_anesthesia_cost")
+    get_parameter_value(model_parameters, "dnc_anesthesia_cost") +
+    independent_ae_cost
 
   # -- office EMB expected cost, summed directly from raw parameters --
   # emb_disposable_supply_cost is deliberately excluded: CMS's Direct PE

@@ -685,12 +685,12 @@ value were ever left unsourced.
 **The critical validation, run first:** the `national` locality's GPCIs and wage index are all 1.0 by
 construction, so it must reproduce `compute_strategy_costs()`'s own base-case output exactly. Confirmed
 both by an automated test (`tests/testthat/test-geographic-sensitivity.R`, INDEPENDENT-CONFIRMATION-
-flavored, mutation-tested) and by the actual analysis run: national locality produced $505.88 /
-$764.93 / $3,827.04 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
+flavored, mutation-tested) and by the actual analysis run: national locality produced $506.11 /
+$766.62 / $3,839.81 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
 
 **Result** (`Rscript analysis/09_geographic_sensitivity.R`): combined EMB remained the least expensive
-strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $209.77 (Arkansas, the
-low-cost locality) to $353.14 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
+strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $211.24 (Arkansas, the
+low-cost locality) to $354.61 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
 qualitative conclusion (combined EMB cheaper than office EMB) is not an artifact of national-average
 pricing; it holds, and if anything strengthens, at both geographic extremes tested. See
 `tables/geographic_sensitivity_summary.csv` for the full table and

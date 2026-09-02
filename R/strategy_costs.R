@@ -81,6 +81,42 @@ compute_dnc_strategy_cost <- function(
 ) {
   base::message("Computing D&C (operative) strategy cost.")
 
+  # adverse_event_cost_partial_perforation_only: expected cost of managing a
+  # uterine perforation, weighted by management-state probability, per
+  # docs/ae_cost_evidence_table.md. This is a DELIBERATE PARTIAL/LOWER-BOUND
+  # estimate: only the two management states with a fully-sourced cost
+  # (observation, $0; diagnostic laparoscopy without conversion, professional
+  # + OPPS facility fee) are included. Immediate laparotomy and
+  # laparoscopy-converted-to-laparotomy (28.8% of perforations combined) are
+  # excluded because CPT 49000 carries OPPS status indicator C (inpatient-only)
+  # -- no OPPS/ASC facility rate exists for it, and pricing it would require
+  # MS-DRG inpatient costing this repository has not built. The unspecified
+  # 5.8% (Ben-Baruch/Menczer 1982's own abstract does not account for all 52
+  # patients) is also excluded. Severe hemorrhage is not represented at all:
+  # no management-pathway source was found for it. See
+  # docs/ae_cost_evidence_table.md for the full accounting and what would
+  # close each gap.
+  perforation_probability <- get_parameter_value(
+    model_parameters, "dnc_perforation_probability"
+  )
+  observation_fraction <- get_parameter_value(
+    model_parameters, "dnc_perforation_management_observation_fraction"
+  )
+  laparoscopy_only_fraction <- get_parameter_value(
+    model_parameters, "dnc_perforation_management_laparoscopy_only_fraction"
+  )
+  laparoscopy_professional_cost <- get_parameter_value(
+    model_parameters, "dnc_perforation_laparoscopy_professional_cost"
+  )
+  laparoscopy_facility_cost <- get_parameter_value(
+    model_parameters, "dnc_perforation_laparoscopy_facility_cost"
+  )
+  adverse_event_cost_partial <- perforation_probability * (
+    observation_fraction * 0 +
+      laparoscopy_only_fraction *
+        (laparoscopy_professional_cost + laparoscopy_facility_cost)
+  )
+
   components <- tibble::tibble(
     strategy = "dnc",
     component = c(
@@ -88,14 +124,16 @@ compute_dnc_strategy_cost <- function(
       "pathology",
       "facility_fee",
       "preop_clinic_visit",
-      "anesthesia"
+      "anesthesia",
+      "adverse_event_cost_partial_perforation_only"
     ),
     amount = c(
       get_parameter_value(model_parameters, "dc_professional_cost"),
       get_parameter_value(model_parameters, "emb_pathology_cost"),
       get_parameter_value(model_parameters, "dnc_facility_or_asc_fee"),
       get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost"),
-      get_parameter_value(model_parameters, "dnc_anesthesia_cost")
+      get_parameter_value(model_parameters, "dnc_anesthesia_cost"),
+      adverse_event_cost_partial
     )
   )
 

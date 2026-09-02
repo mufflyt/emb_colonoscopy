@@ -3,6 +3,20 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-01 (the adverse-event cost is live now -- for the third of perforations it can actually price)
+
+Followed up on this morning's evidence table by wiring the sourced part of it in. D&C's own cost now
+includes a real, small adverse-event cost -- about $12.77 -- for the fraction of uterine perforations
+that get managed by diagnostic laparoscopy, priced from live CMS data. That's a real, if modest,
+change to the headline number: D&C goes from $3,827 to $3,840, and it ripples faintly into the office
+and combined arms too, since both of them can escalate to D&C. Every manuscript number tied to any of
+that got regenerated and rechecked, not hand-adjusted.
+
+What's deliberately still not in that number: perforations that need laparotomy, and all of severe
+hemorrhage. Both stay out for the same reason as before -- no priceable, sourced pathway for them yet
+-- so the addition is honestly a lower bound, not a complete adverse-event cost, and it says so
+everywhere it shows up.
+
 ## 2026-09-01 (the PSA got a seed; adverse-event costing got a real evidence table, not a guess)
 
 Two pieces of asked-for work, both finished. First: the PSA is seeded now, by default, so running it

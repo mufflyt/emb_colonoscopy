@@ -83,17 +83,17 @@ across four localities, and two supplementary clinical-outcome sensitivity
 analyses testing the model's assumption of equivalent diagnostic
 effectiveness across strategies.
 
-**Results:** In the base case, combined biopsy cost an estimated $505.88 per
-patient, compared with $764.93 for standalone office biopsy and $3,827.04
-for operative D&C. Combined biopsy was $259.04 (33.9%) less expensive than
-standalone office biopsy and was cost-saving in 82.3% of probabilistic
+**Results:** In the base case, combined biopsy cost an estimated $506.11 per
+patient, compared with $766.62 for standalone office biopsy and $3,839.81
+for operative D&C. Combined biopsy was $260.51 (34.0%) less expensive than
+standalone office biopsy and was cost-saving in 81.4% of probabilistic
 sensitivity analysis draws. Combined biopsy remained the least expensive
 strategy across all four geographic localities tested, with its advantage
-over standalone office biopsy widening from $209.77 in a low-cost locality
-to $353.14 in a high-cost locality. Clinical-outcome sensitivity analysis
+over standalone office biopsy widening from $211.24 in a low-cost locality
+to $354.61 in a high-cost locality. Clinical-outcome sensitivity analysis
 found combined biopsy carried substantially lower exposure to
 D&C-rescue-driven adverse events than standalone office biopsy (mean 0.36
-vs 2.12 events per 1,000 patients).
+vs 2.15 events per 1,000 patients).
 
 **Conclusion:** [DRAFT -- directly supported by data, no "further research
 needed" language, per journal requirement] Endometrial biopsy performed
@@ -193,7 +193,12 @@ step was required for them.
 Each strategy was modeled as a one-step decision tree: an initial sampling
 attempt, which either succeeds or fails and escalates to operative D&C. D&C
 itself was modeled as a deterministic reference arm with no escalation
-branch of its own in the base case. The combined-biopsy arm was modeled
+branch of its own in the base case; its cost also includes a partial
+expected cost for uterine perforation, restricted to the one management
+pathway (diagnostic laparoscopy) with a cost fully traceable to current
+Medicare payment data,^6,7^ weighted by that pathway's observed probability
+in an independent cohort study of postperforation management.^14^ See
+Discussion for what this deliberately excludes. The combined-biopsy arm was modeled
 under an incremental-cost principle: because the patient is assumed to be
 undergoing the surveillance colonoscopy regardless of whether biopsy is
 added, no colonoscopy base cost, gastroenterology professional fee, or
@@ -290,45 +295,45 @@ checklist is provided as Supplemental Digital Content.
 
 ## Results
 
-In the base case, combined biopsy cost an estimated $505.88 per patient,
-compared with $764.93 for standalone office biopsy and $3,827.04 for
-operative D&C. Combined biopsy was $259.04 (33.9%) less expensive than
+In the base case, combined biopsy cost an estimated $506.11 per patient,
+compared with $766.62 for standalone office biopsy and $3,839.81 for
+operative D&C. Combined biopsy was $260.51 (34.0%) less expensive than
 office biopsy, and both office-based strategies were substantially less
 expensive than D&C, which was more costly than both alternatives at every
 facility fee tested, including a facility fee of $0.
 
 The combined-vs-office cost difference was most sensitive to the office
-biopsy failure probability (range -$144.23 to -$515.45 across its 10.3%-20.0%
-bound) and the combined arm's incremental procedure time (range -$392.78 to
--$24.99 across its observed 1-12 minute range). At the upper end of the
+biopsy failure probability (range -$145.32 to -$517.78 across its 10.3%-20.0%
+bound) and the combined arm's incremental procedure time (range -$394.25 to
+-$26.46 across its observed 1-12 minute range). At the upper end of the
 observed time range, the combined arm's advantage over office biopsy
-narrowed to $24.99 but did not reverse.
+narrowed to $26.46 but did not reverse.
 
 Across 1,000 probabilistic-sensitivity draws, combined biopsy had a mean
-cost of $537.34 (SD $114.32) and office biopsy a mean cost of $676.60 (SD
-$112.80). Combined biopsy was the least expensive strategy in 82.3% of
+cost of $540.65 (SD $115.56) and office biopsy a mean cost of $683.44 (SD
+$116.94). Combined biopsy was the least expensive strategy in 81.4% of
 draws; D&C was never the least expensive strategy in any draw. Combined
 biopsy remained the least expensive strategy as long as the incremental
-colonoscopy-suite time stayed below approximately 12.7 minutes and as long
+colonoscopy-suite time stayed below approximately 12.8 minutes and as long
 as the office biopsy failure probability stayed above approximately 6.5%.
 At illustrative cohort sizes of 10 to 1,000 patients screened annually,
 adopting combined biopsy over standalone office biopsy was projected to
-save $2,590 to $259,043 per year.
+save $2,605 to $260,511 per year.
 
 Combined biopsy remained the least expensive strategy in all four localities
-tested. Its advantage over office biopsy ranged from $209.77 per patient in
-the low-cost locality to $274.33 in the mid-cost locality to $353.14 per
+tested. Its advantage over office biopsy ranged from $211.24 per patient in
+the low-cost locality to $275.79 in the mid-cost locality to $354.61 per
 patient in the high-cost locality -- that is, the combined-arm cost
 advantage widened, rather than narrowed or reversed, at the high-cost
 extreme.
 
 D&C-rescue-driven major-adverse-event exposure was substantially lower for
 combined biopsy (mean 0.36 events per 1,000 patients) than for office
-biopsy (mean 2.12 per 1,000), reflecting the combined arm's lower
+biopsy (mean 2.15 per 1,000), reflecting the combined arm's lower
 probability of ultimately requiring D&C. D&C itself carried a mean
-adverse-event exposure of 19.21 per 1,000. The office-biopsy arm's estimated
+adverse-event exposure of 19.18 per 1,000. The office-biopsy arm's estimated
 delayed-neoplasia risk (a failed sample not rescued to D&C that represents
-cancer or precancer) had a mean of 1.54 per 1,000 patients. The
+cancer or precancer) had a mean of 1.55 per 1,000 patients. The
 combined-biopsy arm's estimated delayed-neoplasia risk was 0.00 in all 1,000
 draws by construction, not because the underlying risk is known to be zero
 (see Discussion); we therefore report this as an exploratory,
@@ -385,12 +390,18 @@ in the standalone-office population, and its effect was therefore tested in
 sensitivity analysis rather than treated as fixed. Operative D&C's own risk
 of an inadequate specimen was not modeled, so its cost is likely a
 conservative (lower-bound) estimate relative to a strategy that sometimes
-requires its own repeat procedure. We did not monetize the adverse-event
-probabilities used in the clinical-outcome sensitivity analysis, because no
-adverse-event cost specific to this patient population and these procedures
-could be identified without relying on values borrowed from a clinically
-unrelated economic model; we report adverse-event exposure as a clinical
-count rather than attach a speculative dollar value to it. Finally, several
+requires its own repeat procedure. The base-case D&C cost partially
+monetizes adverse-event risk: it includes an expected cost for uterine
+perforation managed by diagnostic laparoscopy, the only management
+pathway with a cost fully traceable to current Medicare payment data --
+a deliberate lower bound. Perforations requiring laparotomy, a
+substantial minority of cases, could not be costed: the relevant
+procedure code is inpatient-only under Medicare, with no outpatient
+facility rate. Severe hemorrhage was not monetized at all, since no
+source described its management pathway without relying on a clinically
+unrelated economic model, which we avoided. The per-1,000 adverse-event
+and delayed-neoplasia exposures reported above remain unmonetized
+clinical counts, not cost inputs. Finally, several
 inputs -- the diagnostic sensitivity values used in a secondary analysis not
 reported in detail here, and the D&C and hysteroscopy adverse-event
 probabilities -- are drawn from general, non-Lynch populations rather than
@@ -426,7 +437,23 @@ references 11 and (via the direct_room_cost_per_minute/
 anesthesia_cost_per_minute parameters cited in Table 1 but not in the
 condensed Methods text) the Childers/Maggard-Gibbons JAMA Surg citation --
 JAMA Surg 2018;153:e176233 (PMID 29490366), confirmed 2026-08-31. No
-[VERIFY] flags remain. -->
+[VERIFY] flags remain.
+
+Reference 14 (Ben-Baruch, Menczer, Frenkel, Serr, J Reprod Med 1982;27:73-76,
+PMID 6212675) added 2026-09-01, verified directly against its PubMed
+abstract, when the D&C arm's cost was partially monetized for
+adverse-event risk (see Discussion). NOT the same paper as the 1980 Isr J
+Med Sci paper by an overlapping author subset that Hefler et al. 2009
+(reference 9) itself cites in its own reference list -- the two are easy to
+conflate; confirmed as distinct papers directly on PubMed.
+
+KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01, not yet fixed):
+reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
+paragraph before references 1-5 first appear later in the same section, so
+citation numbering is not strictly in first-appearance order throughout.
+Flagged rather than silently fixed or silently left unmentioned -- a full
+renumbering pass touches every in-text marker and was out of scope for this
+change; do before submission. -->
 
 1. Elmasry K, Hurt CN, Sanders D, et al. Genetic testing and prophylactic
    surgery in a family with hereditary non-polyposis colorectal cancer
@@ -473,6 +500,8 @@ JAMA Surg 2018;153:e176233 (PMID 29490366), confirmed 2026-08-31. No
 13. Munro MG, Kasiewicz JL, Desai VB. Office versus institutional operative
     hysteroscopy: an economic model. J Minim Invasive Gynecol
     2022;29:535-548.
+14. Ben-Baruch G, Menczer J, Frenkel Y, Serr DM. Laparoscopy in the
+    management of uterine perforation. J Reprod Med 1982;27:73-76.
 
 <!-- ACOG Committee Opinion 800, Sakna/Nabhan 2023, and Namazov 2017 support
 the secondary (Pipelle-vs-D&C sensitivity/specificity) analysis, which is

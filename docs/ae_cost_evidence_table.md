@@ -3,9 +3,13 @@
 Built 2026-09-01 in response to a specific instruction: monetize D&C adverse-event risk by
 **management pathway**, not by inserting a single generic "$X per event" placeholder. Every
 nonzero term below traces to a named source, verified directly (not relayed) in this session.
-**Nothing in this table is wired into `compute_dnc_strategy_cost()` or any other cost function yet**
--- per instruction, that only happens once every nonzero term has a traceable source, and several
-terms below do not yet have one.
+
+**Update, same day:** the sourced portion (observation and laparoscopy-only perforation management)
+was subsequently wired into `compute_dnc_strategy_cost()` as `adverse_event_cost_partial_perforation_only`,
+per explicit instruction to wire in only the fully-sourced terms and track the addition as its own
+labeled component rather than blending it invisibly into the total. Immediate laparotomy,
+laparoscopy-converted-to-laparotomy, the unspecified 5.8%, and all of severe hemorrhage remain
+excluded -- see "Status" at the end of this document.
 
 The structured version of this table is `tables/ae_cost_evidence_table.csv`, with columns `event`,
 `event_probability`, `population`, `management_state`, `p_management_given_event`, `unit_cost`,
@@ -121,8 +125,19 @@ resolve this" below.
 
 ## Status
 
-**Not wired into any cost function.** `compute_dnc_strategy_cost()`'s `expected_total_cost` is
-unchanged. This table exists so that (a) what is and isn't sourced is explicit and reviewable before
-any wiring decision, and (b) the real, verified values captured this session (Hefler's probabilities
-cross-checked, Ben-Baruch/Menczer's management-state split, and the CMS professional/facility fees
-for CPT 49320/49000) don't need to be re-derived from scratch when this is picked back up.
+**Partially wired in, as of 2026-09-01.** `compute_dnc_strategy_cost()`'s `expected_total_cost` now
+includes `adverse_event_cost_partial_perforation_only` -- the sourced portion of this table only
+(observation, $0; laparoscopy-only, $6,492.30), weighted by `dnc_perforation_probability`. This
+raised the D&C base-case cost from $3,827.04 to $3,839.81 (+$12.77), with a small pass-through
+increase to the office and combined arms via their escalation-cost terms. Every nonzero term in that
+partial component has a traceable source (see `config/model_parameters.csv`'s
+`dnc_perforation_management_observation_fraction`, `dnc_perforation_management_laparoscopy_only_fraction`,
+`dnc_perforation_laparoscopy_professional_cost`, and `dnc_perforation_laparoscopy_facility_cost`
+rows). Mutation-tested per `docs/testing_philosophy.md`.
+
+**Still not wired in, and not estimated:** immediate laparotomy, laparoscopy-converted-to-laparotomy,
+and the unspecified 5.8% of perforation management (all blocked on MS-DRG inpatient costing this
+repository doesn't have), and severe hemorrhage entirely (no management-pathway source found). This
+table remains the reviewable record of exactly what is and isn't included, and why -- see
+`docs/methods_notes.md` and the manuscript's Methods/Discussion for how this partial estimate is
+described to readers.

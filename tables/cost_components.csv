@@ -4,6 +4,7 @@ dnc,pathology,70.14
 dnc,facility_fee,3307.24
 dnc,preop_clinic_visit,125.4
 dnc,anesthesia,114.5
+dnc,adverse_event_cost_partial_perforation_only,12.770029485
 office_emb,office_visit,88.76
 office_emb,professional_fee,97.03
 office_emb,pathology,70.14

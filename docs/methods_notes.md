@@ -161,17 +161,19 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$505.88** per patient
-- Office EMB: **$764.93** per patient
-- Operative D&C: **$3,827.04** per patient
-- Combined EMB is **$259.04 (33.9%) cheaper** than office EMB
+- Combined EMB: **$506.11** per patient
+- Office EMB: **$766.62** per patient
+- Operative D&C: **$3,839.81** per patient (includes a partial, management-pathway-weighted adverse-event
+  cost for uterine perforation, wired in 2026-09-01 -- see `docs/ae_cost_evidence_table.md` for the
+  full sourcing and what remains deliberately excluded)
+- Combined EMB is **$260.51 (34.0%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
-  stays below **~12.7 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
+  stays below **~12.8 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
   meaning the base case's own room-time assumption is now comfortably inside the threshold rather
   than close to its edge
 - D&C is dominated (more expensive than both alternatives) at every tested facility fee, **including
   $0** -- see the caveat below
-- Combined EMB was cost-saving vs. office EMB in **~82%** of 1,000 probabilistic-sensitivity draws
+- Combined EMB was cost-saving vs. office EMB in **~81%** of 1,000 probabilistic-sensitivity draws
   (`Rscript analysis/03_probabilistic_sensitivity.R`; this figure moves a few points run to run since
   the script is unseeded, consistent with `office_to_dnc_escalation_fraction` and
   `combined_to_dnc_probability` both genuinely varying in PSA -- see their correction notes below)
@@ -297,7 +299,7 @@ locality [Arkansas], a high-cost locality [Manhattan]) using real CMS GPCI and O
 see `docs/data_sources.md` for the full methodology, citations, and a disclosed limitation (physician
 GPCI locality and hospital OPPS wage-index geography are two different CMS systems that don't share a
 common unit). Result: combined EMB remained the least expensive strategy in all 4 of 4 localities
-tested, with its advantage over office EMB *widening* from $209.77 in the low-cost locality to $353.14
+tested, with its advantage over office EMB *widening* from $211.24 in the low-cost locality to $354.61
 in the high-cost locality. This is a deterministic analysis, deliberately kept out of
 `run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
 parameter-uncertainty question the way a study's confidence interval is.

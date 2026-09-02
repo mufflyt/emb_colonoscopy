@@ -66,8 +66,8 @@ was the directly observed rate from a 10.5-year, 111-visit MD Anderson combined-
 Every parameter was assigned an evidence tier: **A** (Lynch-specific direct data), **B** (contemporary
 U.S. public cost/reimbursement data), **C** (general or adjacent-population literature), **D**
 (provisional placeholder with no source yet), or **structural** (an analysis convention, not an
-evidence claim, e.g. the 2026 reference dollar year). Of 62 parameters in the current model, 10 (16.1%)
-are tier A, 22 (35.5%) tier B, 22 (35.5%) tier C, 6 (9.7%) tier D, and 2 (3.2%) structural (Table 8).
+evidence claim, e.g. the 2026 reference dollar year). Of 66 parameters in the current model, 10 (15.2%)
+are tier A, 24 (36.4%) tier B, 24 (36.4%) tier C, 6 (9.1%) tier D, and 2 (3.0%) structural (Table 8).
 Four provisional (tier D or otherwise unresolved) parameters remain in the base case: the
 coordination-cost time estimate, the office-arm escalation-to-D&C fraction (fixed at 100%, discussed
 below), and two documented exclusions retained only to enforce a regression test against double-counting.
@@ -163,9 +163,9 @@ calls the function that originally produced it, before being treated as establis
 
 ### Base case
 
-In the base case, combined EMB cost an estimated **$505.88** per patient, compared with **$764.93**
-for standalone office EMB and **$3,827.04** for operative D&C (Table 3, Figure 1). Combined EMB was
-**$259.04 (33.9%)** less expensive than office EMB, and both office-based strategies were substantially
+In the base case, combined EMB cost an estimated **$506.11** per patient, compared with **$766.62**
+for standalone office EMB and **$3,839.81** for operative D&C (Table 3, Figure 1). Combined EMB was
+**$260.51 (34.0%)** less expensive than office EMB, and both office-based strategies were substantially
 less expensive than D&C, which was dominated by both alternatives at every facility fee tested,
 including a facility fee of $0 (i.e., D&C's professional fee, pathology, preoperative visit, and
 anesthesia costs alone already exceed either office-based strategy's total cost).
@@ -180,59 +180,59 @@ from the 13.3% probability of a failed attempt.
 ### Deterministic sensitivity
 
 The combined-vs-office cost difference was most sensitive to the office EMB failure probability
-(`emb_failure_lynch`, range: -$144.23 to -$515.45 across its 10.3%-20.0% bound) and the combined arm's
-incremental added minutes (`combined_emb_added_minutes`, range: -$392.78 to -$24.99 across its
+(`emb_failure_lynch`, range: -$145.32 to -$517.78 across its 10.3%-20.0% bound) and the combined arm's
+incremental added minutes (`combined_emb_added_minutes`, range: -$394.25 to -$26.46 across its
 observed 1-12 minute range), followed by the D&C facility fee, the combined-arm escalation probability,
 and the per-minute room and anesthesia rates (Table 4, Figure 2). At the upper end of the observed
-added-minutes range (12 minutes), the combined arm's advantage over office EMB narrows to $24.99 but
+added-minutes range (12 minutes), the combined arm's advantage over office EMB narrows to $26.46 but
 does not reverse.
 
 ### Probabilistic sensitivity analysis
 
-Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $537.34 (SD $114.32; 95% range
-$371.86-$797.58) and office EMB a mean cost of $676.60 (SD $112.80; 95% range $485.99-$924.15) (Table 5).
-Combined EMB was the least expensive strategy in **82.3%** of draws; office EMB was least expensive in
-the remaining 17.7%. D&C was never the least expensive strategy in any of the 1,000 draws.
+Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $540.65 (SD $115.56; 95% range
+$367.73-$797.11) and office EMB a mean cost of $683.44 (SD $116.94; 95% range $485.55-$942.88) (Table 5).
+Combined EMB was the least expensive strategy in **81.4%** of draws; office EMB was least expensive in
+the remaining 18.6%. D&C was never the least expensive strategy in any of the 1,000 draws.
 
 ### Threshold analysis
 
 Combined EMB remained the least expensive strategy as long as the incremental colonoscopy-suite time
-stayed below approximately **12.7 minutes** (base case: 5 minutes; observed range: 1-12 minutes) and
+stayed below approximately **12.8 minutes** (base case: 5 minutes; observed range: 1-12 minutes) and
 as long as the office EMB failure probability stayed above approximately **6.5%** (base case: 13.3%).
 The maximum coordination cost the combined arm could absorb before losing its advantage over office EMB
-was approximately **$281**, well above the base-case estimate of $22.08. No D&C facility fee within the
+was approximately **$283**, well above the base-case estimate of $22.08. No D&C facility fee within the
 tested range ($0-$20,000) caused D&C to stop being dominated by both alternatives (Table 6).
 
 ### Budget impact
 
 At illustrative cohort sizes of 10, 25, 50, 100, and 1,000 patients screened annually, adopting
-combined EMB over standalone office EMB was projected to save $2,590, $6,476, $12,952, $25,904, and
-$259,043 per year, respectively (Table 7).
+combined EMB over standalone office EMB was projected to save $2,605, $6,513, $13,026, $26,051, and
+$260,511 per year, respectively (Table 7).
 
 ### Clinical-outcome sensitivity
 
 Across the same 1,000 PSA draws used above, D&C-rescue-driven major-adverse-event exposure was
-substantially lower for combined EMB (mean 0.36 events per 1,000 patients; SD 0.33) than for office EMB
-(mean 2.12 per 1,000; SD 0.54), reflecting the combined arm's lower probability of ultimately requiring
-D&C. D&C itself carried a mean adverse-event exposure of 19.21 per 1,000 (SD 1.95), the direct
+substantially lower for combined EMB (mean 0.36 events per 1,000 patients; SD 0.31) than for office EMB
+(mean 2.15 per 1,000; SD 0.54), reflecting the combined arm's lower probability of ultimately requiring
+D&C. D&C itself carried a mean adverse-event exposure of 19.18 per 1,000 (SD 2.02), the direct
 adverse-event probability observed in the underlying 5,359-patient nonobstetric D&C cohort.
 
 The office-EMB arm's estimated delayed-neoplasia risk (a failed sample that is not rescued to D&C, and
-that turns out to represent cancer or precancer) had a mean of 1.54 per 1,000 patients (SD 1.13) across
+that turns out to represent cancer or precancer) had a mean of 1.55 per 1,000 patients (SD 1.14) across
 the same draws, driven entirely by draws in which the assumed escalation fraction fell below 100%. The
 combined-EMB arm's estimated delayed-neoplasia risk was exactly 0.00 in all 1,000 draws -- **not
 because the underlying risk is known to be zero, but because the current model has no evidence-based
 pathway to estimate an unresolved combined-EMB sampling failure** (see *Limitations*). We therefore do
 not report a head-to-head delayed-neoplasia comparison between the two office-based strategies; the
-1.54-per-1,000 figure is reported as an exploratory, office-arm-specific finding only.
+1.55-per-1,000 figure is reported as an exploratory, office-arm-specific finding only.
 
 ### Geographic sensitivity
 
 Combined EMB remained the least expensive strategy in all four localities tested (Figure 6). Its
-advantage over office EMB ranged from $209.77 per patient in the low-cost locality (Arkansas) to
-$274.33 in Colorado to $353.14 per patient in the high-cost locality (Manhattan) -- i.e., the
+advantage over office EMB ranged from $211.24 per patient in the low-cost locality (Arkansas) to
+$275.79 in Colorado to $354.61 per patient in the high-cost locality (Manhattan) -- i.e., the
 combined-arm cost advantage widened, rather than narrowed or reversed, at the high-cost extreme. The
-national-locality estimate ($505.88 / $764.93 / $3,827.04 for combined / office / D&C) exactly
+national-locality estimate ($506.11 / $766.62 / $3,839.81 for combined / office / D&C) exactly
 reproduced the base case, confirming the geographic-adjustment methodology introduces no distortion at
 the reference locality.
 
@@ -256,14 +256,15 @@ reproduced by this model, which prices a structurally different procedure (Table
   `analysis/07_manuscript_outputs.R` has not yet been extended to include them in its numbered output.
   If you want them as, e.g., Table 10 and an explicit clinical-outcome summary table, I can extend that
   script.
-- **Limitations paragraph.** This draft covers Methods and Results only, per your request. A
-  Limitations section (the office-arm escalation-fraction assumption; the combined-arm delayed-neoplasia
-  evidence gap; D&C's own unmodeled failure/escalation branch; unmonetized adverse-event costs;
-  general-population rather than Lynch-specific sensitivity/specificity and adverse-event data) would
-  draw directly from `docs/methods_notes.md`'s "Simplifying assumptions not yet relaxed" section --
-  say the word and I'll draft it next.
-- **Discussion.** Not drafted. Would need your framing on clinical significance and positioning
-  relative to existing Lynch-surveillance guidelines.
+- **STALE (superseded):** the two bullets that followed here described a not-yet-drafted Limitations
+  section and Discussion. Both have since been drafted directly in `manuscript/manuscript.qmd`'s
+  Discussion section (as of 2026-09-01, that section covers: the office-arm escalation-fraction
+  assumption; the combined-arm delayed-neoplasia evidence gap; D&C's own unmodeled failure/escalation
+  branch; the D&C adverse-event cost, now partially monetized for perforation managed by laparoscopy,
+  with laparotomy-involving management and severe hemorrhage still unmonetized; and general-population
+  rather than Lynch-specific sensitivity/specificity data). This file's own dollar figures/percentages
+  below were kept in sync with that manuscript through the 2026-09-01 AE-cost wiring, but this
+  particular planning note was not deleted at the time and should not be read as current status.
 - All dollar figures and percentages above are exact values from the currently committed table files as
   of this draft (2026-08-31); PSA-derived figures (probabilistic sensitivity, clinical-outcome
   sensitivity) will shift slightly on any future unseeded re-run, since `run_probabilistic_sensitivity()`

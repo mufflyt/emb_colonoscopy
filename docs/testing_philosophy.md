@@ -35,6 +35,7 @@ logged here so it isn't quietly skipped later.
 | `geographic inputs cannot adjust the same parameter twice` (`test-geographic-sensitivity.R`) | Disabled the duplicate-adjustment guard (`duplicated_adjustments <- character(0)`) | RED with defect (`Expected ... to throw a error` -- failed to throw) -> GREEN on revert |
 | `facility wage index adjusts only the labor share`, `national facility wage index preserves national payment`, and `run_geographic_sensitivity ... reproduces the base case at the national row` (`test-geographic-sensitivity.R`) | In `compute_facility_geographic_multiplier()`, changed `labor_share * wage_index + (1 - labor_share)` to `labor_share * wage_index + labor_share` (dropped the complement) | RED with defect on all three tests (multiplier off by `2 * labor_share - 1` in each case; the national-row identity check diverged from the real base case by $12-$661 per strategy) -> GREEN on revert |
 | `sample_triangular falls back to the mode instead of dividing by zero when min == max` (`test-parameters.R`) | Removed the `if (isTRUE(min_value == max_value)) return(mode_value)` early return | RED with defect (`sample_triangular(5, 5, 5)` threw `"missing value where TRUE/FALSE needed"` -- `(mode-min)/(max-min)` evaluated to `0/0 = NaN`, and `if (uniform_draw < NaN)` errors rather than returning a number) -> GREEN on revert |
+| `D&C arm includes a partial adverse-event cost matching the sourced perforation-management formula` (`test-strategy-costs.R`) and `INDEPENDENT CONFIRMATION: D&C is dominated...` (`test-independent-confirmation.R`) | Hardcoded `adverse_event_cost_partial <- 0` in `compute_dnc_strategy_cost()`, bypassing the sourced formula | RED with defect on both (unit test: `ae_amount` 0 vs expected $12.77, `ae_amount > 0` false; independent confirmation: all three strategies' costs diverged from the pipeline by the exact $12.77/$1.70/$0.23 cascade -- D&C's own AE cost plus its pass-through into the office and combined arms' escalation-cost terms) -> GREEN on revert |
 | `adjust_for_inflation errors rather than dividing by a zero or negative index_value` (`test-inflation.R`) | Removed both new `source_index`/`reference_index` finiteness/positivity guards | RED with defect on both assertions (`Expected ... to throw a error` -- a `0` or `-1` `index_value` silently produced `Inf`/`-Inf` costs instead of erroring) -> GREEN on revert |
 | `compare_combined_vs_office returns NA percent difference ... when office_cost is 0` and `build_pairwise_comparison_table returns NA percent difference ... when cost_b is 0` (`test-comparison.R`) | Removed the `office_cost == 0`/`cost_b == 0` guards from both functions, matching the guard already present in the sibling `compare_strategies_to_cheapest()` | RED with defect on both tests (`Expected is.na(...) to be TRUE`, got `FALSE` -- `50/0 = Inf`, and `is.na(Inf)` is `FALSE`). First attempt at the `compare_combined_vs_office` test used a `0/0` case, which is `NaN`; since `is.na(NaN)` is `TRUE` in R, that version of the test passed even with the guard removed and had to be rewritten with a nonzero numerator (`combined_cost = 50, office_cost = 0`) to actually distinguish "guarded" from "unguarded" -> GREEN on revert with the corrected test |
 
@@ -72,17 +73,19 @@ provisional (see `docs/data_sources.md`). Independent confirmation checks the ma
 not the inputs.
 
 **Also applied, at the manuscript level:** the manuscript's PSA-derived clinical-outcome
-claims (combined EMB cheaper in 82.3% of draws, 0.36-vs-2.12-per-1,000 adverse-event
+claims (combined EMB cheaper in 81.4% of draws, 0.36-vs-2.15-per-1,000 adverse-event
 exposure, 100% no-worse-delayed-neoplasia-risk) were re-derived by
 `analysis/12_independent_psa_verification.R`, which reads only the saved
 `tables/probabilistic_sensitivity_draws.csv` and never sources `R/00_source_all.R` or
 calls `compute_strategy_clinical_outcomes()`/`run_probabilistic_sensitivity()`. Every
 number it produces matched the manuscript's Results/Discussion text exactly on the
-2026-09-01 re-run, made after `run_probabilistic_sensitivity()` gained a fixed default
-seed (see CHANGELOG.md), which shifted every PSA-derived number slightly from the prior
-unseeded run and required regenerating and re-syncing all of them together (previously
-this check had been done ad
-hoc and not preserved as a repository artifact).
+2026-09-01 re-run made after `compute_dnc_strategy_cost()` was wired to include a
+partial adverse-event cost (see `docs/ae_cost_evidence_table.md` and CHANGELOG.md),
+which changed the D&C cost every PSA draw is built from and therefore shifted every
+PSA-derived number again -- this is the second time in the same day this exact
+re-sync discipline was exercised for real (first for the PSA seed change, then for
+this cost-model change), previously this check had been done ad
+hoc and not preserved as a repository artifact.
 
 **When to apply this rule going forward:** any new finding that would appear in a
 manuscript's abstract or headline results -- a threshold value, a dominance claim, a

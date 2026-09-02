@@ -78,6 +78,42 @@ test_that("D&C arm never includes a separate recovery-room component (already pa
   expect_false(dnc_recovery_room_cost %in% dnc_result$components$amount)
 })
 
+test_that("D&C arm includes a partial adverse-event cost matching the sourced perforation-management formula", {
+  # Per docs/ae_cost_evidence_table.md: only observation ($0) and
+  # laparoscopy-only (professional + facility fee, both CMS-sourced) are
+  # included. Immediate laparotomy, laparoscopy-converted-to-laparotomy, and
+  # unspecified management are deliberately excluded -- see
+  # R/strategy_costs.R's docblock comment for why (CPT 49000 has no
+  # OPPS/ASC facility rate).
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  dnc_result <- compute_dnc_strategy_cost(model_parameters, price_index_table, 2026)
+
+  expect_true(
+    "adverse_event_cost_partial_perforation_only" %in% dnc_result$components$component
+  )
+
+  ae_amount <- dnc_result$components$amount[
+    dnc_result$components$component == "adverse_event_cost_partial_perforation_only"
+  ]
+
+  expected_ae_amount <-
+    get_parameter_value(model_parameters, "dnc_perforation_probability") * (
+      get_parameter_value(model_parameters, "dnc_perforation_management_observation_fraction") * 0 +
+        get_parameter_value(model_parameters, "dnc_perforation_management_laparoscopy_only_fraction") * (
+          get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_professional_cost") +
+            get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_facility_cost")
+        )
+    )
+
+  expect_equal(ae_amount, expected_ae_amount, tolerance = 1e-9)
+  expect_gt(ae_amount, 0)
+  # Sanity bound: this is a small partial addition, not a large one -- if a
+  # future edit accidentally summed in the unsourced laparotomy states too,
+  # this would catch the resulting jump.
+  expect_lt(ae_amount, 50)
+})
+
 test_that("office EMB arm never includes a separate supplies component (already packaged into the nonfacility professional fee)", {
   # Per CMS's CY2026 Direct PE Inputs file (CMS-1832-F), CPT 58100's
   # disposable supplies (Pipelle curette, pelvic exam pack, tenaculum,
