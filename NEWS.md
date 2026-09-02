@@ -3,6 +3,22 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-02 (why isn't ultrasound one of the strategies? plus a citation that slipped through)
+
+Added a sentence to the Methods answering a question a reviewer would likely ask: why doesn't this
+model include transvaginal ultrasound as a fourth way to screen for endometrial cancer? NCCN's own
+guideline has an answer -- it says TVUS hasn't been shown accurate enough (sensitivity and specificity)
+to support recommending it for this purpose, unlike endometrial biopsy. That's now stated plainly in
+the Methods, right where the three strategies actually being compared are introduced.
+
+Digging into the guideline for that also turned up something that needed fixing: yesterday's swap from
+the old 25%-success citation to the new 75%-success one (see below) had updated every dollar figure and
+percentage downstream, but missed three spots where the old citation was described in plain prose
+instead of as a number -- a paragraph in Methods, a paragraph in the Discussion's limitations section,
+and the reference list itself, which still listed the old citation even though nothing pointed to it
+anymore. All three now correctly describe the new source. Good reminder that a number-only search
+misses a citation that's only ever mentioned by name.
+
 ## 2026-09-02 (a better-sourced number for how often a repeat office biopsy actually works)
 
 Swapped out the source behind one of the numbers added just yesterday. The repeat-office-biopsy

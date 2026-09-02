@@ -5,6 +5,42 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (added NCCN's TVUS position to Methods; fixed a stale Adambekov citation the earlier Kandil swap had missed)
+
+### Added
+- `manuscript/manuscript.qmd`, Methods opening paragraph: added "Transvaginal ultrasound was not
+  modeled as a fourth comparator: NCCN's own guideline states that transvaginal ultrasound has not
+  been shown to have sufficient sensitivity or specificity to support a screening recommendation in
+  this population, in contrast to endometrial biopsy." (cites reference 16, the existing NCCN
+  citation). Justifies the model's three-strategy scope against an obvious reviewer question. Verified
+  via the same route as the rest of the NCCN citation -- not a direct read of the primary NCCN PDF
+  (login-gated), but corroborated across a search-engine summary of current guideline content and a
+  2026 peer-reviewed review (PMC11936791) that directly quotes the guideline's TVUS language. A
+  specific TVUS sensitivity/specificity percentage found during this search was deliberately NOT
+  included in the manuscript text, since that number traced to a source this session could not
+  independently verify; flagged in-file for a direct primary-source check before submission.
+- `manuscript/cheers_checklist.qmd`: Comparators row (item 7) now quotes the TVUS-exclusion sentence.
+
+### Fixed
+- **Bug found while adding the above**: the earlier same-day Adambekov-to-Kandil parameter swap (see
+  entry above) updated `config/model_parameters.csv`, `R/strategy_costs.R`, `R/diagnostic_yield.R`,
+  and every *derived-number* reference in the manuscript and docs, but missed three places that
+  described the repeat-attempt evidence in prose rather than by number: (1) `manuscript.qmd`'s
+  "Clinical probabilities" Methods paragraph still said "succeeding 25% of the time... documented
+  prior sampling failure,^15^" citing Adambekov; (2) the Discussion's "Other limitations" paragraph
+  still described "a subgroup of only 8 patients"; (3) reference 15 in the reference list was still
+  Adambekov et al. 2017, now cited nowhere else in the manuscript. Fixed all three: reference 15 is
+  now Kandil et al. 2014 (Adambekov removed from the reference list entirely, since it no longer
+  supports any parameter in the model or any statement in the text); the Methods and Discussion prose
+  now correctly describe Kandil's 1,120-patient cohort and 75% success rate, and the Discussion
+  explicitly notes the CI is a reconstruction, not primary-reported. `manuscript/cheers_checklist.qmd`
+  had the same stale "25%" quote in its Measurement-of-outcomes row; fixed to match. Root cause: the
+  original propagation swept every file for the *numeric results* the parameter change produced, but
+  did not separately grep for the parameter's *prose description* embedded in Methods/Discussion
+  running text and the reference list -- a gap worth checking for on any future parameter-source swap.
+  Discussion tightened by 8 words in the process to stay under the journal's 750-word limit (735/750
+  after this change; was 743/750 before).
+
 ## 2026-09-02 (replaced the Adambekov-sourced office repeat-attempt success probability with Kandil et al. 2014)
 
 ### Changed

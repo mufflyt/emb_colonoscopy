@@ -158,7 +158,25 @@ endometrial cancer surveillance in adult women with Lynch syndrome who are
 candidates for gynecologic surveillance and have an already-scheduled
 surveillance colonoscopy: standalone office endometrial biopsy, operative
 dilation and curettage (D&C), and endometrial biopsy performed during that
-colonoscopy (combined biopsy). Age, genotype, menopausal status, and prior
+colonoscopy (combined biopsy). Transvaginal ultrasound was not modeled as a
+fourth comparator: NCCN's own guideline states that transvaginal ultrasound
+has not been shown to have sufficient sensitivity or specificity to support
+a screening recommendation in this population, in contrast to endometrial
+biopsy.^16^
+
+<!-- DRAFT -- TVUS-exclusion sentence added 2026-09-02. Verified via the
+same route as the rest of the NCCN citation: not a direct read of the
+primary NCCN PDF (login-gated), but corroborated across two independent
+sources -- a search-engine summary of current guideline content and a
+2026 peer-reviewed review (PMC11936791) that directly quotes the
+guideline's TVUS language and contrasts it with the endometrial-biopsy
+interval recommendation. A specific sensitivity/specificity figure for
+TVUS (e.g., a numeric sensitivity percentage) was deliberately NOT
+included in the manuscript text, since that number traced to a source
+this session could not independently verify -- do a direct primary-source
+check before submission if institutional NCCN access becomes available. -->
+
+Age, genotype, menopausal status, and prior
 biopsy history were not modeled separately; the model represents a single
 surveillance episode rather than a specific patient subgroup. No
 prespecified health economic analysis plan was registered before the
@@ -219,9 +237,10 @@ full-text verification (22 of 166 attempts, 13.3%).^1-3^ After a failed
 office attempt, we modeled two pathways rather than assuming universal
 escalation to D&C: a repeat office attempt, estimated to occur in 5% of
 failures based on a Pipelle decision-tree model's expert clinical
-estimate,^12^ succeeding 25% of the time based on that same general
-Pipelle-sampling population's own reported outcome among patients with a
-documented prior sampling failure,^15^ or direct escalation to D&C. The
+estimate,^12^ succeeding 75% of the time based on a separate, much larger
+cohort of patients with an insufficient endometrial sample, among whom a
+second sampling attempt was adequate in three-quarters of those who
+underwent one,^15^ or direct escalation to D&C. The
 combined-arm probability of escalation to D&C was the directly observed rate
 from a 10.5-year, 111-visit combined-screening cohort (2 of 111 visits,
 1.8%).^4^ The combined arm's incremental procedure time (median 5 minutes,
@@ -402,13 +421,14 @@ attempt eventually received either an adequate repeat sample or D&C, rather
 than assuming or inferring it from aggregate escalation rates.
 
 Other limitations warrant explicit statement. The office arm's
-repeat-attempt structure rests on a small, non-Lynch evidence base: the 5%
+repeat-attempt structure rests on a non-Lynch evidence base: the 5%
 repeat-attempt probability is an expert clinical estimate from a Pipelle
-decision-tree model, not a direct measurement, and the 25% repeat-attempt
-success probability comes from a subgroup of only 8 patients in a single
-U.S. health system's Pipelle-failure cohort. Both parameters' effects were
-tested in sensitivity analysis rather than treated as fixed, but neither is
-a direct measurement in a Lynch surveillance population. Operative D&C's own risk
+decision-tree model, and the 75% repeat-attempt success probability comes
+from a 1,120-patient insufficient-endometrial-sample cohort with a
+reconstructed, not primary-reported, confidence interval. Both parameters'
+effects were tested in sensitivity analysis rather than treated as fixed,
+but neither is a direct measurement in a Lynch surveillance population.
+Operative D&C's own risk
 of an inadequate specimen was not modeled, so its cost is likely a
 conservative (lower-bound) estimate relative to a strategy that sometimes
 requires its own repeat procedure. The base-case D&C cost partially
@@ -468,19 +488,26 @@ Med Sci paper by an overlapping author subset that Hefler et al. 2009
 (reference 9) itself cites in its own reference list -- the two are easy to
 conflate; confirmed as distinct papers directly on PubMed.
 
-Reference 15 (Adambekov, Goughnour, Mansuria, Donnellan, Elishaev,
-Villanueva, Edwards, Bovbjerg, Linkov, Gynecol Oncol 2017;144:324-328,
-PMID 27913154) added 2026-09-02, when the office arm's repeat-attempt
-structure was wired in. Table 1's "history of prior biopsy failure" row
-(2/8 = 25.0% success) is the source of the repeat-attempt success
-probability; independently confirmed as the exact same subgroup Yi et al.
-2018 (reference 12) cites for the identical purpose in their own methods
-text, not merely a similar number from a different source.
+Reference 15 (Kandil D, Yang X, Stockl T, Liu Y, Int J Gynecol Pathol
+2014;33(5):500-506, PMID 25083966) added 2026-09-02, when the office arm's
+repeat-attempt structure was wired in, REPLACING an earlier same-day
+citation to Adambekov et al. 2017 (Gynecol Oncol 144:324-328, PMID
+27913154) in this same slot: Adambekov's Table 1 "history of prior biopsy
+failure" row (2/8 = 25.0% success) was the original source of the
+repeat-attempt success probability, independently confirmed as the exact
+subgroup Yi et al. 2018 (reference 12) cites for the identical purpose in
+their own methods text -- but its n=8 subgroup was replaced the same day
+with Kandil's much larger 1,120-patient insufficient-sample cohort (38% had
+a second sampling procedure by 12-month follow-up, adequate in 75% of
+those). Since Adambekov no longer supports any parameter in the model, it
+was removed from the reference list rather than kept as an uncited entry;
+see `config/model_parameters.csv`'s own notes for the full replacement
+rationale and the reconstructed-CI caveat.
 
 KNOWN, PRE-EXISTING ISSUE (not introduced 2026-09-01/02, not yet fixed):
 reference 6 (CMS Physician Fee Schedule) is cited in the Methods' second
 paragraph before references 1-5 first appear later in the same section;
-references 12 and 15 (Yi et al. 2018; Adambekov et al. 2017) are now cited
+references 12 and 15 (Yi et al. 2018; Kandil et al. 2014) are now cited
 in the "Clinical probabilities" paragraph before their validation-paragraph/
 first-numbered appearance later in Methods; and reference 16 (NCCN Version
 1.2026) is cited in the Introduction -- textually the very first citation
@@ -536,10 +563,9 @@ marker and was out of scope for these changes; do before submission. -->
     2022;29:535-548.
 14. Ben-Baruch G, Menczer J, Frenkel Y, Serr DM. Laparoscopy in the
     management of uterine perforation. J Reprod Med 1982;27:73-76.
-15. Adambekov S, Goughnour SL, Mansuria S, Donnellan N, Elishaev E,
-    Villanueva HJ, Edwards RP, Bovbjerg DH, Linkov F. Patient and provider
-    factors associated with endometrial Pipelle sampling failure. Gynecol
-    Oncol 2017;144:324-328.
+15. Kandil D, Yang X, Stockl T, Liu Y. Clinical outcomes of patients with
+    insufficient sample from endometrial biopsy or curettage. Int J Gynecol
+    Pathol 2014;33(5):500-506.
 16. National Comprehensive Cancer Network. NCCN Clinical Practice
     Guidelines in Oncology: Genetic/Familial High-Risk Assessment:
     Colorectal, Endometrial, Esophageal, and Gastric Cancer. Version
