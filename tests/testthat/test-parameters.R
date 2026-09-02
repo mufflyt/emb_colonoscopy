@@ -101,3 +101,64 @@ test_that("sample_triangular falls back to the mode instead of dividing by zero 
   )
   expect_equal(draw_parameter_sample(degenerate_row), 7.5)
 })
+
+test_that("run_probabilistic_sensitivity is reproducible under its default seed", {
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+
+  first_run <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25
+  )
+  second_run <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25
+  )
+
+  expect_identical(first_run$combined_emb_cost, second_run$combined_emb_cost)
+  expect_identical(first_run$office_emb_neoplasia_delayed_per_1000, second_run$office_emb_neoplasia_delayed_per_1000)
+})
+
+test_that("run_probabilistic_sensitivity does not leak its seed into the caller's RNG state", {
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+
+  set.seed(4242)
+  before_draw <- runif(1)
+
+  set.seed(4242)
+  invisible(run_probabilistic_sensitivity(model_parameters, price_index_table, n_simulations = 10))
+  after_draw <- runif(1)
+
+  expect_identical(before_draw, after_draw)
+})
+
+test_that("run_probabilistic_sensitivity gives identical draws for identical seeds and different draws for different seeds", {
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+
+  seed1_first <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25, seed = 111
+  )
+  seed1_second <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25, seed = 111
+  )
+  seed2 <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25, seed = 222
+  )
+
+  expect_identical(seed1_first$combined_emb_cost, seed1_second$combined_emb_cost)
+  expect_false(identical(seed1_first$combined_emb_cost, seed2$combined_emb_cost))
+})
+
+test_that("run_probabilistic_sensitivity(seed = NULL) produces genuinely different draws each call", {
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+
+  unseeded_first <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25, seed = NULL
+  )
+  unseeded_second <- run_probabilistic_sensitivity(
+    model_parameters, price_index_table, n_simulations = 25, seed = NULL
+  )
+
+  expect_false(identical(unseeded_first$combined_emb_cost, unseeded_second$combined_emb_cost))
+})

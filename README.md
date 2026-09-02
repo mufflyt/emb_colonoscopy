@@ -116,7 +116,7 @@ not hand-drawn).*
 
 *Figure 3. Distribution of the incremental cost of combined EMB versus office EMB across 1,000
 Monte Carlo draws (`analysis/03_probabilistic_sensitivity.R`). Combined EMB was the least
-expensive strategy in 82.0% of draws; D&C was never the least expensive strategy in any draw.*
+expensive strategy in 82.3% of draws; D&C was never the least expensive strategy in any draw.*
 
 ## Geographic sensitivity analysis
 
@@ -269,18 +269,38 @@ or a QALY-based extension should not require restructuring the existing office/c
 functions -- see `docs/methods_notes.md`'s note on why the base case is cost-minimization rather than
 cost-effectiveness, and what would need to change to make it one.
 
+## Reproducibility
+
+`run_probabilistic_sensitivity()` (`R/sensitivity_probabilistic.R`) now defaults to a fixed
+`seed = 20260901` rather than drawing from R's ambient RNG state. Before this, every call produced
+a different 1,000-draw sample, which is how this project ended up, twice, with a manuscript quoting
+PSA statistics from one run and clinical-outcome statistics from a different run -- both correct
+individually, inconsistent together (see CHANGELOG.md). With a fixed default seed,
+`analysis/03_probabilistic_sensitivity.R` and `analysis/07_manuscript_outputs.R` -- which both call
+`run_probabilistic_sensitivity()` independently, against the same `config/model_parameters.csv` and
+the same `n_simulations = 1000` -- now produce byte-identical draws, so their downstream tables
+(`tables/probabilistic_sensitivity_draws.csv` and `tables/manuscript_table5_psa_summary.csv`) can no
+longer silently drift apart. The RNG state is saved before seeding and restored on exit, so calling
+this function never affects unrelated random draws elsewhere in the same R session. Pass
+`seed = NULL` to deliberately opt back into an unseeded, genuinely random run (e.g. to explore
+draw-to-draw variability); any other integer reproduces a different but still-fixed sequence.
+
 ## Independent verification
 
 Per this project's independent-confirmation rule (see `docs/testing_philosophy.md`), a finding
 capable of changing the study's conclusions is not confirmed if the confirmation reuses the same
 pipeline that produced it. `analysis/12_independent_psa_verification.R` re-derives every
 clinical-outcome and joint cost/outcome claim in the manuscript's Results and Discussion sections
-(the 82.0% probability combined EMB is cheaper, the 0.34-vs-2.11-per-1,000 adverse-event exposure,
+(the 82.3% probability combined EMB is cheaper, the 0.36-vs-2.12-per-1,000 adverse-event exposure,
 the 100% no-worse-delayed-neoplasia-risk claim) directly from the saved
 `tables/probabilistic_sensitivity_draws.csv`, using only base R -- it never sources
 `R/00_source_all.R` and never calls `compute_strategy_clinical_outcomes()` or
 `run_probabilistic_sensitivity()`. It is read-only (writes nothing) and is meant to be re-run
-whenever the PSA draws file is regenerated, since `run_probabilistic_sensitivity()` is unseeded.
+whenever the PSA draws file is regenerated -- which, as of 2026-09-01, only actually changes the
+numbers if `config/model_parameters.csv`, `n_simulations`, or the `seed` argument changes:
+`run_probabilistic_sensitivity()` now defaults to a fixed `seed` (see "Reproducibility" below), so
+re-running `analysis/03_probabilistic_sensitivity.R` and `analysis/07_manuscript_outputs.R` against
+the same parameter table produces byte-identical draws.
 
 ## Manuscript and reporting
 
@@ -315,6 +335,9 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/manuscript_methods_results.md`](docs/manuscript_methods_results.md),
   [`docs/CHEERS_2022_checklist.md`](docs/CHEERS_2022_checklist.md) -- manuscript drafting notes and
   the CHEERS 2022 reporting audit behind `manuscript/`
+- [`docs/ae_cost_evidence_table.md`](docs/ae_cost_evidence_table.md) -- management-pathway adverse-event
+  costing evidence table (what's sourced, what's explicitly flagged unsourceable, and why); not yet
+  wired into any cost function
 
 Every blocking test in `tests/testthat/` is required to be proven to fail on a
 planted defect and pass when reverted, and any finding capable of changing the

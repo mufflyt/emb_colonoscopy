@@ -72,13 +72,16 @@ provisional (see `docs/data_sources.md`). Independent confirmation checks the ma
 not the inputs.
 
 **Also applied, at the manuscript level:** the manuscript's PSA-derived clinical-outcome
-claims (combined EMB cheaper in 82.0% of draws, 0.34-vs-2.11-per-1,000 adverse-event
+claims (combined EMB cheaper in 82.3% of draws, 0.36-vs-2.12-per-1,000 adverse-event
 exposure, 100% no-worse-delayed-neoplasia-risk) were re-derived by
 `analysis/12_independent_psa_verification.R`, which reads only the saved
 `tables/probabilistic_sensitivity_draws.csv` and never sources `R/00_source_all.R` or
 calls `compute_strategy_clinical_outcomes()`/`run_probabilistic_sensitivity()`. Every
 number it produces matched the manuscript's Results/Discussion text exactly on the
-2026-08-31 re-run that formalized this script (previously this check had been done ad
+2026-09-01 re-run, made after `run_probabilistic_sensitivity()` gained a fixed default
+seed (see CHANGELOG.md), which shifted every PSA-derived number slightly from the prior
+unseeded run and required regenerating and re-syncing all of them together (previously
+this check had been done ad
 hoc and not preserved as a repository artifact).
 
 **When to apply this rule going forward:** any new finding that would appear in a

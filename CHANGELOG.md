@@ -5,6 +5,58 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-01 (seeded the PSA for reproducibility; built an AE-cost evidence table, not yet wired in)
+
+### Added
+- `R/sensitivity_probabilistic.R::run_probabilistic_sensitivity()`: new `seed` parameter, default
+  `20260901`. The RNG state is saved before seeding and restored on exit (via `on.exit()`), so calling
+  this function no longer affects unrelated random draws elsewhere in the caller's session. Pass
+  `seed = NULL` for a genuinely unseeded run. This closes the root cause behind two prior real bugs
+  where a manuscript quoted PSA statistics from one run and clinical-outcome statistics from a
+  different run (see the "Draft Methods and Results sections" and CHEERS-checklist entries above):
+  `analysis/03_probabilistic_sensitivity.R` and `analysis/07_manuscript_outputs.R` both call
+  `run_probabilistic_sensitivity()` independently against the same `config/model_parameters.csv` and
+  `n_simulations = 1000`, and now produce byte-identical draws. Regenerated every PSA-dependent
+  artifact under the new seed and re-synced every number that changed (manuscript.qmd's Abstract and
+  Results, cheers_checklist.qmd, docs/manuscript_methods_results.md, README.md, the independent
+  verification script's output, figure4): 82.0% -> 82.3% cheapest, mean costs $536.50/$678.20 ->
+  $537.34/$676.60, AE means 0.34/2.11/19.16 -> 0.36/2.12/19.21, delayed-neoplasia mean 1.52 -> 1.54.
+  Added `tests/testthat/test-parameters.R` tests: identical seeds give identical draws, different
+  seeds give different draws, `seed = NULL` gives different draws each call, and the RNG state is not
+  leaked to the caller. Mutation-tested (removed the seeding block; both reproducibility tests and the
+  RNG-leak test correctly failed; restored, confirmed green).
+- `docs/ae_cost_evidence_table.md` and `tables/ae_cost_evidence_table.csv`: a management-pathway-based
+  adverse-event costing evidence table for `dnc_perforation_probability` and
+  `dnc_severe_hemorrhage_probability`, per explicit instruction not to insert a single generic
+  "$X per event" placeholder. For perforation: verified Hefler et al. 2009's abstract directly (no
+  management detail in that paper); found and verified a distinct, later paper by an overlapping
+  author group -- Ben-Baruch, Menczer, Frenkel, Serr, "Laparoscopy in the management of uterine
+  perforation," J Reprod Med 1982;27(2):73-76 (PMID 6212675) -- reporting a management-state
+  distribution across 52 curettage perforations (44.2% observation, 21.2% laparoscopy-only, 15.4%
+  immediate laparotomy, 13.5% laparoscopy converted to laparotomy, 5.8% unspecified in the abstract).
+  Sourced CY2026 CMS costs for the two procedure codes involved: CPT 49320 (diagnostic laparoscopy)
+  professional fee $316.30 (RVU26C) + OPPS facility fee $6,176 (Addendum B, APC 5361) = fully sourced;
+  CPT 49000 (exploratory laparotomy) professional fee $728.81, but its facility component is
+  UNSOURCEABLE -- confirmed directly that CPT 49000 carries OPPS status indicator C (inpatient-only,
+  no APC/payment) and is absent from the ASC Addendum AA, meaning laparotomy-involving management
+  states are only partially costed (professional fee only) pending an MS-DRG inpatient-costing
+  methodology this repository does not have. Independently verified an external plausibility check
+  (PMC10776262, a US commercial-claims IUD study: 4.5 perforation-management events per 100 enrolled,
+  $31 mean cost per enrolled individual, implying ~$689/event) and explicitly did NOT use it as a
+  base-case value, per instruction -- population/mechanism differ, and the ~9x gap versus the
+  CMS-priced total is itself informative (flagged in the evidence table). For hemorrhage: the event
+  probability is already sourced (Hefler et al. 2009); no management-pathway source (transfusion rate,
+  etc.) was located this session (a targeted search was interrupted by a bot-check), so it remains
+  entirely unmonetized, exactly per instruction not to substitute obstetric/peripartum hemorrhage cost
+  literature for a different clinical event. **Not wired into `compute_dnc_strategy_cost()` or any
+  other cost function** -- per instruction, only once every nonzero term has a traceable source.
+  Cross-referenced from `dnc_perforation_probability`'s and `dnc_severe_hemorrhage_probability`'s
+  notes in `config/model_parameters.csv`.
+- `articles/cms_source_data/`: consolidated every CMS source package referenced this session
+  (RVU26C, OPPS Addendum B, ASC Addendum AA, FY2026 IPPS wage tables, CMS-1832-F Direct PE Inputs) out
+  of scratch/temp locations into the repository's local (gitignored) reference-materials folder,
+  alongside the literature PDFs already organized there.
+
 ## 2026-09-01 (assessed Adambekov et al. 2017 for relevance; cited as corroborating context, not wired in)
 
 ### Added

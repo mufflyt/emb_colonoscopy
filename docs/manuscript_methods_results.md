@@ -189,10 +189,10 @@ does not reverse.
 
 ### Probabilistic sensitivity analysis
 
-Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $536.50 (SD $113.50; 95% range
-$364.20-$793.20) and office EMB a mean cost of $678.20 (SD $114.50; 95% range $480.30-$924.10) (Table 5).
-Combined EMB was the least expensive strategy in **82.0%** of draws; office EMB was least expensive in
-the remaining 18.0%. D&C was never the least expensive strategy in any of the 1,000 draws.
+Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $537.34 (SD $114.32; 95% range
+$371.86-$797.58) and office EMB a mean cost of $676.60 (SD $112.80; 95% range $485.99-$924.15) (Table 5).
+Combined EMB was the least expensive strategy in **82.3%** of draws; office EMB was least expensive in
+the remaining 17.7%. D&C was never the least expensive strategy in any of the 1,000 draws.
 
 ### Threshold analysis
 
@@ -212,19 +212,19 @@ $259,043 per year, respectively (Table 7).
 ### Clinical-outcome sensitivity
 
 Across the same 1,000 PSA draws used above, D&C-rescue-driven major-adverse-event exposure was
-substantially lower for combined EMB (mean 0.34 events per 1,000 patients; SD 0.31) than for office EMB
-(mean 2.11 per 1,000; SD 0.52), reflecting the combined arm's lower probability of ultimately requiring
-D&C. D&C itself carried a mean adverse-event exposure of 19.16 per 1,000 (SD 1.96), the direct
+substantially lower for combined EMB (mean 0.36 events per 1,000 patients; SD 0.33) than for office EMB
+(mean 2.12 per 1,000; SD 0.54), reflecting the combined arm's lower probability of ultimately requiring
+D&C. D&C itself carried a mean adverse-event exposure of 19.21 per 1,000 (SD 1.95), the direct
 adverse-event probability observed in the underlying 5,359-patient nonobstetric D&C cohort.
 
 The office-EMB arm's estimated delayed-neoplasia risk (a failed sample that is not rescued to D&C, and
-that turns out to represent cancer or precancer) had a mean of 1.52 per 1,000 patients (SD 1.09) across
+that turns out to represent cancer or precancer) had a mean of 1.54 per 1,000 patients (SD 1.13) across
 the same draws, driven entirely by draws in which the assumed escalation fraction fell below 100%. The
 combined-EMB arm's estimated delayed-neoplasia risk was exactly 0.00 in all 1,000 draws -- **not
 because the underlying risk is known to be zero, but because the current model has no evidence-based
 pathway to estimate an unresolved combined-EMB sampling failure** (see *Limitations*). We therefore do
 not report a head-to-head delayed-neoplasia comparison between the two office-based strategies; the
-1.52-per-1,000 figure is reported as an exploratory, office-arm-specific finding only.
+1.54-per-1,000 figure is reported as an exploratory, office-arm-specific finding only.
 
 ### Geographic sensitivity
 

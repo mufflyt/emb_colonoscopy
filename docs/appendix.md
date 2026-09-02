@@ -16,6 +16,7 @@ navigation index now that there are several of them.
 | [`docs/validation_notes.md`](validation_notes.md) | Why Yi et al. 2018 is not numerically reproduced, and what a real replication would require |
 | [`docs/evidence_layers.md`](evidence_layers.md) | The CMS/HPT/MEPS public-data layer: what exists, what was dropped (APCD, CMS facility) and why, three real bugs caught during review |
 | [`docs/testing_philosophy.md`](testing_philosophy.md) | Two CI meta-rules: prove every blocking test fails-then-passes on a planted defect; independently re-derive any study-frame-changing finding. Worked log of five real mutation tests. |
+| [`docs/ae_cost_evidence_table.md`](ae_cost_evidence_table.md) | Management-pathway-based adverse-event costing evidence table (uterine perforation, severe hemorrhage) -- what's sourced, what's explicitly unsourceable, and why. Not yet wired into any cost function. |
 | `docs/appendix.md` (this file) | Bug-reproduction record, CI workflow notes, provenance of the evidence-layer code, raw CMS source-file inventory |
 
 ## Independent PSA verification script

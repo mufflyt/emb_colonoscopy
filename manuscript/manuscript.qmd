@@ -86,14 +86,14 @@ effectiveness across strategies.
 **Results:** In the base case, combined biopsy cost an estimated $505.88 per
 patient, compared with $764.93 for standalone office biopsy and $3,827.04
 for operative D&C. Combined biopsy was $259.04 (33.9%) less expensive than
-standalone office biopsy and was cost-saving in 82.0% of probabilistic
+standalone office biopsy and was cost-saving in 82.3% of probabilistic
 sensitivity analysis draws. Combined biopsy remained the least expensive
 strategy across all four geographic localities tested, with its advantage
 over standalone office biopsy widening from $209.77 in a low-cost locality
 to $353.14 in a high-cost locality. Clinical-outcome sensitivity analysis
 found combined biopsy carried substantially lower exposure to
-D&C-rescue-driven adverse events than standalone office biopsy (mean 0.34
-vs 2.11 events per 1,000 patients).
+D&C-rescue-driven adverse events than standalone office biopsy (mean 0.36
+vs 2.12 events per 1,000 patients).
 
 **Conclusion:** [DRAFT -- directly supported by data, no "further research
 needed" language, per journal requirement] Endometrial biopsy performed
@@ -305,8 +305,8 @@ observed time range, the combined arm's advantage over office biopsy
 narrowed to $24.99 but did not reverse.
 
 Across 1,000 probabilistic-sensitivity draws, combined biopsy had a mean
-cost of $536.50 (SD $113.50) and office biopsy a mean cost of $678.20 (SD
-$114.50). Combined biopsy was the least expensive strategy in 82.0% of
+cost of $537.34 (SD $114.32) and office biopsy a mean cost of $676.60 (SD
+$112.80). Combined biopsy was the least expensive strategy in 82.3% of
 draws; D&C was never the least expensive strategy in any draw. Combined
 biopsy remained the least expensive strategy as long as the incremental
 colonoscopy-suite time stayed below approximately 12.7 minutes and as long
@@ -323,12 +323,12 @@ advantage widened, rather than narrowed or reversed, at the high-cost
 extreme.
 
 D&C-rescue-driven major-adverse-event exposure was substantially lower for
-combined biopsy (mean 0.34 events per 1,000 patients) than for office
-biopsy (mean 2.11 per 1,000), reflecting the combined arm's lower
+combined biopsy (mean 0.36 events per 1,000 patients) than for office
+biopsy (mean 2.12 per 1,000), reflecting the combined arm's lower
 probability of ultimately requiring D&C. D&C itself carried a mean
-adverse-event exposure of 19.16 per 1,000. The office-biopsy arm's estimated
+adverse-event exposure of 19.21 per 1,000. The office-biopsy arm's estimated
 delayed-neoplasia risk (a failed sample not rescued to D&C that represents
-cancer or precancer) had a mean of 1.52 per 1,000 patients. The
+cancer or precancer) had a mean of 1.54 per 1,000 patients. The
 combined-biopsy arm's estimated delayed-neoplasia risk was 0.00 in all 1,000
 draws by construction, not because the underlying risk is known to be zero
 (see Discussion); we therefore report this as an exploratory,

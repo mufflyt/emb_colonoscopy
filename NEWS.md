@@ -3,6 +3,26 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-01 (the PSA got a seed; adverse-event costing got a real evidence table, not a guess)
+
+Two pieces of asked-for work, both finished. First: the PSA is seeded now, by default, so running it
+twice gives the same 1,000 draws instead of a new random sample each time. This is the actual fix for
+a bug class that bit this project twice already -- a manuscript number quoted from one run, a
+different manuscript number quoted from a run computed minutes later, both individually correct and
+mutually inconsistent. Every PSA-derived number in the manuscript got regenerated and re-synced under
+the new seed (small shifts -- 82.0% to 82.3%, that kind of thing -- not a substantive change).
+
+Second, and more interesting: instead of finding a single "$X per perforation" number to bolt onto
+the model, built out what actually happens after a D&C perforation, by management pathway --
+observation, laparoscopy, or laparotomy -- each with its own real CMS cost. That took finding a
+second, distinct 1982 paper that reports exactly this breakdown, and then discovering, via the actual
+current CMS payment file, that the laparotomy pathway can't be priced the same way as the others: it's
+classified as an inpatient-only procedure, with no outpatient facility rate assigned to it at all.
+That's not a research gap this session could close -- it's a different pricing methodology (inpatient
+DRG-based) that this model doesn't have yet. So about two-thirds of perforation management is now
+fully costed with real numbers, and the rest is honestly marked unresolved instead of guessed at --
+nothing is wired into the actual cost model until that's settled.
+
 ## 2026-09-01 (checked a candidate paper; it's real but doesn't do what it looked like it would)
 
 Asked to cite Adambekov et al. 2017 if it's relevant to the office-EMB-failure parameter. It's

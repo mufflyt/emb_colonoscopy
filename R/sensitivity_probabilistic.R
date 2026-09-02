@@ -127,19 +127,44 @@ draw_parameter_set <- function(model_parameters) {
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @param price_index_table Tibble from [load_price_index_table()].
 #' @param n_simulations Integer number of Monte Carlo draws. Default 1000.
+#' @param seed Integer scalar or `NULL`. Default `20260901` (the date PSA
+#'   reproducibility was established -- see docs/testing_philosophy.md and
+#'   CHANGELOG.md). The RNG state is saved before seeding and restored on
+#'   exit, so calling this function does not affect random draws elsewhere
+#'   in the caller's session. Pass `NULL` for an unseeded, genuinely random
+#'   run (e.g. deliberately exploring draw-to-draw variability); any other
+#'   integer reproduces a different but still-fixed sequence of draws.
 #' @return A tibble with `n_simulations` rows, one per draw, giving each
 #'   strategy's `expected_total_cost` and the combined-vs-office
 #'   incremental cost.
 run_probabilistic_sensitivity <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
-  n_simulations = 1000
+  n_simulations = 1000,
+  seed = 20260901
 ) {
   validate_positive(n_simulations, "n_simulations")
 
+  if (!base::is.null(seed)) {
+    old_seed <- if (base::exists(".Random.seed", envir = .GlobalEnv)) {
+      base::get(".Random.seed", envir = .GlobalEnv)
+    } else {
+      NULL
+    }
+    base::on.exit({
+      if (!base::is.null(old_seed)) {
+        base::assign(".Random.seed", old_seed, envir = .GlobalEnv)
+      } else if (base::exists(".Random.seed", envir = .GlobalEnv)) {
+        base::rm(".Random.seed", envir = .GlobalEnv)
+      }
+    }, add = TRUE)
+    base::set.seed(seed)
+  }
+
   base::message(
     "Running probabilistic sensitivity analysis: ", n_simulations,
-    " Monte Carlo draws."
+    " Monte Carlo draws",
+    if (base::is.null(seed)) " (unseeded)." else base::paste0(" (seed ", seed, ").")
   )
 
   simulation_rows <- purrr::map(base::seq_len(n_simulations), function(draw_index) {
