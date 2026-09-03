@@ -378,6 +378,40 @@ in the high-cost locality. This is a deterministic analysis, deliberately kept o
 `run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
 parameter-uncertainty question the way a study's confidence interval is.
 
+## Cost-consequence secondary analysis (2026-09-03): cost per additional case detected
+
+This repository's base case is a cost-minimization analysis (see above). Turning it into a full
+cost-utility analysis (QALYs, an ICER against a willingness-to-pay threshold) would require a
+stage-shift/survival model (delayed detection -> later-stage diagnosis -> worse survival) and
+health-state utility values -- a substantially larger undertaking, and one that would almost
+certainly have to lean on general (non-Lynch) oncology literature for Lynch-specific stage-shift and
+utility data that likely does not exist, extending rather than resolving this model's existing
+evidence-tier-C pattern. `R/cost_effectiveness.R` instead adds a deliberately lighter alternative: an
+incremental cost-effectiveness ratio (ICER) using data this repository already has, no new sourced
+parameters required. `compute_diagnostic_yield_cost_effectiveness()` combines
+`compute_strategy_costs()`'s healthcare-sector cost with `compute_diagnostic_yield()`'s detection
+probability (see "Diagnostic-yield..." section above) into dollars per additional expected true case
+detected -- no disease-prevalence parameter is needed for this interpretation, since dividing a cost
+difference by a detection-*probability* difference already yields dollars per additional expected
+case in a cohort of any size.
+
+`compute_incremental_cost_effectiveness()` implements both standard health-economic dominance rules
+(strict dominance and extended/weak dominance via monotonic stepwise-ICER checking along the cost-
+sorted frontier) generically, tested against synthetic cases exercising both, not just this
+repository's real three-strategy data (which -- as it happens -- triggers neither: cost and detection
+probability rise together from combined_emb -> office_emb -> dnc for both cancer and precancer, so
+all three remain on the frontier). Result: ICER(office_emb vs combined_emb) ~ $20,843 per additional
+cancer case detected (~$36,823 for AEH); ICER(dnc vs office_emb) ~ $33,437 per additional cancer case
+detected (~$59,073 for AEH). Like `compute_diagnostic_yield()` itself, this is a deterministic point
+estimate, not integrated into the probabilistic sensitivity analysis, and inherits the same evidence
+caveats (general, symptomatic, non-Lynch sensitivity data; D&C's own sensitivity estimate carries a
+very wide 95% CI). See `analysis/15_cost_effectiveness.R` / `tables/cost_effectiveness.csv` for the
+reproducible output. **Not yet added to the manuscript itself**: the journal's word limits (Discussion
+<=750, total Intro+Methods+Results+Discussion <=3,000) were already at their cap after the
+diagnostic-yield and societal-perspective secondary analyses were added; reporting this one in the
+manuscript text will require either further trimming elsewhere or cutting something else to make
+room -- a decision left to the author rather than made silently.
+
 ## Simplifying assumptions not yet relaxed
 
 - Pathology cost (`emb_pathology_cost`) is assumed identical across all three strategies (one

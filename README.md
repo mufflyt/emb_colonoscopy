@@ -110,6 +110,20 @@ Monte Carlo realizations. See `docs/data_sources.md` for the full parameter list
 separate adverse-event *cost* was wired directly into `compute_dnc_strategy_cost()` instead (see
 "Adverse-event costing" below), not into this module.
 
+## Cost-consequence secondary analysis (added 2026-09-03): cost per additional case detected
+
+A deliberately lighter alternative to a full cost-utility analysis (no QALYs, no stage-shift/survival
+model -- see `docs/methods_notes.md` for why that's a much larger undertaking). `R/cost_effectiveness.R`
+combines `compute_strategy_costs()`'s healthcare-sector cost with `compute_diagnostic_yield()`'s
+detection probability into an incremental cost-effectiveness ratio (ICER): dollars per additional
+expected true cancer/precancer case detected. Implements standard strict- and extended-dominance
+rules generically (tested against synthetic cases, not just this repository's real data). Result:
+ICER(office EMB vs combined EMB) ~ $20,843 per additional cancer case detected; ICER(D&C vs office
+EMB) ~ $33,437. Deterministic point estimate, not PSA-integrated, same scope discipline as
+`compute_diagnostic_yield()`. See `analysis/15_cost_effectiveness.R` /
+`tables/cost_effectiveness.csv`. Not yet reported in the manuscript text -- the journal's word limits
+were already at their cap; see `docs/methods_notes.md`'s own section for the full account.
+
 ## Adverse-event costing (partial; wired into the D&C base-case cost)
 
 `compute_dnc_strategy_cost()` (`R/strategy_costs.R`) includes an

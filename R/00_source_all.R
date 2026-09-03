@@ -55,6 +55,10 @@ source_files <- c(
   # diagnostic_yield.R reuses draw_parameter_set() from
   # sensitivity_probabilistic.R, so it must come after it.
   "diagnostic_yield.R",
+  # cost_effectiveness.R calls both compute_strategy_costs() (strategy_costs.R)
+  # and compute_diagnostic_yield() (diagnostic_yield.R), so it must come
+  # after both.
+  "cost_effectiveness.R",
   "threshold_analysis.R",
   "scenarios.R",
   # geographic_sensitivity.R calls override_model_parameters()/

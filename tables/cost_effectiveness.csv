@@ -1,0 +1,7 @@
+strategy,disease,cost,effect,status,icer
+combined_emb,cancer,506.113634478403,0.7759079999999999,on_frontier,NA
+office_emb,cancer,749.1756158994485,0.787569325,on_frontier,20843.427433936053
+dnc,cancer,3839.810029485,0.88,on_frontier,33437.32384931248
+combined_emb,precancer,506.113634478403,0.74108,on_frontier,NA
+office_emb,precancer,749.1756158994485,0.74768075,on_frontier,36823.388466620294
+dnc,precancer,3839.810029485,0.8,on_frontier,59072.60546711869

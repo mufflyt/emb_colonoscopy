@@ -5,6 +5,48 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-03 (added a cost-consequence secondary analysis: cost per additional case detected)
+
+### Added
+- `R/cost_effectiveness.R`: two new functions. `compute_incremental_cost_effectiveness()` is a
+  domain-agnostic ICER/dominance function (works on any `strategy`/`cost`/`effect` tibble) that
+  implements both standard health-economic dominance rules: strict dominance (a strategy costing the
+  same or more while detecting the same or less is excluded) and extended/weak dominance (among
+  surviving strategies sorted by cost, stepwise ICERs must increase monotonically; a violation means
+  the middle strategy is excluded because a combination of its neighbors would be more efficient).
+  `compute_diagnostic_yield_cost_effectiveness()` is a thin domain wrapper combining
+  `compute_strategy_costs()`'s healthcare-sector cost with `compute_diagnostic_yield()`'s detection
+  probability (Sakna et al. 2023, already reference 17 in the manuscript -- no new citation needed).
+  This is a deliberately LIGHTER alternative to a full cost-utility analysis: no QALYs, no
+  stage-shift/survival model, no new sourced parameters -- built entirely from data this repository
+  already computes. Deterministic point estimate, not PSA-integrated, matching
+  `compute_diagnostic_yield()`'s own scope discipline.
+- `analysis/15_cost_effectiveness.R`: runs the above for both `disease = "cancer"` and `"precancer"`,
+  saving `tables/cost_effectiveness.csv`.
+- `tests/testthat/test-cost-effectiveness.R`: 8 tests, including two synthetic cases specifically
+  constructed to exercise strict dominance and extended dominance (this repository's real three
+  strategies never trigger either, so synthetic cases were necessary to actually test the dominance
+  logic), a real-data regression test, and an INDEPENDENT CONFIRMATION re-deriving an ICER via a path
+  that never calls either new function. Mutation-tested for real: flipped the extended-dominance
+  violation-detection comparison (`<` to `>`), confirmed 6 tests failed -- including, notably, the
+  real-data test, since the flipped logic also mis-triggered on the actual model's three-strategy
+  frontier, incorrectly marking a real strategy `extendedly_dominated` -- reverted, confirmed green.
+  Logged in `docs/testing_philosophy.md`. Full test suite green.
+- `docs/methods_notes.md`, `README.md`: new sections describing the analysis, its results ($20,843
+  per additional cancer case detected switching office EMB for combined EMB; $33,437 switching D&C
+  for office EMB), and why it stops short of a full cost-utility analysis.
+
+### Not done (explicitly deferred, disclosed rather than silently skipped)
+- **Not yet added to the manuscript text.** The journal's word limits (Discussion <=750,
+  Intro+Methods+Results+Discussion <=3,000) were already exactly at their cap after the
+  diagnostic-yield and societal-perspective secondary analyses were added in the prior two entries.
+  Adding this one to the manuscript requires either trimming more existing content or a decision
+  about what to cut to make room -- left to the author rather than done silently. Code, tests, and
+  reproducible table output are complete and available now regardless.
+- A full cost-utility analysis (QALYs, stage-shift/survival model, health-state utilities, an ICER
+  against a willingness-to-pay threshold) remains out of scope, as discussed with the user -- this
+  lighter cost-consequence analysis was the explicitly chosen alternative.
+
 ## 2026-09-02 (closed a test-coverage gap: confirmed the 2010->2026 inflation adjustment actually fires)
 
 ### Added

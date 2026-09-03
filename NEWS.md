@@ -61,6 +61,38 @@ office biopsy sometimes does. That's a genuinely different gap (no source for it
 yet), and conflating the two would have been the kind of mistake this project has caught itself making
 before. Kept them separate.
 
+## 2026-09-03 (what does an extra detected cancer actually cost?)
+
+Asked how this could become a true cost-effectiveness model -- the kind with QALYs and an
+incremental cost-effectiveness ratio against a willingness-to-pay threshold. The honest answer: that's
+a much bigger project than anything built so far this week, because it needs a whole model of how a
+delayed diagnosis translates into worse survival, plus utility values for different health states --
+data that almost certainly doesn't exist specifically for Lynch syndrome patients, meaning it would
+lean on the same kind of general-population evidence this project has been trying to move away from,
+not resolve.
+
+So built the lighter version instead: no QALYs, just dollars per additional true cancer case actually
+detected. The pieces for this were already sitting in the codebase -- a function computing each
+strategy's cost, and a separate one (added a day ago) computing each strategy's detection accuracy.
+Combining them didn't need a single new data source. The output: switching from combined biopsy to
+office biopsy costs about $20,800 for every additional cancer case it actually catches; switching from
+office biopsy to D&C costs about $33,400 more per additional case. Whether that's "worth it" isn't
+something this analysis answers -- that's a judgment call for the reader -- but now there's an actual
+number to make that judgment against, instead of nothing.
+
+Also built out the standard "is any strategy pointless" check economists use for this kind of
+comparison -- if a strategy costs more without detecting more, or if a cheaper combination of two
+other strategies would beat it, it gets flagged and excluded rather than quietly reported as if it
+were a real option. None of the three strategies in this specific model happen to trigger either
+check right now, so that logic had to be tested against made-up numbers instead of the real data to
+prove it actually works -- otherwise there'd be no way to know it functions correctly until the day it
+mattered.
+
+One thing this did NOT do: get added to the manuscript itself. The paper is already sitting right at
+its word-count ceiling after the last two additions, so this one is built, tested, and has real output
+sitting in a table -- but putting it into the actual paper text means either trimming something else
+first or deciding what to cut. Flagged rather than guessed at.
+
 ## 2026-09-02 (actually read the NCCN PDF this time, instead of a summary of it)
 
 Went back to strengthen the NCCN citation the Introduction leans on, and did it properly this time:

@@ -45,6 +45,8 @@ logged here so it isn't quietly skipped later.
 
 | `patient_time_cost_per_encounter is actually inflation-adjusted from 2010 to the reference year...` and `INDEPENDENT CONFIRMATION: patient_time_cost_per_encounter matches adjust_for_inflation()...` (`test-societal-costs.R`) | In `compute_strategy_societal_costs()`, replaced `get_adjusted_cost_parameter(...)` with a plain `get_parameter_value(...)` call, silently skipping the 2010->2026 inflation adjustment | RED with defect on both tests (`adjusted_rate` equal to the raw `$43` base value instead of the inflated `$65.63`; the independently-derived adjusted rate diverged from the pipeline value by exactly `$22.6`, the 2010-to-2026 CPI-U gap) -> GREEN on revert |
 
+| `extended dominance: a strategy whose ICER decreases the next step is excluded...` and 5 other tests in `test-cost-effectiveness.R` (`REAL-DATA`, `INDEPENDENT CONFIRMATION`) | In `compute_incremental_cost_effectiveness()`'s extended-dominance loop, flipped the violation-detection comparison from `step_icers[[k]] < step_icers[[k - 1]]` to `>` | RED with defect on 6 tests simultaneously (the synthetic extended-dominance case no longer excluded the inefficient middle strategy; more strikingly, the flipped logic also mis-triggered on the REAL model's actual three-strategy frontier, incorrectly marking a real strategy `extendedly_dominated` when it should be `on_frontier` -- a live demonstration of how a single flipped comparison operator can silently corrupt a real reported finding, not just a synthetic test case) -> GREEN on revert |
+
 Each row above was executed for real during this session, not simulated -- see the
 conversation history / commit that introduced this file for the exact defect-planting
 commands.
