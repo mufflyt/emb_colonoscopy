@@ -124,6 +124,66 @@ test_that("compute_strategy_societal_costs returns valid, internally consistent 
   )
 })
 
+test_that("patient_time_cost_per_encounter is actually inflation-adjusted from 2010 to the reference year, not left at its raw base value", {
+  # Guards against get_adjusted_cost_parameter() silently no-op'ing (e.g. a
+  # dollar_year/reference_year mismatch, or a missing row in
+  # data/cpi_all_items.csv for one of the two years) and quietly returning
+  # the raw 2010 base_value ($43) instead of an inflated 2026 figure.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  all_items_price_index_table <- test_all_items_price_index_table()
+  reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
+
+  cost_result <- compute_strategy_costs(model_parameters, price_index_table)
+  societal <- compute_strategy_societal_costs(
+    model_parameters, cost_result$strategy_costs, all_items_price_index_table, reference_year
+  )
+
+  raw_base_value <- get_parameter_value(
+    model_parameters, "patient_time_opportunity_cost_per_visit"
+  )
+  adjusted_rate <- societal$patient_time_cost_per_encounter[[1]]
+
+  expect_true(all(societal$patient_time_cost_per_encounter == adjusted_rate))
+  expect_false(isTRUE(all.equal(adjusted_rate, raw_base_value)))
+})
+
+test_that("INDEPENDENT CONFIRMATION: patient_time_cost_per_encounter matches adjust_for_inflation() called directly", {
+  # Meta-rule (docs/testing_philosophy.md, Rule 2): re-derive via a path
+  # that never calls compute_strategy_societal_costs()/get_adjusted_cost_parameter().
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  all_items_price_index_table <- test_all_items_price_index_table()
+  reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
+
+  raw_base_value <- get_parameter_value(
+    model_parameters, "patient_time_opportunity_cost_per_visit"
+  )
+  parameter_row <- model_parameters[
+    model_parameters$parameter == "patient_time_opportunity_cost_per_visit",
+  ]
+  independent_adjusted_rate <- adjust_for_inflation(
+    cost_value = raw_base_value,
+    source_year = parameter_row$dollar_year[[1]],
+    reference_year = reference_year,
+    price_index_table = all_items_price_index_table
+  )
+
+  cost_result <- compute_strategy_costs(model_parameters, price_index_table)
+  societal <- compute_strategy_societal_costs(
+    model_parameters, cost_result$strategy_costs, all_items_price_index_table, reference_year
+  )
+
+  expect_equal(
+    societal$patient_time_cost_per_encounter[[1]], independent_adjusted_rate,
+    tolerance = 1e-9
+  )
+  # And that independently-derived rate really is 2026 dollars, not 2010 --
+  # the CPI-U ratio (332.813/218.056) is > 1, so the adjustment must raise
+  # the value, not leave it unchanged or lower it.
+  expect_true(independent_adjusted_rate > raw_base_value)
+})
+
 test_that("dnc's societal_addon equals exactly 2x the per-encounter opportunity cost", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

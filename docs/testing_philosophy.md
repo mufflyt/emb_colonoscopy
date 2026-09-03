@@ -43,6 +43,8 @@ logged here so it isn't quietly skipped later.
 
 | `compute_strategy_expected_encounters returns one row per strategy with dnc fixed at 2` and four other tests in `test-societal-costs.R` (`INDEPENDENT CONFIRMATION`, the `compute_strategy_costs()` consistency guard, `dnc's societal_addon equals exactly 2x...`) | Changed `dnc_encounters <- 2` to `dnc_encounters <- 1` in `compute_strategy_expected_encounters()` (`R/societal_costs.R`) | RED with defect on 5 tests simultaneously (dnc's own encounter count, both office/combined formulas that multiply the escalation branch by `dnc_encounters`, the `compute_strategy_costs()` consistency check, and the `dnc_row$societal_addon == ... * 2` identity) -> GREEN on revert |
 
+| `patient_time_cost_per_encounter is actually inflation-adjusted from 2010 to the reference year...` and `INDEPENDENT CONFIRMATION: patient_time_cost_per_encounter matches adjust_for_inflation()...` (`test-societal-costs.R`) | In `compute_strategy_societal_costs()`, replaced `get_adjusted_cost_parameter(...)` with a plain `get_parameter_value(...)` call, silently skipping the 2010->2026 inflation adjustment | RED with defect on both tests (`adjusted_rate` equal to the raw `$43` base value instead of the inflated `$65.63`; the independently-derived adjusted rate diverged from the pipeline value by exactly `$22.6`, the 2010-to-2026 CPI-U gap) -> GREEN on revert |
+
 Each row above was executed for real during this session, not simulated -- see the
 conversation history / commit that introduced this file for the exact defect-planting
 commands.

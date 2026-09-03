@@ -5,6 +5,24 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-02 (closed a test-coverage gap: confirmed the 2010->2026 inflation adjustment actually fires)
+
+### Added
+- `tests/testthat/test-societal-costs.R`: 2 new tests, prompted by a direct user question ("do we
+  need to alter the 2010 dollars to 2026 dollars") that exposed a real gap -- the adjustment was
+  already implemented and working (`compute_strategy_societal_costs()` already calls
+  `get_adjusted_cost_parameter()`, confirmed live via the console log "Inflation-adjusted $43 (2010)
+  to $65.63 (2026)"), but none of the original 9 tests actually asserted that it ran; they only
+  checked `patient_time_cost_per_encounter > 0`, which would still pass if the adjustment were
+  silently skipped and the raw 2010 `$43` were used instead. New tests: (1) the adjusted rate is not
+  equal to the raw base value; (2) an INDEPENDENT CONFIRMATION re-deriving the adjustment via
+  `adjust_for_inflation()` called directly, matching the pipeline value exactly. Mutation-tested for
+  real: replaced `get_adjusted_cost_parameter(...)` with `get_parameter_value(...)` in
+  `R/societal_costs.R` (silently skipping the adjustment), confirmed both new tests failed with the
+  expected signature (adjusted_rate == raw $43; independent derivation off by exactly the $22.60
+  2010-to-2026 CPI-U gap), reverted, confirmed green -- logged in `docs/testing_philosophy.md`. Full
+  test suite green (21 societal-costs tests total).
+
 ## 2026-09-02 (added a societal-perspective secondary analysis: patient time and travel opportunity cost)
 
 ### Added
