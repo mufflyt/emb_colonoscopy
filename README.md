@@ -31,6 +31,30 @@ study (ONCE) have shown that combining colonoscopy and EMB is feasible, well-tol
 preferred by patients -- but none of them costed it. This repository asks the next question: **what
 does each strategy actually cost, and does coordinating biopsy with colonoscopy save money?**
 
+## What "cost-minimization" means, in plain language
+
+Most health-economics studies have to weigh cost against benefit -- is the more expensive option
+worth it because it works better? This one doesn't have to, because it starts from a specific,
+stated assumption: **all three ways of getting the tissue sample are assumed to catch cancer
+equally well.** If that's true, the only question left is which one costs less -- there's no
+tradeoff to weigh, just an itemized bill to compare. That's what "cost-minimization" means: not
+"which is better," but "given that they're equally good, which is cheaper."
+
+A useful comparison: three ways to get your car's brakes checked -- a standalone appointment at the
+shop, folding it into an oil change you were getting anyway, or a full dealership service visit.
+Assuming a competent mechanic checks the brakes equally well any of those three ways, the real
+question is just what each option costs once you add up the shop's time, the parts, and what
+happens if something needs a second visit to fix. This model does exactly that arithmetic for
+endometrial sampling, using real, itemized Medicare prices instead of guesses: the office-visit fee,
+the pathology fee, the room and anesthesia time, and -- importantly -- what it costs when a first
+attempt fails and has to escalate to something bigger, since a fair comparison has to include what
+happens when things don't go smoothly, not just when they do.
+
+The "all three are equally good" assumption is doing real work, so this repository doesn't just
+assume it and move on -- two supplementary analyses (see "Diagnostic-yield and clinical-outcome
+extension" and "Cost-consequence secondary analysis" below) exist specifically to test whether that
+assumption actually holds up, rather than taking it on faith.
+
 ## The incremental-cost principle
 
 The central conceptual choice in this model: a Lynch patient undergoing surveillance colonoscopy is
