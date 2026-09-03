@@ -5,6 +5,26 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-03 (added the cost-consequence analysis to the manuscript itself)
+
+### Added
+- `manuscript/manuscript.qmd`: reports the cost-consequence secondary analysis added in the entry
+  below. Author explicitly chose "trim more to fit" over leaving it undocumented or cutting other
+  content. New Methods sentence introducing the analysis; new Results paragraph reporting the four
+  ICERs ($20,843/$33,437 for cancer, $36,823/$59,073 for AEH); the Discussion's "Finally, several
+  inputs..." limitations sentence extended by 2 words to note this analysis inherits the same
+  general-population evidence caveat as the detection-probability analysis it's built from. No new
+  reference needed (reuses reference 17, already cited for the detection-probability analysis).
+- To make room, five existing Methods passages were tightened (no content change): the five-analyses
+  enumeration, the combined-arm incremental-cost-principle sentence, the geographic/patient-level
+  heterogeneity sentence, the structural-assumptions sentence, and the analytic-horizon sentence.
+  Final counts: Introduction 244/250, Discussion 750/750 (at the limit), total 2,990/3,000 (a
+  10-word buffer, deliberately not left at exactly 3,000 given rounding/counting-method uncertainty).
+- `manuscript/cheers_checklist.qmd` item 12 (Measurement of outcomes) now quotes the new Methods
+  sentence.
+- `docs/methods_notes.md`, `README.md`: updated from "not yet added" to reflect the manuscript now
+  reports this analysis.
+
 ## 2026-09-03 (added a cost-consequence secondary analysis: cost per additional case detected)
 
 ### Added

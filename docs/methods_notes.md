@@ -406,11 +406,11 @@ detected (~$59,073 for AEH). Like `compute_diagnostic_yield()` itself, this is a
 estimate, not integrated into the probabilistic sensitivity analysis, and inherits the same evidence
 caveats (general, symptomatic, non-Lynch sensitivity data; D&C's own sensitivity estimate carries a
 very wide 95% CI). See `analysis/15_cost_effectiveness.R` / `tables/cost_effectiveness.csv` for the
-reproducible output. **Not yet added to the manuscript itself**: the journal's word limits (Discussion
-<=750, total Intro+Methods+Results+Discussion <=3,000) were already at their cap after the
-diagnostic-yield and societal-perspective secondary analyses were added; reporting this one in the
-manuscript text will require either further trimming elsewhere or cutting something else to make
-room -- a decision left to the author rather than made silently.
+reproducible output. **Added to the manuscript 2026-09-03** (author confirmed: trim more to fit,
+rather than leave undocumented or cut something else): Methods, Results, and the Discussion
+limitations paragraph now report this analysis, after tightening five other Methods passages (no
+content change, just fewer words) to make room. Final word counts: Introduction 244/250, Discussion
+750/750 (at the limit), total 2,990/3,000.
 
 ## Simplifying assumptions not yet relaxed
 

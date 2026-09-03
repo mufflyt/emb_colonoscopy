@@ -225,11 +225,9 @@ anesthesia time and scheduling-coordination labor. Patient time,
 transportation, lost productivity, and other nonmedical costs were excluded.
 All costs are reported in 2026 U.S. dollars; costs originally reported in an
 earlier year were inflation-adjusted using the Bureau of Labor Statistics
-Consumer Price Index for Medical Care. The analytic horizon was a single
-endometrial-surveillance episode, beginning with the initial sampling
-strategy and extending through any rescue D&C required after an
-unsuccessful initial attempt; costs or consequences beyond resolution of
-that episode were not included. Because the horizon was less than one year,
+Consumer Price Index for Medical Care. The analytic horizon was a single endometrial-surveillance episode: the
+initial sampling strategy through any rescue D&C after an unsuccessful
+attempt; costs beyond resolution of that episode were not included. Because the horizon was less than one year,
 costs were not discounted.
 
 Total expected cost per patient was the primary outcome, selected because
@@ -257,10 +255,9 @@ Medicare payment data,^6,7^ weighted by that pathway's observed probability
 in an independent cohort study of postperforation management.^14^ See
 Discussion for what this deliberately excludes. The combined-biopsy arm was modeled
 under an incremental-cost principle: because the patient is assumed to be
-undergoing the surveillance colonoscopy regardless of whether biopsy is
-added, no colonoscopy base cost, gastroenterology professional fee, or
-baseline procedural sedation cost was charged to this arm; only costs
-incremental to the already-planned colonoscopy were included.
+undergoing the colonoscopy regardless of whether biopsy is added, no
+colonoscopy base cost, gastroenterology fee, or baseline sedation cost
+was charged; only incremental costs were included.
 
 Clinical probabilities were drawn preferentially from Lynch-syndrome-specific
 literature. The office biopsy failure probability was pooled from three
@@ -279,19 +276,17 @@ range 1-12 minutes) and incremental anesthesia requirement (no increase in
 dosing) were drawn from a prospective feasibility study of the combined
 procedure.^5^
 
-We conducted five complementary sensitivity analyses. First, deterministic
-one-way sensitivity analysis varied each of ten parameters individually
-across its low/high bound while holding all others at base case. Second,
-probabilistic sensitivity analysis drew 1,000 Monte Carlo samples, with each
-parameter sampled from a distribution matched to its evidence type (beta for
-probabilities, gamma for costs, triangular for parameters whose uncertainty
-is a structural or plausibility range rather than a formal confidence
-interval). Third, threshold analysis solved for the parameter value at which
-the combined strategy's cost advantage over office biopsy would be lost.
-Fourth, scenario analysis modeled illustrative Medicaid and commercial
-reimbursement and an alternative structural assumption about the combined
-arm's preoperative visit. Fifth, budget-impact analysis projected annualized
-savings across illustrative cohort sizes.
+We conducted five complementary sensitivity analyses: deterministic
+one-way sensitivity analysis, varying ten parameters individually across
+low/high bounds; probabilistic sensitivity analysis, drawing 1,000 Monte
+Carlo samples from distributions matched to evidence type (beta for
+probabilities, gamma for costs, triangular for plausibility ranges);
+threshold analysis, solving for the parameter value at which combined
+biopsy's cost advantage over office biopsy would be lost; scenario
+analysis, modeling illustrative Medicaid/commercial reimbursement and an
+alternative combined-arm preoperative-visit assumption; and budget-impact
+analysis, projecting annualized savings across illustrative cohort
+sizes.
 
 To test whether the base-case conclusion depends on national-average
 Medicare pricing, we re-priced all three strategies at four localities: the
@@ -339,6 +334,11 @@ meta-analysis.^17^ This calculation is a point estimate only, not
 integrated into the probabilistic sensitivity analysis; see Discussion for
 its limitations.
 
+As a lighter alternative to a full cost-utility analysis, we also
+computed cost per additional true case detected between adjacent
+strategies, combining costs with the detection probabilities above and
+checking for dominance -- also a point estimate, not PSA-integrated.
+
 As a supplementary societal-perspective check, we reintroduced patient
 time and travel-time opportunity costs the base case excludes: each
 strategy's expected number of dedicated patient encounters (office or
@@ -351,17 +351,15 @@ report it under the existing scenario folding combined biopsy's
 preoperative visit into the colonoscopy day.
 
 The geographic sensitivity analysis characterizes setting-level
-heterogeneity (how the base-case conclusion varies by practice location);
-it does not characterize patient-level heterogeneity, which was not
-modeled -- the model does not stratify results by age, genotype,
-menopausal status, or other individual patient characteristics.
+heterogeneity (how the base-case conclusion varies by practice location),
+not patient-level heterogeneity -- the model does not stratify results by
+age, genotype, menopausal status, or other individual characteristics.
 Distributional or equity effects (e.g., differential access or affordability
 across patient subgroups) were outside this analysis's scope. Structural
-modeling assumptions describing actual clinical workflow (e.g., whether the
-combined-biopsy strategy requires a separate preoperative office visit)
-were informed by clinician-investigator practice experience; no formal
-patient or public engagement process was undertaken in developing this
-model.
+modeling assumptions describing clinical workflow (e.g., whether the
+combined arm requires a separate preoperative office visit) were informed
+by clinician-investigator practice experience; no formal patient or public
+engagement process was undertaken.
 
 We compared the model's cost estimates against three independently
 published analyses as a validation check: a historical office-biopsy cost
@@ -436,6 +434,10 @@ its underlying sensitivity carries a very wide 95% confidence interval
 (28.1%-99.3%, from only 5 pooled studies), compared with 56.5%-90.0% for
 Pipelle; this ordering is therefore far from established (see Discussion).
 
+This cost-consequence check found no strategy dominated: switching
+combined to office biopsy cost $20,843 per additional cancer case
+detected, office to D&C $33,437 (AEH: $36,823 and $59,073).
+
 Reintroducing patient time/travel opportunity costs widened combined
 biopsy's advantage over office biopsy from $243.06 to $257.94 per patient
 ($574.11 vs $832.04 total cost); D&C's total was $3,971.07. Folding
@@ -505,16 +507,17 @@ monetizes adverse-event risk: it includes an expected cost for uterine
 perforation managed by diagnostic laparoscopy, the only management
 pathway with a cost fully traceable to current Medicare payment data --
 a deliberate lower bound. Perforations requiring laparotomy, a
-substantial minority of cases, could not be costed: the relevant
+substantial minority, could not be costed: the relevant
 procedure code is inpatient-only under Medicare, with no outpatient
 facility rate. Severe hemorrhage was not monetized at all, since no
 source described its management pathway without relying on a clinically
 unrelated economic model, which we avoided. The per-1,000 adverse-event
 and delayed-neoplasia exposures reported above remain unmonetized
 clinical counts, not cost inputs. Finally, several
-inputs -- the diagnostic sensitivity values underlying the detection-probability
-analysis above, and the D&C and hysteroscopy adverse-event
-probabilities -- are drawn from general, non-Lynch populations rather than
+inputs -- the diagnostic sensitivity values underlying the
+detection-probability and cost-consequence analyses above, and the D&C
+and hysteroscopy adverse-event probabilities -- are drawn from general,
+non-Lynch populations rather than
 from women undergoing Lynch syndrome surveillance specifically, because
 Lynch-specific data for these particular parameters were not identified in
 the literature search underlying this model.
@@ -745,6 +748,8 @@ PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (explicitly exempted from the
     built by analysis/13_diagnostic_yield.R)
   - tables/societal_perspective.csv (societal-perspective secondary
     analysis, both scenarios, built by analysis/14_societal_perspective.R)
+  - tables/cost_effectiveness.csv (cost-consequence secondary analysis,
+    both disease types, built by analysis/15_cost_effectiveness.R)
 
 If a reviewer or the author prefers a different 5, the most likely swap is
 Figure 3 (geographic) <-> figure2_tornado.jpeg (one-way sensitivity/tornado)

@@ -121,8 +121,9 @@ rules generically (tested against synthetic cases, not just this repository's re
 ICER(office EMB vs combined EMB) ~ $20,843 per additional cancer case detected; ICER(D&C vs office
 EMB) ~ $33,437. Deterministic point estimate, not PSA-integrated, same scope discipline as
 `compute_diagnostic_yield()`. See `analysis/15_cost_effectiveness.R` /
-`tables/cost_effectiveness.csv`. Not yet reported in the manuscript text -- the journal's word limits
-were already at their cap; see `docs/methods_notes.md`'s own section for the full account.
+`tables/cost_effectiveness.csv`. Now reported in the manuscript (2026-09-03), after tightening five
+other Methods passages to make room within the journal's word limits; see `docs/methods_notes.md`'s
+own section for the full account.
 
 ## Adverse-event costing (partial; wired into the D&C base-case cost)
 

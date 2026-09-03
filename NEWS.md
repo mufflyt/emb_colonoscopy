@@ -61,6 +61,23 @@ office biopsy sometimes does. That's a genuinely different gap (no source for it
 yet), and conflating the two would have been the kind of mistake this project has caught itself making
 before. Kept them separate.
 
+## 2026-09-03 (getting the extra-cancer-detected number into the actual paper)
+
+Yesterday's cost-per-additional-case-detected analysis got built, tested, and left out of the
+manuscript on purpose -- the paper was already sitting right at its word-count ceiling, and adding
+new findings without a plan for where the words come from is how papers quietly balloon past a
+journal's limit. Asked how to handle it; the answer was to make room rather than skip it or start
+cutting other findings.
+
+So went back through the Methods section looking for places that said the same thing in more words
+than needed -- a list of five sensitivity analyses that read as five separate sentences instead of
+one tight one, a sentence about the combined-biopsy arm's cost logic that repeated itself, a couple of
+others -- and tightened five of them without changing what any of them claim. That freed up enough
+room to add the actual numbers: switching from combined biopsy to office biopsy costs about $20,843
+per additional cancer case caught, and going from office biopsy to D&C costs about $33,437 more per
+case. Landed at 2,990 of the paper's 3,000-word ceiling -- close, but with a few words of breathing
+room this time instead of sitting exactly on the line.
+
 ## 2026-09-03 (what does an extra detected cancer actually cost?)
 
 Asked how this could become a true cost-effectiveness model -- the kind with QALYs and an
