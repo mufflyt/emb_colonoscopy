@@ -47,7 +47,7 @@ psa_histogram <- ggplot2::ggplot(
   ggplot2::geom_vline(xintercept = 0, linetype = "dashed", colour = "grey30") +
   ggplot2::scale_x_continuous(labels = scales::dollar_format()) +
   ggplot2::labs(
-    x = "Incremental cost, combined EMB vs. office EMB ($)",
+    x = "Incremental cost, combined biopsy vs. office biopsy ($)",
     y = "Monte Carlo draws"
   ) +
   theme_journal()

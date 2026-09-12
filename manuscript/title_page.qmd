@@ -28,12 +28,13 @@ compared strategies and CHEERS item 1 only requires the title to identify
 the study as an economic evaluation ("Cost-Minimization"), not enumerate
 every comparator. -->
 
-**Author(s):** [To be completed by the corresponding author -- full name(s),
-institutional/corporate/commercial affiliation(s), up to two major degrees per
-author.]
+**Author(s):** Jenna Carter, MD^1^; Tyler M. Muffly, MD^2^; Marisa Moroney, MD^1^
 
-**Corresponding author:** [Name, department and institution name, city,
-state, email address.]
+^1^University of Colorado, Department of Obstetrics and Gynecology, Aurora, CO.
+^2^Denver Health and Hospital Authority, Denver, CO.
+
+**Corresponding author:** Tyler M. Muffly, MD, Denver Health and Hospital
+Authority, Denver, CO, tyler.muffly@dhha.org
 
 **Disclosure of financial support:** [State any source of financial support
 for the study, including supplies or services from a commercial

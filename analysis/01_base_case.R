@@ -44,10 +44,14 @@ if (!base::dir.exists("figures")) {
   base::dir.create("figures", recursive = TRUE)
 }
 
-cost_comparison_figure <- plot_strategy_cost_comparison(strategy_result$strategy_costs)
+psa_cost_interval <- summarize_psa_cost_interval(model_parameters, price_index_table)
+strategy_costs_with_ci <- strategy_result$strategy_costs %>%
+  dplyr::left_join(psa_cost_interval, by = "strategy")
+
+cost_comparison_figure <- plot_strategy_cost_comparison(strategy_costs_with_ci)
 ggplot2::ggsave(
   "figures/figure1_strategy_cost_comparison.jpeg",
-  plot = cost_comparison_figure, width = 8, height = 6, device = "jpeg", dpi = 300
+  plot = cost_comparison_figure, width = 8, height = 6.5, device = "jpeg", dpi = 300
 )
 base::message("Saved figure to: figures/figure1_strategy_cost_comparison.jpeg")
 

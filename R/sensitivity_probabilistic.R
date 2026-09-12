@@ -240,6 +240,122 @@ run_probabilistic_sensitivity <- function(
   probabilistic_estimates
 }
 
+#' Per-strategy cost mean/SD/95% interval from a set of PSA draws
+#'
+#' Reshapes the wide per-draw costs from [run_probabilistic_sensitivity()]
+#' into one summary row per strategy. Used to attach parameter-evidence
+#' uncertainty (as error bars) to a strategy-cost bar chart -- the
+#' `model_parameters` passed in may already carry scenario- or
+#' locality-specific overrides (see `R/scenarios.R`, `R/geographic_sensitivity.R`),
+#' in which case the resulting interval describes uncertainty in the
+#' underlying cost/probability evidence AS PRICED at that scenario or
+#' locality, not uncertainty about the scenario/locality choice itself
+#' (which this repository deliberately treats as deterministic; see
+#' `R/geographic_sensitivity.R`'s file-level docblock).
+#'
+#' @param model_parameters Tibble from [load_model_parameters()].
+#' @param price_index_table Tibble from [load_price_index_table()].
+#' @param n_simulations Integer number of Monte Carlo draws.
+#' @param seed Integer or `NULL`, passed through to
+#'   [run_probabilistic_sensitivity()].
+#' @return A tibble with one row per strategy: `strategy`, `mean_cost`,
+#'   `sd_cost`, `ci_low` (2.5th percentile), `ci_high` (97.5th percentile).
+summarize_psa_cost_interval <- function(
+  model_parameters,
+  price_index_table = load_price_index_table(),
+  n_simulations = 1000,
+  seed = 20260901
+) {
+  draws <- run_probabilistic_sensitivity(
+    model_parameters,
+    price_index_table = price_index_table,
+    n_simulations = n_simulations,
+    seed = seed
+  )
+
+  draws %>%
+    dplyr::select("office_emb_cost", "combined_emb_cost", "dnc_cost") %>%
+    tidyr::pivot_longer(
+      dplyr::everything(), names_to = "strategy", values_to = "expected_total_cost"
+    ) %>%
+    dplyr::mutate(strategy = base::sub("_cost$", "", .data$strategy)) %>%
+    dplyr::group_by(.data$strategy) %>%
+    dplyr::summarize(
+      mean_cost = base::mean(.data$expected_total_cost),
+      sd_cost = stats::sd(.data$expected_total_cost),
+      ci_low = stats::quantile(.data$expected_total_cost, 0.025)[[1]],
+      ci_high = stats::quantile(.data$expected_total_cost, 0.975)[[1]],
+      .groups = "drop"
+    )
+}
+
+#' Metric's 95% PSA interval at one pinned value of a swept parameter
+#'
+#' Used to draw an uncertainty band around a deterministic threshold-sweep
+#' line ([plot_threshold_sweep()]): `parameter_name` is pinned exactly at
+#' `parameter_value` (its `distribution` is temporarily forced to
+#' `"fixed"`, not merely re-centered, so it does not also vary across
+#' draws), while every OTHER parameter is Monte Carlo-sampled exactly as
+#' in [run_probabilistic_sensitivity()]. The resulting interval answers
+#' "how much could the line move at this x, given uncertainty in every
+#' OTHER cited parameter" -- not uncertainty in the swept parameter, which
+#' the x-axis already represents directly.
+#'
+#' @param model_parameters Tibble from [load_model_parameters()].
+#' @param parameter_name Character scalar: the swept parameter to pin.
+#' @param parameter_value Numeric scalar: the grid value to pin it at.
+#' @param price_index_table Tibble from [load_price_index_table()].
+#' @param target_metric_fn Function of `strategy_costs` returning a
+#'   numeric scalar (see [evaluate_metric_at()]).
+#' @param n_simulations Integer Monte Carlo draws at this grid point.
+#' @param seed Integer or `NULL`. Same save/restore-on-exit behavior as
+#'   [run_probabilistic_sensitivity()].
+#' @return A one-row tibble: `parameter_value`, `ci_low`, `ci_high`.
+evaluate_metric_psa_interval_at <- function(
+  model_parameters,
+  parameter_name,
+  parameter_value,
+  price_index_table,
+  target_metric_fn,
+  n_simulations = 200,
+  seed = 20260901
+) {
+  pinned_parameters <- model_parameters
+  pinned_row <- base::which(pinned_parameters$parameter == parameter_name)
+  pinned_parameters$base_value[[pinned_row]] <- base::as.character(parameter_value)
+  pinned_parameters$distribution[[pinned_row]] <- "fixed"
+
+  if (!base::is.null(seed)) {
+    old_seed <- if (base::exists(".Random.seed", envir = .GlobalEnv)) {
+      base::get(".Random.seed", envir = .GlobalEnv)
+    } else {
+      NULL
+    }
+    base::on.exit({
+      if (!base::is.null(old_seed)) {
+        base::assign(".Random.seed", old_seed, envir = .GlobalEnv)
+      } else if (base::exists(".Random.seed", envir = .GlobalEnv)) {
+        base::rm(".Random.seed", envir = .GlobalEnv)
+      }
+    }, add = TRUE)
+    base::set.seed(seed)
+  }
+
+  draw_values <- purrr::map_dbl(base::seq_len(n_simulations), function(draw_index) {
+    sampled_parameters <- draw_parameter_set(pinned_parameters)
+    strategy_result <- compute_strategy_costs(
+      sampled_parameters, price_index_table = price_index_table
+    )
+    target_metric_fn(strategy_result$strategy_costs)
+  })
+
+  tibble::tibble(
+    parameter_value = parameter_value,
+    ci_low = stats::quantile(draw_values, 0.025)[[1]],
+    ci_high = stats::quantile(draw_values, 0.975)[[1]]
+  )
+}
+
 #' Probability each strategy is the least expensive, across PSA draws
 #'
 #' Answers "combined sampling was the least-cost strategy in N% of

@@ -56,15 +56,62 @@ saved_paths <- save_geographic_sensitivity(
   directory = "tables"
 )
 
+# Per-locality PSA error bars: re-runs run_probabilistic_sensitivity()
+# under each locality's own geographically adjusted parameters, so the
+# interval reflects uncertainty in the underlying cost/probability
+# evidence AS PRICED at that locality -- not uncertainty about geography
+# itself, which this analysis deliberately treats as deterministic (see
+# R/geographic_sensitivity.R's file-level docblock and
+# summarize_psa_cost_interval()'s docblock).
+geographic_psa_intervals <- dplyr::bind_rows(purrr::map(
+  locality_indices$locality_id,
+  function(current_locality) {
+    locality_label <- locality_indices %>%
+      dplyr::filter(.data$locality_id == current_locality) %>%
+      dplyr::pull(.data$locality_label)
+    geographic_bundle <- build_geographic_overrides(
+      model_parameters = model_parameters, locality_id = current_locality,
+      locality_indices = locality_indices, pfs_rvus = pfs_rvus,
+      professional_mapping = professional_mapping, facility_mapping = facility_mapping
+    )
+    locality_parameters <- override_model_parameters(
+      model_parameters, geographic_bundle$overrides
+    )
+    summarize_psa_cost_interval(locality_parameters, price_index_table) %>%
+      dplyr::mutate(locality_id = current_locality, locality_label = locality_label, .before = 1)
+  }
+))
+save_table(geographic_psa_intervals, "geographic_psa_intervals.csv")
+
+geographic_strategy_costs_with_ci <- geographic_analysis$strategy_costs %>%
+  dplyr::left_join(
+    geographic_psa_intervals, by = base::c("locality_id", "locality_label", "strategy")
+  ) %>%
+  dplyr::mutate(label = STRATEGY_LABELS[.data$strategy])
+
+geo_dodge_position <- ggplot2::position_dodge(width = 0.9)
+
 geographic_figure <- ggplot2::ggplot(
-  geographic_analysis$strategy_costs %>%
-    dplyr::mutate(label = STRATEGY_LABELS[.data$strategy]),
+  geographic_strategy_costs_with_ci,
   ggplot2::aes(x = .data$locality_label, y = .data$expected_total_cost, fill = .data$label)
 ) +
-  ggplot2::geom_col(position = "dodge") +
-  ggplot2::scale_y_continuous(labels = scales::dollar_format()) +
+  ggplot2::geom_col(position = geo_dodge_position) +
+  ggplot2::geom_errorbar(
+    ggplot2::aes(ymin = .data$ci_low, ymax = .data$ci_high),
+    position = geo_dodge_position, width = 0.25, linewidth = 0.4, colour = "grey30"
+  ) +
+  ggplot2::geom_text(
+    ggplot2::aes(y = .data$ci_high, label = scales::dollar(.data$ci_high, accuracy = 1)),
+    position = geo_dodge_position, vjust = -0.5, size = 2.2, colour = "grey35"
+  ) +
+  ggplot2::scale_y_continuous(
+    labels = scales::dollar_format(), expand = ggplot2::expansion(mult = c(0, 0.12))
+  ) +
   ggplot2::scale_fill_brewer(palette = "Set1", name = "Strategy") +
-  ggplot2::labs(x = NULL, y = "Expected cost per patient ($)") +
+  ggplot2::labs(
+    x = NULL, y = "Expected cost per patient ($)",
+    caption = "Error bars: 95% probabilistic-sensitivity-analysis interval, re-run under each locality's own geographically adjusted costs."
+  ) +
   theme_journal() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 20, hjust = 1))
 

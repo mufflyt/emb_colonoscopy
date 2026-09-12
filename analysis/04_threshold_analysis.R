@@ -19,7 +19,7 @@ minutes_sweep_figure <- plot_threshold_sweep(
   parameter_name = "combined_emb_added_minutes",
   parameter_grid = seq(0, 60, length.out = 100),
   price_index_table = price_index_table,
-  x_label = "Incremental colonoscopy-suite minutes for EMB"
+  x_label = "Incremental colonoscopy-suite minutes for combined biopsy"
 )
 ggplot2::ggsave(
   "figures/figure3a_threshold_minutes.jpeg",
@@ -31,7 +31,7 @@ failure_sweep_figure <- plot_threshold_sweep(
   parameter_name = "emb_failure_lynch",
   parameter_grid = seq(0.001, 0.6, length.out = 100),
   price_index_table = price_index_table,
-  x_label = "Office EMB failure probability"
+  x_label = "Office endometrial biopsy failure probability"
 )
 ggplot2::ggsave(
   "figures/figure3b_threshold_office_failure.jpeg",

@@ -1,4 +1,4 @@
 Strategy,Initial cost ($),Escalation probability,Expected total cost ($),"Major adverse events per 1,000","Delayed neoplasia per 1,000*"
-EMB with colonoscopy,437,1.8%,506.11,0.36,0
-Office EMB (standalone),255.93,12.8%,749.18,2.48,0
-Operative D&C,3839.81,0.0%,3839.81,19.19,NA
+Endometrial biopsy with colonoscopy,417.61,1.8%,486.42,0.36,0
+Office endometrial biopsy (standalone),236.54,12.8%,727.48,2.48,0
+Operative dilation and curettage,3822.79,0.0%,3822.79,19.2,NA

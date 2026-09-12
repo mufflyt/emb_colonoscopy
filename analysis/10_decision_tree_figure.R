@@ -23,14 +23,14 @@ strategy_result <- compute_strategy_costs(model_parameters, price_index_table)
 costs <- strategy_result$strategy_costs
 
 get_cost <- function(strategy_name) {
-  base::round(costs$expected_total_cost[costs$strategy == strategy_name], 2)
+  base::round(costs$expected_total_cost[costs$strategy == strategy_name], 0)
 }
 get_escalation_probability <- function(strategy_name) {
   costs$escalation_probability[costs$strategy == strategy_name]
 }
 
-office_initial_cost <- base::round(costs$initial_cost[costs$strategy == "office_emb"], 2)
-combined_initial_cost <- base::round(costs$initial_cost[costs$strategy == "combined_emb"], 2)
+office_initial_cost <- base::round(costs$initial_cost[costs$strategy == "office_emb"], 0)
+combined_initial_cost <- base::round(costs$initial_cost[costs$strategy == "combined_emb"], 0)
 dnc_cost <- get_cost("dnc")
 office_escalation_pct <- scales::percent(get_escalation_probability("office_emb"), accuracy = 0.1)
 office_success_pct <- scales::percent(1 - get_escalation_probability("office_emb"), accuracy = 0.1)
@@ -42,8 +42,8 @@ combined_success_pct <- scales::percent(1 - get_escalation_probability("combined
 # strategy's overall probability-weighted expected cost, which is instead
 # annotated at each strategy's own chance node (the standard "fold-back"
 # value shown at a decision-tree's branch point).
-office_escalate_path_cost <- base::round(office_initial_cost + dnc_cost, 2)
-combined_escalate_path_cost <- base::round(combined_initial_cost + dnc_cost, 2)
+office_escalate_path_cost <- base::round(office_initial_cost + dnc_cost, 0)
+combined_escalate_path_cost <- base::round(combined_initial_cost + dnc_cost, 0)
 
 base::message(
   "Office EMB: initial $", office_initial_cost, ", escalation ", office_escalation_pct,
@@ -64,34 +64,34 @@ digraph decision_tree {
         label="Lynch syndrome\\nsurveillance\\npatient"];
 
   office_chance [shape=circle, style=filled, fillcolor="#F5F5F5",
-                 label="Office EMB\\nInitial cost: $%s\\nExpected total: $%s"];
+                 label="Office endometrial biopsy\\nInitial cost: $%s\\nExpected total: $%s"];
   office_success [shape=triangle, style=filled, fillcolor="#B7E4C7",
                   label="Adequate sample\\nCost: $%s"];
   office_fail [shape=circle, style=filled, fillcolor="#F5F5F5",
                label="Failed/inadequate\\nsample"];
   office_dnc [shape=triangle, style=filled, fillcolor="#F4A6A6",
-              label="Escalate to D&C\\nCost: $%s"];
+              label="Escalate to dilation and curettage\\nCost: $%s"];
 
   combined_chance [shape=circle, style=filled, fillcolor="#F5F5F5",
-                    label="Combined EMB\\n(during colonoscopy)\\nInitial cost: $%s\\nExpected total: $%s"];
+                    label="Combined endometrial biopsy\\n(during colonoscopy)\\nInitial cost: $%s\\nExpected total: $%s"];
   combined_success [shape=triangle, style=filled, fillcolor="#B7E4C7",
                      label="Adequate sample\\nCost: $%s"];
   combined_dnc [shape=triangle, style=filled, fillcolor="#F4A6A6",
-                label="Escalate to D&C\\nCost: $%s"];
+                label="Escalate to dilation and curettage\\nCost: $%s"];
 
   dnc_terminal [shape=triangle, style=filled, fillcolor="#F4A6A6",
-                label="Operative D&C\\n(no escalation branch)\\nTotal: $%s"];
+                label="Operative dilation and curettage\\n(no escalation branch)\\nTotal: $%s"];
 
-  root -> office_chance [label="  Strategy 1: Office EMB"];
+  root -> office_chance [label="  Strategy 1: Office endometrial biopsy"];
   office_chance -> office_success [label="  %s"];
   office_chance -> office_fail [label="  %s"];
   office_fail -> office_dnc [label="  escalate\\n(100%%)"];
 
-  root -> combined_chance [label="  Strategy 2: Combined EMB"];
+  root -> combined_chance [label="  Strategy 2: Combined endometrial biopsy"];
   combined_chance -> combined_success [label="  %s"];
   combined_chance -> combined_dnc [label="  %s"];
 
-  root -> dnc_terminal [label="  Strategy 3: Operative D&C"];
+  root -> dnc_terminal [label="  Strategy 3: Operative dilation and curettage"];
 }
 ', office_initial_cost, get_cost("office_emb"),
    office_initial_cost, office_escalate_path_cost,

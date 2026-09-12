@@ -812,6 +812,97 @@ This list reflects the priority ranking developed during model design, highest-y
    step for whoever wants a differentiated, procedure-day-specific patient-time-cost estimate instead
    of the single general-ambulatory-visit rate currently used for every encounter.
 
+## Opportunity cost of a displaced case: checked, real, not quantifiable here (added 2026-09-12)
+
+Prompted by the same question asked directly of the sibling
+`iud_bariatric` project: if adding EMB time to an already-scheduled
+colonoscopy means the endoscopy suite can't fit in another colonoscopy
+that day, is that lost-case cost priced anywhere in this model? Checked
+directly rather than assumed either way, and the answer and the
+literature search behind it are identical across both projects since
+both use the same source paper for procedure-suite time costs.
+
+**Confirmed: not currently captured, and the source paper itself says
+so explicitly.** `direct_room_cost_per_minute` ($20.90/minute, 2014
+dollars, used as the base-case marginal-cost proxy) and
+`procedure_room_cost_per_minute` ($36.14/minute, the fully-loaded
+direct+indirect scenario-only alternative) are both Childers CP,
+Maggard-Gibbons M. "Understanding Costs of Care in the Operating Room."
+*JAMA Surg.* 2018;153(4). Verified directly via the open-access PMC
+full text (PMC5875376), 2026-09-12. The paper defines "direct costs" as
+"costs attributable to the revenue center, such as staff salaries or
+supplies," and separately, explicitly addresses the exact question
+asked here under its own "opportunity cost" discussion, stating plainly
+that this is NOT included in either figure this project uses: "If
+saving time allows the OR to schedule an additional case, this
+potential revenue should be included as a cost. Opportunity costs vary
+and are likely to be highest for short operations (i.e., myringotomy or
+cataract surgery), where scheduling additional cases is more likely.
+However, opportunity cost requires a case to be profitable, which, in
+many circumstances, depends primarily on payer mix."
+
+**This is the project where that caveat matters most.** Childers's own
+description of where opportunity cost is "likely to be highest" -- short,
+high-throughput procedures where "scheduling additional cases is more
+likely" -- describes an ambulatory colonoscopy suite (15-30 minute
+slots, high daily case volume) far better than it describes a bariatric
+OR (60-120+ minute cases, 1-3 per day), where an added few minutes is
+much less likely to literally bump an entire additional case. So this
+gap is a more live concern for `combined_emb_added_minutes` (5 minutes,
+median, Huang et al. 2011) here than for the analogous parameter in
+`iud_bariatric`.
+
+**Searched directly for a real, generalizable per-minute or per-hour
+opportunity-cost figure, specifically so as not to assume "no data
+exists" without checking.** Two primary sources found and verified:
+- Macario A, Dexter F, Traub RD. "Hospital profitability per hour of
+  operating room time can vary among surgeons." *Anesth Analg.*
+  2001;93(3):669-675. Directly verified via the Europe PMC abstract,
+  2026-09-12. Stanford, 2,848 elective surgical cases across 94
+  surgeons. Contribution margin per OR-hour was NEGATIVE for 26% of
+  cases, with substantial surgeon-to-surgeon variability (Cohen's f =
+  0.29). Conclusion: hospitals should "increase the hours of lucrative
+  cases, rather than encourage surgeons to do more and more cases" --
+  the field's own classic reference on this exact quantity treats it as
+  inherently case- and payer-mix-specific, not a generalizable rate.
+  This is OR-based data (mixed surgical case types), not
+  endoscopy-suite-specific, which would matter even more here than for
+  the OR-based `iud_bariatric` project.
+- Saporito A, La Regina D, Perren A, Gabutti L, Anselmi L, Cafarotti S,
+  Mongelli F. "Contribution margin per hour of operating room to
+  reallocate unutilized operating room time: a cost-effectiveness
+  analysis." *Braz J Anesthesiol.* 2023;73(3):243-249.
+  doi:10.1016/j.bjane.2021.03.024. Directly verified via the Europe PMC
+  abstract, 2026-09-12. Swiss hospital, ten procedure types: prioritizing
+  unused OR time by contribution-margin-per-hour raised earnings from
+  $87,117 to $140,444 over a two-month study period versus random
+  allocation. Confirms the same underlying variability in a newer,
+  different-country cohort, but reports only portfolio-level
+  reallocation revenue across heterogeneous procedures, not a single
+  per-minute rate, and is not U.S.-health-system data (inconsistent
+  with this project's CMS-anchored basis used everywhere else).
+
+No study found isolates this figure for an ambulatory endoscopy/
+colonoscopy suite specifically -- both sources above are general
+inpatient-OR-economics studies, decades apart, agreeing that the
+quantity is too variable (by procedure type, payer mix, and provider)
+and too often negative to serve as a stable rate, let alone one
+specific to a short ambulatory procedure like EMB-during-colonoscopy.
+
+**Decision: not built into either sibling project's cost engine.**
+Compressing a quantity the field's own primary literature reports as
+negative over a quarter of the time, and varying by more than an order
+of magnitude by surgeon/procedure, into a single low/base/high
+parameter would be exactly the kind of fabricated precision this
+project's evidence-tier discipline exists to avoid -- there is no
+honest single number to add to `config/model_parameters.csv` here.
+Documented instead as a real, checked, deliberately unquantified
+limitation, more consequential here than in the sibling project
+precisely because this project's added-time procedure is the short,
+high-throughput kind Childers flags as the highest-opportunity-cost
+case. See `iud_bariatric`'s own `docs/data_sources.md` for the mirrored
+entry.
+
 ## What should not be conflated
 
 - **Medicare reimbursement, hospital cost, and charges are conceptually distinct**, per the user's

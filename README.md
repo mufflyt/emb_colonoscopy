@@ -377,6 +377,22 @@ flagged here as future work (patient time, travel, need for a driver) remains a 
 a differentiated, procedure-day-specific estimate; see `docs/data_sources.md`'s "Next literature to
 mine" item 7.
 
+**Opportunity cost of a displaced endoscopy-suite case: checked, real, not quantifiable (added
+2026-09-12).** A related but distinct question: does adding EMB time to a colonoscopy risk bumping
+another colonoscopy that suite could otherwise have scheduled that day? No -- `direct_room_cost_per_minute`
+and `procedure_room_cost_per_minute` are both Childers & Maggard-Gibbons's (*JAMA Surg* 2018) own
+direct/fully-loaded cost figures, and that paper explicitly excludes this: "opportunity cost requires
+a case to be profitable, which, in many circumstances, depends primarily on payer mix." A literature
+search for a real, generalizable per-minute opportunity-cost figure (Macario, Dexter, Traub 2001,
+*Anesth Analg* 93(3):669-675, Stanford; Saporito et al. 2023, *Braz J Anesthesiol* 73(3):243-249,
+Swiss) found the field's own consensus is that this quantity is too variable by surgeon/payer mix
+(negative for 26% of cases in the Stanford cohort) to serve as a stable rate -- not built in, since
+fabricating a point estimate from a quantity the literature itself calls unstable would be false
+precision. This gap is arguably more consequential here than in the sibling `iud_bariatric` project,
+since Childers's own paper says opportunity cost is highest for short, high-throughput procedures --
+exactly what a colonoscopy suite is, and bariatric surgery is not. See `docs/data_sources.md` for the
+full citation trail.
+
 ## Reproducibility
 
 `run_probabilistic_sensitivity()` (`R/sensitivity_probabilistic.R`) now defaults to a fixed

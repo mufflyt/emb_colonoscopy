@@ -13,7 +13,7 @@ test_that("get_parameter_value returns the correct numeric base value", {
   model_parameters <- test_model_parameters()
   expect_equal(
     get_parameter_value(model_parameters, "emb_pathology_cost"),
-    70.14
+    50.75
   )
 })
 
