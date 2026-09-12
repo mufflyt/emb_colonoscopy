@@ -377,21 +377,55 @@ flagged here as future work (patient time, travel, need for a driver) remains a 
 a differentiated, procedure-day-specific estimate; see `docs/data_sources.md`'s "Next literature to
 mine" item 7.
 
-**Opportunity cost of a displaced endoscopy-suite case: checked, real, not quantifiable (added
-2026-09-12).** A related but distinct question: does adding EMB time to a colonoscopy risk bumping
-another colonoscopy that suite could otherwise have scheduled that day? No -- `direct_room_cost_per_minute`
-and `procedure_room_cost_per_minute` are both Childers & Maggard-Gibbons's (*JAMA Surg* 2018) own
-direct/fully-loaded cost figures, and that paper explicitly excludes this: "opportunity cost requires
-a case to be profitable, which, in many circumstances, depends primarily on payer mix." A literature
-search for a real, generalizable per-minute opportunity-cost figure (Macario, Dexter, Traub 2001,
-*Anesth Analg* 93(3):669-675, Stanford; Saporito et al. 2023, *Braz J Anesthesiol* 73(3):243-249,
-Swiss) found the field's own consensus is that this quantity is too variable by surgeon/payer mix
-(negative for 26% of cases in the Stanford cohort) to serve as a stable rate -- not built in, since
+**Opportunity cost of a displaced endoscopy-suite case: checked, real, quantified as a bound with
+real hospital data (added 2026-09-12, resolved 2026-09-13).** A related but distinct question: does
+adding EMB time to a colonoscopy risk bumping another colonoscopy that suite could otherwise have
+scheduled that day? `direct_room_cost_per_minute` and `procedure_room_cost_per_minute` are both
+Childers & Maggard-Gibbons's (*JAMA Surg* 2018) own direct/fully-loaded cost figures, and that paper
+explicitly excludes this: "opportunity cost requires a case to be profitable, which, in many
+circumstances, depends primarily on payer mix." A literature search for a real, generalizable
+per-minute opportunity-cost figure (Macario, Dexter, Traub 2001, *Anesth Analg* 93(3):669-675,
+Stanford; Saporito et al. 2023, *Braz J Anesthesiol* 73(3):243-249, Swiss) found the field's own
+consensus is that this quantity is too variable by surgeon/payer mix (negative for 26% of cases in
+the Stanford cohort) to serve as a stable rate -- not built into the base-case model, since
 fabricating a point estimate from a quantity the literature itself calls unstable would be false
 precision. This gap is arguably more consequential here than in the sibling `iud_bariatric` project,
 since Childers's own paper says opportunity cost is highest for short, high-throughput procedures --
-exactly what a colonoscopy suite is, and bariatric surgery is not. See `docs/data_sources.md` for the
-full citation trail.
+exactly what a colonoscopy suite is, and bariatric surgery is not.
+
+Rather than a borrowed national ratio, `R/opportunity_cost_colonoscopy.R` answers this with real,
+hospital-specific price-transparency data at six hospitals across five states (Denver Health CO,
+UCHealth University of Colorado Hospital CO, Emory University Hospital GA, University of Mississippi
+Medical Center MS, University of Arkansas for Medical Sciences AR, NYU Langone Tisch NY -- see
+`data/colonoscopy_multi_hospital_rates.csv` and `docs/data_sources.md` for the full per-hospital
+citation trail). Because no outpatient cost-to-charge-ratio methodology exists (HCUP's own
+documentation: "an equivalent [cost-to-charge] ratio for outpatient hospital data is currently not
+available," checked directly 2026-09-13), each hospital's own real Medicare rate stands in as that
+SAME hospital's cost proxy -- an improvement on the sibling project's national-vs-local mismatch,
+since both sides of every comparison come from the identical institution. The result is reported as
+a bound rather than a single number, since no payer-mix data exists for any of these hospitals for
+this procedure: the floor is $0 by construction (a displaced Medicare-paying case costs nothing under
+this method), and the ceiling is that hospital's own real commercial margin, scaled to
+`combined_emb_added_minutes`. Run `Rscript analysis/16_opportunity_cost_colonoscopy.R` to reproduce.
+
+| Hospital | State | Medicare rate | Commercial mean rate | Opportunity-cost ceiling |
+| --- | --- | ---: | ---: | ---: |
+| Denver Health Medical Center | CO | $981.00 | $3,922.75 | $593.09 |
+| UCHealth University of Colorado Hospital | CO | $916.25 | $2,144.00 | $247.53 |
+| Emory University Hospital | GA | $959.20 | $3,756.81 | $564.03 |
+| University of Mississippi Medical Center | MS | $839.62 | $649.74 | -$38.28 |
+| University of Arkansas for Medical Sciences | AR | $892.67 | $1,202.60 | $62.49 |
+| NYU Langone Hospitals (Tisch) | NY | $1,078.83 | $6,813.13 | $1,156.11 |
+
+Two real findings stand out. First, Mississippi's own commercial rate is *below* its own Medicare
+rate at this hospital (77% of it), giving the only negative ceiling in the sample -- the opposite
+direction from every other hospital, and a real, hospital-specific finding rather than an error (see
+the CSV's own notes for why the excluded, lower-confidence Mississippi commercial rows would only
+have widened this gap, not closed it). Second, the two Colorado academic hospitals alone span a
+400% vs. 234% commercial-to-Medicare ratio, showing that even same-state, similarly-sized academic
+hospitals cannot be assumed interchangeable for this kind of estimate. As with the sibling
+`iud_bariatric` project's opportunity-cost work, none of this feeds the base-case cost engine or
+either sensitivity module; it is reported as a standalone bound.
 
 ## Reproducibility
 

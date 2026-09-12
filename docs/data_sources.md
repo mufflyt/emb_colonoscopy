@@ -812,7 +812,7 @@ This list reflects the priority ranking developed during model design, highest-y
    step for whoever wants a differentiated, procedure-day-specific patient-time-cost estimate instead
    of the single general-ambulatory-visit rate currently used for every encounter.
 
-## Opportunity cost of a displaced case: checked, real, not quantifiable here (added 2026-09-12)
+## Opportunity cost of a displaced case: checked, real, no generalizable literature figure exists (added 2026-09-12)
 
 Prompted by the same question asked directly of the sibling
 `iud_bariatric` project: if adding EMB time to an already-scheduled
@@ -902,6 +902,152 @@ precisely because this project's added-time procedure is the short,
 high-throughput kind Childers flags as the highest-opportunity-cost
 case. See `iud_bariatric`'s own `docs/data_sources.md` for the mirrored
 entry.
+
+**Follow-up: no generalizable literature rate exists, but a real,
+hospital-specific bound could still be built (resolved 2026-09-13).**
+Since no per-minute rate from the general OR-economics literature is
+honest to use, the same real-hospital-price-transparency-data method
+that resolved this question for the sibling `iud_bariatric` project
+(bariatric-surgery DRG 621) was replicated here for ambulatory
+colonoscopy CPT/HCPCS codes instead of an inpatient DRG. See
+`R/opportunity_cost_colonoscopy.R`'s file-level docblock for the full
+method (each hospital's own Medicare rate as its own cost proxy, result
+reported as a $0-floor/commercial-margin-ceiling bound) and the
+README.md "Opportunity cost of a displaced endoscopy-suite case"
+section for the six-hospital results table.
+
+**Why Medicare PAYMENT, not a cost-to-charge-ratio-derived cost, is
+used as the proxy here.** The sibling `iud_bariatric` project had a
+real inpatient cost study (Ng et al. 2023) to convert charges to costs.
+No equivalent exists for outpatient/ambulatory procedures: HCUP's own
+documentation states plainly, "Cost-to-charge ratios are available to
+convert inpatient hospital charges to inpatient hospital costs, but an
+equivalent ratio for outpatient hospital data is currently not
+available" (HCUP Statistical Brief, NBK442035, checked directly
+2026-09-13). Using each hospital's own real Medicare rate as its own
+cost proxy avoids fabricating an outpatient CCR that does not exist,
+and is arguably a methodological improvement over the sibling
+project's first-pass national-Medicare-baseline approach, since both
+sides of every comparison here come from the identical hospital.
+
+**Why ambulatory surgery centers (ASCs) could not be included, and this
+is a real regulatory finding, not a data-collection failure.** A
+dedicated search for ASC-published payer-specific rates (attempted at
+USPI, SCA Health, several GI Alliance-affiliated centers, HCA-affiliated
+ASCs, and AmSurg/Surgery Partners facilities) found none publish a
+CMS-style machine-readable file. This is because 45 CFR 180.20 (the CMS
+Hospital Price Transparency Rule's own regulatory text) defines
+"hospital" for purposes of the rule in a way that explicitly excludes
+freestanding ambulatory surgery centers -- verified directly against the
+regulation's text, 2026-09-13. No ASC is legally required to publish
+this data, so this project's real-hospital sample is drawn entirely
+from hospital outpatient departments (HOPDs), which the CMS rule does
+cover. This matters because a meaningful share of real-world screening
+and surveillance colonoscopies are performed at freestanding ASCs, not
+HOPDs -- a real, disclosed scope limitation of this bound, not an
+oversight.
+
+**Per-hospital citation trail for `data/colonoscopy_multi_hospital_rates.csv`
+(6 hospitals, 5 states):**
+
+- **Denver Health Medical Center (CO).** CPT 45378. Medicare $981.00
+  (3 payer rows converge: CMS/Medicare, Aetna Medicare Advantage, and
+  Denver Health Medical Plan's own Medicare Advantage plan, all
+  identically $981.00). Commercial mean $3,922.75 (4 real payer rows:
+  Aetna $3,200, Anthem $3,500, Cigna $3,478, United Healthcare $5,513).
+  Same hospital and same price-transparency file already downloaded and
+  parsed for the sibling `iud_bariatric` project's DRG 621 analysis;
+  reused rather than re-downloaded. No usable Medicaid row found for
+  this code at this hospital.
+- **UCHealth University of Colorado Hospital (CO).** HCPCS G0105
+  ("colorectal cancer screening; colonoscopy on individual at high
+  risk") -- discovered while investigating why this hospital's file
+  returned zero matches for CPT 45378; arguably a more clinically
+  precise code match for this project's Lynch-syndrome-surveillance
+  population than 45378, since G0105 is Medicare's own high-risk
+  screening-specific code. Medicare $916.25 (explicit CMS/Medicare
+  payer row, converging with 8 Medicare Advantage plan rows at the
+  identical value). Commercial mean $2,144.00 (n=40 real commercial
+  payer/plan rows, median $2,121.00, range $492.70-$5,932.00 -- by far
+  the largest single-hospital commercial sample in this dataset). File
+  discovered via the `cms-hpt.txt` discovery convention at
+  uchealth.org, per 45 CFR 180.50's 2024 machine-readable-file-location
+  requirement.
+- **Emory University Hospital (GA).** CPT 45378. Medicare $959.20
+  (6 Medicare Advantage payer rows cluster tightly, $932.77-$988.74; no
+  traditional FFS Medicare line found, so this cluster is used as the
+  proxy). Commercial mean $3,756.81 (6 real payer rows: Aetna Exchange
+  $3,295, Aetna Other $3,826, BCBS Blue Pathways $2,678.54, BCBS HMO
+  $4,221.48, BCBS HPN $3,722.82, Cigna $4,797). A Humana row at
+  $5,345.54 was excluded: it exactly equals the file's own stated
+  maximum for both the commercial and the Medicare Advantage plan
+  types simultaneously, suggesting a data-entry duplication in the
+  source file rather than a real distinct rate. No usable Medicaid row
+  found for this code at this hospital.
+- **University of Mississippi Medical Center (MS).** CPT 45378.
+  Medicare $839.62 (explicit MEDICARE/MEDICARE payer row, with a
+  reported historical claims count of 143 -- high confidence). Commercial
+  mean $649.74, using only the 2 of several commercial rows that
+  carried real historical payment data (BCBS of Mississippi $792.87 and
+  AdvantageHealth/State of MS Blue Cross $506.60); a Cigna row
+  ($1,206.40) and a First Choice row ($2,099.06) were excluded because
+  the source file itself explicitly flags them "NO HISTORICAL PAYMENT
+  DATA AVAILABLE." The commercial mean is *below* Medicare at this
+  hospital -- a real, striking finding, not an error, and if anything a
+  conservative one: both excluded rows would have raised the commercial
+  mean further above Medicare, not lowered it, had they been included.
+- **University of Arkansas for Medical Sciences (AR).** CPT 45378.
+  Medicare $892.67 (12 Medicare/Medicare Advantage payer rows cluster
+  $869.49-$912.96). Commercial mean $1,202.60 (12 real commercial payer
+  rows, range $843.41-$1,652.03; one malformed payer-name row and one
+  row identical to the Medicare cluster value were excluded as
+  unclassifiable). A payer row labeled "AmBetter" ($1,278.15) was
+  excluded from the commercial mean out of caution: Arkansas's ARHOME
+  Medicaid expansion program is administered by Centene/AmBetter, so
+  this may actually be a Medicaid managed-care rate rather than a
+  commercial exchange plan, and it was left unclassified rather than
+  guessed. The same payer set shows the same relative high-to-low
+  ordering here (QualChoice, Northwest Health Plan, Vantos, Employers
+  Health Network highest; TriWest, Wellpath, United Healthcare lowest,
+  near-Medicare) as it did for bariatric surgery in the sibling
+  `iud_bariatric` project's own Arkansas data point -- a real,
+  corroborating cross-check that a given hospital's relative payer
+  behavior is consistent across different procedure types, not
+  procedure-specific noise.
+- **NYU Langone Hospitals (Tisch) (NY).** CPT 45378. Medicare $1,078.83
+  (~70 Medicare Advantage plans converge at exactly this value).
+  Commercial mean $6,813.13 (6 real payer rows: 1199SEIU $5,941, Aetna
+  $6,733, Cigna $5,479, United Healthcare $8,511.79, Empire BCBS
+  $7,334, Oxford $6,880) -- the highest commercial rate and the highest
+  commercial-to-Medicare ratio (632%) in this sample. Also has a real,
+  usable Medicaid managed-care rate for this code, $1,092.90
+  (near-uniform across ~15 plans), essentially identical to its own
+  Medicare Advantage rate (101.3%) -- the only hospital in this dataset
+  with a usable Medicaid figure for this procedure. Wide-format file
+  (payer/plan gets its own column group rather than its own row),
+  requiring header-to-data-row alignment in R rather than a
+  fixed-column-index tool.
+
+**A file that could not be used: Barnes Jewish Hospital (St. Louis,
+MO).** Discovered via the `cms-hpt.txt` trick at bjc.org
+(`https://www.bjc.org/hpt/6/237309937_BarnesJewishHospital_standardcharges.json`).
+The 1.57 GB download did not complete (curl exit code 28, timeout) and
+the resulting local file is truncated mid-record, not valid closing
+JSON -- confirmed by inspecting its tail, which cuts off inside an
+unrelated payer-rate entry rather than closing the file's outer
+structure. This is a real download-completeness failure, not evidence
+that this hospital lacks colonoscopy data (its file was never fully
+read), and was not pursued further given the six-hospital sample
+already assembled; excluded rather than included with unverified data.
+
+**Other `cms-hpt.txt`-discovered hospitals not yet pursued.** UCHealth's,
+BJC's, and UAB's `cms-hpt.txt` files each list additional facilities
+beyond the ones used above (e.g., St. Vincent's Birmingham, several
+UCHealth satellite hospitals, Missouri Baptist Medical Center, Christian
+Hospital) whose files were not downloaded or checked. A natural next
+step if the sample needs to grow further, not pursued here given
+diminishing marginal value at six real, geographically diverse
+hospitals already in hand.
 
 ## What should not be conflated
 

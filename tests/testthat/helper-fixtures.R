@@ -20,3 +20,9 @@ test_price_index_table <- function() {
 test_all_items_price_index_table <- function() {
   load_price_index_table(file.path(repo_root_path(), "data/cpi_all_items.csv"))
 }
+
+test_colonoscopy_hospital_rates_table <- function() {
+  load_colonoscopy_hospital_rates_table(
+    file.path(repo_root_path(), "data/colonoscopy_multi_hospital_rates.csv")
+  )
+}

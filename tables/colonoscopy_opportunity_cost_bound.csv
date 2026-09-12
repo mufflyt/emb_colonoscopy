@@ -1,0 +1,7 @@
+state_abbr,hospital,medicare_rate,commercial_mean_rate,commercial_margin,opportunity_cost_ceiling
+CO,Denver Health Medical Center,981,3922.75,2941.75,593.0947580645161
+CO,UCHealth University of Colorado Hospital,916.25,2144,1227.75,247.53024193548387
+GA,Emory University Hospital,959.2,3756.81,2797.6099999999997,564.0342741935483
+MS,University of Mississippi Medical Center,839.62,649.74,-189.88,-38.28225806451613
+AR,University of Arkansas for Medical Sciences,892.67,1202.6,309.92999999999995,62.48588709677418
+NY,NYU Langone Hospitals (Tisch),1078.83,6813.13,5734.3,1156.108870967742

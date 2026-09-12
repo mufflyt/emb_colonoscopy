@@ -84,7 +84,10 @@ source_files <- c(
   "public_input_config.R",
   # national colonoscopy-setting analysis -- see docs/evidence_layers.md.
   # Depends on cms_find_dataset_uuid()/cms_query_hcpcs() from cms_benchmarks.R.
-  "colonoscopy_setting.R"
+  "colonoscopy_setting.R",
+  # real multi-hospital opportunity-cost-of-displaced-case exercise --
+  # see docs/data_sources.md. Only depends on parameters.R.
+  "opportunity_cost_colonoscopy.R"
 )
 
 for (source_file in source_files) {
