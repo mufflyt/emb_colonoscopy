@@ -89,7 +89,7 @@ publication-ready result.
 ## Provisional parameters -- read before citing any number from this repository
 
 Every parameter in `config/model_parameters.csv` has a `provisional` column. As of this writing, 8
-of 69 parameters are flagged `TRUE`: `patient_time_opportunity_cost_per_visit` (its $43 base value is
+of 77 parameters are flagged `TRUE`: `patient_time_opportunity_cost_per_visit` (its $43 base value is
 directly confirmed via three converging secondary sources, but the 2010 dollar-year used to
 inflation-adjust it is inferred rather than primary-confirmed -- see "Perspective and extending this
 model" below); the coordination-time half of `coordination_cost` (its wage half

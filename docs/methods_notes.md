@@ -44,7 +44,7 @@ does and does not mean.
 
 This is still not a full cost-effectiveness analysis: `R/diagnostic_yield.R` also contains
 `compute_diagnostic_yield()`, a broader Pipelle-vs-D&C sensitivity/specificity-based detection-
-probability function (Sakna et al. 2023, BMJ Open, manuscript reference 17) that is deliberately not
+probability function (Sakna et al. 2023, BMJ Open, manuscript reference 16) that is deliberately not
 built out further (no PSA wiring, no equivalence-margin testing) -- reproducing a full
 diagnostic-accuracy decision tree with prevalence, sensitivity/specificity, and a true/false-positive/
 negative branching structure is a substantially larger undertaking (see `docs/validation_notes.md`'s

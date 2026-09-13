@@ -282,7 +282,7 @@ Carlo samples from distributions matched to evidence type (beta for
 probabilities, gamma for costs, triangular for plausibility ranges);
 threshold analysis, solving for the parameter value at which combined
 biopsy's cost advantage over office biopsy would be lost; scenario
-analysis, modeling illustrative Medicaid/commercial reimbursement and an
+analysis, modeling Medicaid/commercial reimbursement using hospital price-transparency payer ratios^12^ and an
 alternative combined-arm preoperative-visit assumption; and budget-impact
 analysis, projecting annualized savings across illustrative cohort
 sizes.
@@ -296,7 +296,7 @@ relative-value formula for the relevant procedure code and setting.^5^ The
 D&C facility fee was adjusted using the real Hospital Outpatient
 Prospective Payment System wage index for the relevant core-based
 statistical area,^6^ applying the standard labor-related-share formula
-with the actual 60% labor-related share finalized for the payment year.^12^
+with the actual 60% labor-related share finalized for the payment year.^13^
 This geographic
 analysis was kept deterministic rather than folded into the probabilistic
 sensitivity analysis, since geographic variation is a question of whether
@@ -307,14 +307,14 @@ We conducted two clinical-outcome sensitivity analyses, computed from the
 same probabilistic-sensitivity draws as the cost outputs. First, we
 estimated each strategy's exposure to D&C-related adverse events (a
 composite of uterine perforation, cervical false passage, and severe
-hemorrhage, pooled from a cohort of 5,359 nonobstetric D&Cs)^13^ as a
+hemorrhage, pooled from a cohort of 5,359 nonobstetric D&Cs)^14^ as a
 function of that strategy's probability of ultimately requiring D&C, either
 as the primary procedure or as a rescue procedure after a failed sampling
 attempt. Second, we estimated each arm's probability of a failed sampling
 attempt going undiagnosed for cancer or precancer, combined with the
 probability of cancer or precancer among women with a failed or insufficient
 sample, drawn from a general (non-Lynch) postmenopausal-bleeding
-meta-analysis.^14^ Under the repeat-attempt-or-D&C structure described
+meta-analysis.^15^ Under the repeat-attempt-or-D&C structure described
 above, the office arm's failed attempts are accounted for entirely by
 either a successful repeat or escalation to D&C, leaving no probability
 mass for a sample that is neither adequately resampled nor escalated; the
@@ -329,7 +329,7 @@ assumption, we also computed each strategy's overall probability of
 detecting a true cancer or endometrial hyperplasia, combining each arm's
 sampling-escalation probabilities with published Pipelle and D&C
 sensitivities from a general (non-Lynch) diagnostic-accuracy
-meta-analysis.^15^ This calculation is a point estimate only, not
+meta-analysis.^16^ This calculation is a point estimate only, not
 integrated into the probabilistic sensitivity analysis; see Discussion for
 its limitations.
 
@@ -343,7 +343,7 @@ time and travel-time opportunity costs the base case excludes: each
 strategy's expected number of dedicated patient encounters (office or
 preoperative visits, repeat visits, and D&C's own preoperative visit plus
 procedure day, weighted by the same escalation probabilities) was valued
-at a published average opportunity cost per ambulatory visit.^16^ This
+at a published average opportunity cost per ambulatory visit.^17^ This
 deterministic, non-PSA calculation values every encounter equally and
 excludes travel expense and caregiver time (see Discussion); we also
 report it under the existing scenario folding combined biopsy's
@@ -362,9 +362,9 @@ engagement process was undertaken.
 
 We compared the model's cost estimates against three independently
 published analyses as a validation check: a historical office-biopsy cost
-anchor,^17^ a Medicare-payer-perspective decision-tree comparing Pipelle
+anchor,^18^ a Medicare-payer-perspective decision-tree comparing Pipelle
 sampling and D&C,^8^ and an independent U.S. economic model of office
-versus institutional hysteroscopic surgery.^18^
+versus institutional hysteroscopic surgery.^19^
 
 All analyses were implemented in R (R Foundation for Statistical Computing,
 Vienna, Austria) and are publicly available, with every model parameter
@@ -456,7 +456,7 @@ performed during an already-scheduled surveillance colonoscopy cost
 substantially less than either standalone office biopsy or operative D&C
 for Lynch syndrome surveillance, and this advantage held across
 deterministic and probabilistic parameter uncertainty, four Medicare payment
-localities spanning a national low-cost to high-cost range, and illustrative
+localities spanning a national low-cost to high-cost range, and empirical
 payer-mix and structural scenarios. The combined strategy also carried
 substantially lower exposure to D&C-related adverse events than standalone
 office biopsy, because fewer combined-biopsy patients ultimately require a
@@ -544,7 +544,7 @@ consider it the default surveillance strategy for this population.
 Superscript citation markers in the text use Quarto's `^n^` syntax. Every
 reference below has been independently confirmed directly against its
 primary source (PubMed/PMC/journal page or the Federal Register), including
-reference 15 and (via the direct_room_cost_per_minute/
+reference 16 and (via the direct_room_cost_per_minute/
 anesthesia_cost_per_minute parameters cited in Table 1 but not in the
 condensed Methods text) the Childers/Maggard-Gibbons JAMA Surg citation --
 JAMA Surg 2018;153:e176233 (PMID 29490366), confirmed 2026-08-31. No
@@ -555,7 +555,7 @@ PMID 6212675) added 2026-09-01, verified directly against its PubMed
 abstract, when the D&C arm's cost was partially monetized for
 adverse-event risk (see Discussion). NOT the same paper as the 1980 Isr J
 Med Sci paper by an overlapping author subset that Hefler et al. 2009
-(reference 13) itself cites in its own reference list -- the two are easy to
+(reference 14) itself cites in its own reference list -- the two are easy to
 conflate; confirmed as distinct papers directly on PubMed.
 
 Reference 9 (Kandil D, Yang X, Stockl T, Liu Y, Int J Gynecol Pathol
@@ -574,7 +574,7 @@ was removed from the reference list rather than kept as an uncited entry;
 see `config/model_parameters.csv`'s own notes for the full replacement
 rationale and the reconstructed-CI caveat.
 
-Reference 15 (Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan
+Reference 16 (Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan
 AF, BMJ Open 2023;13(6):e072124, PMID 37355271) added 2026-09-02, when
 `compute_diagnostic_yield()` -- an existing, unit-tested function that had
 never previously been called by any analysis script or reported in the
@@ -586,7 +586,7 @@ Pipelle and conventional D&C match exactly what was already coded into
 earlier code comment's "verified directly from the full text" claim
 independently rather than trusting it as-is.
 
-Reference 16 (Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A, Am J
+Reference 17 (Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A, Am J
 Manag Care 2015;21(8):567-574, PMID 26295356) added 2026-09-02, when the
 societal-perspective secondary analysis (patient time/travel opportunity
 cost) was wired into `R/societal_costs.R` and reported via
@@ -607,8 +607,8 @@ if paywall/institutional access becomes available before submission.
 
 RESOLVED 2026-09-09: an earlier pass through this file left citation
 numbers out of first-appearance order (reference 6 cited before
-references 1-5, references 12 and 15 cited before their own
-validation-paragraph appearance later in Methods, and reference 16 cited
+references 1-5, references 13 and 16 cited before their own
+validation-paragraph appearance later in Methods, and reference 17 cited
 first in the document overall while numbered third-from-last). Every
 in-text `^n^` marker and the reference list below were renumbered in one
 pass to match strict first-appearance order; verified by walking the
@@ -698,28 +698,31 @@ independent, direct verification, not a manual read-through. -->
 11. Huang M, Sun C, Boyd-Rogers S, et al. Prospective study of combined colon
     and endometrial cancer screening in women with Lynch syndrome: a
     patient-centered approach. J Oncol Pract 2011;7:43-47.
-12. Medicare Program: Hospital Outpatient Prospective Payment and Ambulatory
+12. Trilliant Health. Hospital MRF Data Directory: consolidated hospital price transparency
+    machine-readable file data (snapshot July 21, 2026). Accessed September 12, 2026.
+    https://oria-data.trillianthealth.com/
+13. Medicare Program: Hospital Outpatient Prospective Payment and Ambulatory
     Surgical Center Payment Systems; Quality Reporting Programs; Overall
     Hospital Quality Star Rating; Hospital Price Transparency; and Notice of
     Closure of a Teaching Hospital and Opportunity To Apply for Available
     Slots. Fed Regist 2025;90 (Nov 25, 2025) [document 2025-20907].
-13. Hefler L, Lemach A, Seebacher V, Polterauer S, Tempfer C, Reinthaller A.
+14. Hefler L, Lemach A, Seebacher V, Polterauer S, Tempfer C, Reinthaller A.
     The intraoperative complication rate of nonobstetric dilation and
     curettage. Obstet Gynecol 2009;113:1268-1271.
-14. van Hanegem N, Prins MMC, Bongers MY, et al. The accuracy of endometrial
+15. van Hanegem N, Prins MMC, Bongers MY, et al. The accuracy of endometrial
     sampling in women with postmenopausal bleeding: a systematic review and
     meta-analysis. Eur J Obstet Gynecol Reprod Biol 2016;197:147-155.
-15. Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan AF.
+16. Sakna NA, Elgendi M, Salama MH, Zeinhom A, Labib S, Nabhan AF.
     Diagnostic accuracy of endometrial sampling tests for detecting
     endometrial cancer: a systematic review and meta-analysis. BMJ Open
     2023;13(6):e072124.
-16. Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A. Opportunity
+17. Ray KN, Chari AV, Engberg J, Bertolet M, Mehrotra A. Opportunity
     costs of ambulatory medical care in the United States. Am J Manag
     Care 2015;21(8):567-574.
-17. Ladabaum U, Wang G, Terdiman J, et al. Strategies to identify the Lynch
+18. Ladabaum U, Wang G, Terdiman J, et al. Strategies to identify the Lynch
     syndrome among patients with colorectal cancer: a cost-effectiveness
     analysis. Ann Intern Med 2011;155:69-79.
-18. Munro MG, Kasiewicz JL, Desai VB. Office versus institutional operative
+19. Munro MG, Kasiewicz JL, Desai VB. Office versus institutional operative
     hysteroscopy: an economic model. J Minim Invasive Gynecol
     2022;29:535-548.
 
@@ -728,7 +731,7 @@ D&C/hysteroscopy adverse-event or hysteroscopy-guided-D&C extension if one
 is added later (see hysteroscopy_diagnostic_complication_probability and
 hysteroscopy_failure_rate_lynch_range in config/model_parameters.csv, both
 still future_extension/unwired) -- NOT the detection-probability secondary
-analysis above, which uses only Sakna et al. 2023 (reference 15) and is
+analysis above, which uses only Sakna et al. 2023 (reference 16) and is
 now fully cited. Full ACOG/Namazov citations are already compiled in
 docs/data_sources.md if that separate extension is built later. -->
 

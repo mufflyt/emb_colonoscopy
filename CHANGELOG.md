@@ -5,6 +5,46 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-13 (empirical payer multipliers replace the provisional Medicaid/commercial scenarios)
+
+### Changed
+- `R/scenarios.R`: the `medicaid_illustrative` (flat 0.70x Medicare) and `commercial_illustrative` (flat
+  1.75x) scenarios are replaced by `medicaid` and `commercial`. These scale each reimbursement input by
+  its own empirical payer-to-Medicare ratio (`build_payer_multiplier_overrides()`). Neither scenario is
+  provisional any more.
+- `config/model_parameters.csv`: eight new `payer_multiplier_<payer>_<parameter>` rows (scenario_only,
+  fixed, tier B). Each is the median, across hospitals, of the within-hospital ratio of that payer's
+  professional-fee rate to the same hospital's Medicare rate. The data are national hospital
+  price-transparency files (Trilliant Health Hospital MRF Data Directory, 2026-07-21 snapshot),
+  processed with github.com/mufflyt/hpt_prices @ e9d2a44 (after its line-type cleanup, which
+  moved only the commercial D&C ratio, from 1.666 to 1.626).
+
+  | Input | CPT | Medicaid | Commercial |
+  |---|---|---|---|
+  | EMB professional | 58100 | 0.883 | 1.775 |
+  | Pathology | 88305 | 0.916 | 1.800 |
+  | D&C professional | 58120 | 0.775 | 1.626 |
+  | Office visit | 99213 | 0.836 | 1.492 |
+
+- Scenario results (combined vs office vs D&C):
+  - Medicaid: $465 / $690 / $3,771 (was $442 / $646 / $3,744). Combined's advantage over office is
+    $225 (was $204).
+  - Commercial: $573 / $910 / $3,996 (was $593 / $931 / $4,020). Advantage $338 (unchanged).
+  - Combined remains the least expensive strategy under both payers. The base case is unchanged.
+- `manuscript/manuscript.qmd`:
+  - Methods describes the payer scenarios as using hospital price-transparency payer ratios, citing a
+    new reference 12 (Trilliant Health). References 12-18 are renumbered 13-19, including every
+    citation marker and prose mention in the reference notes; citation order was checked sequential.
+  - Discussion reads "empirical" instead of "illustrative" payer-mix scenarios (word-neutral).
+  - Net +4 words, total within the 3,000-word limit.
+- Figure 5 labels read "Medicaid payer" and "Commercial payer". Tables 1 and 8 now include the eight
+  multipliers (77 parameters; tier B 24 to 32).
+- `docs/data_sources.md` (new section with the ratios and caveats), `docs/manuscript_methods_results.md`,
+  `docs/methods_notes.md`, and `README.md` updated. `methods_notes.md` and the parameter notes now call
+  Sakna et al. reference 16; they said 17 even before this change.
+- `tests/testthat/test-model-identity.R`: each payer scenario must scale every reimbursement input by its
+  own multiplier, and no provisional payer scenario may remain.
+
 ## 2026-09-13 (2014 CPI placeholder replaced with the actual BLS value)
 
 ### Fixed
