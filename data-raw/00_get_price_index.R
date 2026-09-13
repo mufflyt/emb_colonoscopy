@@ -17,17 +17,16 @@
 #'   https://www.cms.gov/medicare/payment/fee-schedules/physician
 #'
 #' Current status of data/cpi_medical_care.csv:
-#'   - 2010 (388.436) and 2026 (593.781): REAL BLS CPI-U Medical Care
-#'     annual values, surfaced during literature review of Ladabaum et
-#'     al. 2011 for the cost_emb_ladabaum_2010 cross-validation scenario.
-#'     RECOMMEND independently re-confirming both against the live BLS
-#'     series before publication -- they were not fetched directly by
-#'     this repository's code.
-#'   - 2014: still an ESTIMATED PLACEHOLDER (geometrically interpolated
-#'     between the two real anchors above), needed for the
-#'     Childers/Maggard-Gibbons JAMA Surgery per-minute OR/anesthesia
-#'     cost parameters (procedure_room_cost_per_minute,
-#'     direct_room_cost_per_minute, anesthesia_cost_per_minute).
+#'   - 2010 (388.436, annual average) and 2026 (593.781, July): BLS CPI-U
+#'     Medical Care values used for the cost_emb_ladabaum_2010
+#'     cross-validation scenario; confirmed against the BLS Public Data API
+#'     v2 on 2026-09-13.
+#'   - 2014 (435.292, annual average): used for the Childers/Maggard-Gibbons
+#'     JAMA Surgery per-minute OR/anesthesia cost parameters
+#'     (procedure_room_cost_per_minute, direct_room_cost_per_minute,
+#'     anesthesia_cost_per_minute). Retrieved from the BLS Public Data API
+#'     v2 (annualaverage=true) on 2026-09-13, replacing a geometrically
+#'     interpolated placeholder (431.9), 0.8% low.
 #'
 #' CAUTION -- a real bug this repository already hit once: do not add a
 #' new year's index value to this table using a different, disconnected
@@ -39,16 +38,9 @@
 #' year-to-year index ratios to catch this class of bug in the future --
 #' keep that test passing when editing this file.
 #'
-#' Steps to close the remaining 2014 gap:
-#'   1. Download the annual (not monthly) BLS CPI-U Medical Care value
-#'      for 2014 from https://www.bls.gov/cpi/data.htm (series
-#'      CUUR0000SAM).
-#'   2. Replace the 2014 row in data/cpi_medical_care.csv with the real
-#'      value, setting is_placeholder = FALSE.
-#'   3. Re-run analysis/01_base_case.R and confirm the inflation-adjusted
-#'      room/anesthesia costs change only modestly (the interpolated
-#'      placeholder is already on the correct scale, so this should be a
-#'      refinement, not a large swing).
+#' To refresh or add a year: query the BLS Public Data API v2 for series
+#' CUUR0000SAM (annualaverage=true gives period M13), replace the row, and
+#' re-run analysis/01_base_case.R.
 #'
 #' No PHI, institutional data, or credentials belong in this file or in
 #' data/. Only publicly published index values should ever be committed.

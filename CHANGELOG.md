@@ -5,6 +5,30 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-13 (2014 CPI placeholder replaced with the actual BLS value)
+
+### Fixed
+- `data/cpi_medical_care.csv`: the 2014 CPI-U Medical Care index was a geometrically interpolated
+  placeholder (431.9). It is now the BLS annual average, 435.292 (series CUUR0000SAM, retrieved from the
+  BLS Public Data API v2 on 2026-09-13). The 2010 (388.436) and July 2026 (593.781) anchors were
+  confirmed against the same API. The table now has no placeholder rows.
+- The placeholder was 0.8% low, so costs in 2014 dollars (the Childers/Maggard-Gibbons per-minute
+  room and anesthesia parameters) had been inflated by 1.375 instead of 1.364. Only the combined arm
+  uses them, so the correction lowers its cost slightly. Office biopsy and D&C are unchanged.
+- Results updated in `manuscript/manuscript.qmd` and `manuscript/cheers_checklist.qmd` (no
+  conclusion changes):
+  - combined biopsy $486 to $485; advantage over office biopsy $241 (33.1%) to $242 (33.3%);
+  - PSA share cheapest 91.6% to 91.8%; PSA mean $520 to $519;
+  - incremental-minutes threshold 12.2 to 12.3; office-failure threshold 6.8% to 6.7%;
+  - geographic advantage $194/$256/$331 to $195/$257/$333;
+  - one-way ranges -$130/-$488 to -$132/-$490 and -$375/-$7 to -$375/-$10;
+  - budget impact $2,411-$241,061 to $2,424-$242,363;
+  - cost per additional cancer case detected $20,672 to $20,784 (hyperplasia $36,520 to $36,718);
+  - societal advantage $256 to $257 ($554 to $553 total) and $410 to $412 ($400 to $399).
+- `tests/testthat/test-inflation.R`: asserts the shipped table has no placeholders and matches BLS,
+  and still checks that a placeholder row triggers the loader warning.
+- `manuscript/manuscript.docx` and `cheers_checklist.docx` must be re-rendered from the updated `.qmd`.
+
 ## 2026-09-03 (added the cost-consequence analysis to the manuscript itself)
 
 ### Added

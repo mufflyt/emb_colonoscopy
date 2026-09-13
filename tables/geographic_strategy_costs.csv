@@ -1,13 +1,13 @@
 locality_id,locality_label,strategy,initial_cost,escalation_probability,escalation_cost,expected_total_cost
-national,National,combined_emb,417.607053947673,0.018,68.81022053072999,486.417274478403
-national,National,office_emb,236.54000000000002,0.1280125,489.3649086494486,727.4778996494485
-national,National,dnc,3822.790029485,0,0,3822.790029485
-colorado,Colorado (Denver-Aurora-Centennial),combined_emb,417.054230008279,0.018,70.76801686990069,487.82224687817967
+national,National,combined_emb,416.30433171296505,0.018,68.81022053072999,485.114552243695
+national,National,office_emb,236.54000000000002,0.1280125,489.3649086494485,727.4778996494485
+national,National,dnc,3822.7900294849996,0,0,3822.7900294849996
+colorado,Colorado (Denver-Aurora-Centennial),combined_emb,415.7515077735712,0.018,70.76801686990069,486.51952464347187
 colorado,Colorado (Denver-Aurora-Centennial),office_emb,238.76343914965992,0.1280125,503.2883755310091,743.6395915510143
 colorado,Colorado (Denver-Aurora-Centennial),dnc,3931.556492772261,0,0,3931.556492772261
-low_cost,Arkansas (statewide/rural),combined_emb,412.5661294022185,0.018,61.9602298789007,474.5263592811192
-low_cost,Arkansas (statewide/rural),office_emb,225.9657102040816,0.1280125,440.64910707626535,668.1174892532041
-low_cost,Arkansas (statewide/rural),dnc,3442.2349932722614,0,0,3442.2349932722614
-high_cost,Manhattan (New York-Jersey City-White Plains),combined_emb,426.36707515979424,0.018,82.59282691988157,508.9599020796758
+low_cost,Arkansas (statewide/rural),combined_emb,411.2634071675106,0.018,61.96022987890069,473.2236370464113
+low_cost,Arkansas (statewide/rural),office_emb,225.9657102040816,0.1280125,440.6491070762653,668.117489253204
+low_cost,Arkansas (statewide/rural),dnc,3442.234993272261,0,0,3442.234993272261
+high_cost,Manhattan (New York-Jersey City-White Plains),combined_emb,425.06435292508627,0.018,82.59282691988157,507.65717984496786
 high_cost,Manhattan (New York-Jersey City-White Plains),office_emb,251.38096952381,0.1280125,587.3841253378523,840.4367783089956
 high_cost,Manhattan (New York-Jersey City-White Plains),dnc,4588.490384437866,0,0,4588.490384437866

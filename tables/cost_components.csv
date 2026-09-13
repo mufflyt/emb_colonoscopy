@@ -11,8 +11,8 @@ office_emb,pathology,50.75
 combined_emb,incremental_professional_fee,60.05
 combined_emb,pathology,50.75
 combined_emb,supplies,28.79
-combined_emb,incremental_room_time,143.66778073628151
-combined_emb,incremental_anesthesia_time,23.509273211391527
+combined_emb,incremental_room_time,142.54825381582936
+combined_emb,incremental_anesthesia_time,23.32607789713571
 combined_emb,incremental_anesthesia_drug,0
 combined_emb,coordination,22.08
 combined_emb,preop_office_visit,88.76
