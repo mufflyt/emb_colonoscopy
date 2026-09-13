@@ -25,11 +25,23 @@ test_that("adjust_for_inflation errors on an unmatched year", {
   )
 })
 
-test_that("load_price_index_table flags placeholder rows", {
+test_that("the shipped price index has no placeholder rows and matches BLS", {
   price_index_table <- test_price_index_table()
   expect_true("is_placeholder" %in% names(price_index_table))
-  expect_true(any(price_index_table$is_placeholder))
-  expect_true(any(!price_index_table$is_placeholder))
+  expect_false(any(price_index_table$is_placeholder))
+  # BLS CPI-U Medical Care (CUUR0000SAM), confirmed via the BLS API 2026-09-13
+  expect_equal(price_index_table$index_value[price_index_table$year == 2014], 435.292)
+  expect_equal(price_index_table$index_value[price_index_table$year == 2010], 388.436)
+})
+
+test_that("load_price_index_table still warns when a placeholder row is present", {
+  path <- tempfile(fileext = ".csv")
+  writeLines(c(
+    "year,index_value,index_source,is_placeholder",
+    "2010,388.436,real,FALSE",
+    "2014,431.9,estimated,TRUE"
+  ), path)
+  expect_message(load_price_index_table(path), "PLACEHOLDER")
 })
 
 test_that("no adjacent pair of index years implies an implausible multi-year inflation multiplier", {

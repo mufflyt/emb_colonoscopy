@@ -167,14 +167,11 @@ independently.
 
 ## The real BLS CPI-U Medical Care anchors (`data/cpi_medical_care.csv`)
 
-Two real, literature-sourced index values are in place: **2010 = 388.436** and **2026 = 593.781**
-(the ratio, ~1.529x, is the multiplier used in the `office_cost_ladabaum_historical` scenario).
-**2014 is still an estimated placeholder** (geometrically interpolated between the two real anchors,
-not an actual reported value), needed for the Childers/Maggard-Gibbons per-minute OR/anesthesia
-parameters. `data-raw/00_get_price_index.R` documents how to close this gap. Both real anchors
-should still be independently re-confirmed against the live BLS series (CUUR0000SAM) before this
-model is used for anything beyond development -- they were transcribed during literature review, not
-fetched programmatically by this repository's code.
+All three index values are BLS CPI-U Medical Care (series CUUR0000SAM), confirmed against the BLS
+Public Data API v2 on 2026-09-13: **2010 = 388.436** (annual average) and **2026 = 593.781** (July)
+(the ratio, ~1.529x, is the multiplier used in the `office_cost_ladabaum_historical` scenario), and
+**2014 = 435.292** (annual average), used for the Childers/Maggard-Gibbons per-minute OR/anesthesia
+parameters. The 2014 value replaced an interpolated placeholder (431.9, 0.8% low).
 
 **A real bug this exact setup caught, worth knowing about:** an earlier version of this file paired
 the real anchors with a disconnected synthetic `2014 = 100` value, which silently produced a ~5.9x

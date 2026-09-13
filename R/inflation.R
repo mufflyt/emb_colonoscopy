@@ -6,15 +6,14 @@
 #' basis using a caller-supplied price-index table, keeping the adjustment
 #' mechanism decoupled from any specific index's actual values.
 #'
-#' `data/cpi_medical_care.csv` carries two real, literature-sourced BLS
-#' CPI-U Medical Care annual values (2010: 388.436; 2026: 593.781) used to
-#' cross-check the Ladabaum et al. 2011 office-EMB cost anchor against
-#' contemporary dollars, plus one still-placeholder row (2014, needed for
-#' the Childers/Maggard-Gibbons per-minute OR/anesthesia parameters) that
-#' has not yet been independently sourced. Every row's `is_placeholder`
-#' flag says which is which -- see `data-raw/00_get_price_index.R` for
-#' how to fill in the remaining gap and how to re-verify the two
-#' populated values against the live BLS series before publication.
+#' `data/cpi_medical_care.csv` carries three BLS CPI-U Medical Care values
+#' (series CUUR0000SAM), all confirmed against the BLS Public Data API on
+#' 2026-09-13: the 2010 annual average (388.436) and July 2026 (593.781),
+#' used to cross-check the Ladabaum et al. 2011 office-EMB cost anchor, and
+#' the 2014 annual average (435.292), used for the Childers/Maggard-Gibbons
+#' per-minute OR/anesthesia parameters. The 2014 row replaced an
+#' interpolated placeholder (431.9). `is_placeholder` is kept so any future
+#' estimated row still triggers the loader's warning.
 
 #' Adjust a cost from its source year to a reference year
 #'
