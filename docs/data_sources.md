@@ -1058,3 +1058,36 @@ hospitals already in hand.
   separate parameters (`cost_emb_ladabaum_2010` vs. `emb_office_professional_cost`) for exactly this
   reason -- see `R/scenarios.R`'s `office_cost_ladabaum_historical` scenario for the one place they
   are deliberately brought together, with the inflation adjustment made explicit rather than implied.
+
+## Payer-to-Medicare multipliers for the Medicaid and commercial scenarios
+
+The `medicaid` and `commercial` scenarios scale each reimbursement input by its own empirical ratio
+(`payer_multiplier_<payer>_<parameter>` rows in `config/model_parameters.csv`). Each ratio is the median,
+across hospitals, of that hospital's professional-fee rate for the payer divided by the same hospital's
+traditional Medicare rate for the same CPT code. Each rate is the median of the hospital's payer/plan
+contracts. Low and high values are the 25th and 75th percentiles across hospitals.
+
+| Input | CPT | Medicaid | Commercial | Hospitals |
+|---|---|---|---|---|
+| `emb_office_professional_cost` | 58100 | 0.883 | 1.775 | 72-73 |
+| `emb_pathology_cost` | 88305 | 0.916 | 1.800 | 56-61 |
+| `dc_professional_cost` | 58120 | 0.775 | 1.666 | 67-68 |
+| `office_visit_em_cost` | 99213 | 0.836 | 1.492 | 110-114 |
+
+**Source:** Trilliant Health Hospital MRF Data Directory, consolidated DuckLake snapshot of 2026-07-21
+(oria-data.trillianthealth.com), processed with the `hpt_prices` pipeline (github.com/mufflyt/hpt_prices,
+`analysis/14_emb_payer_ratios.R`). The pipeline validates the underlying data against CMS OPPS 2026 and
+known hospital answers.
+
+**Caveats:**
+- Professional-fee rows come only from hospitals that list employed-physician fees in their price files.
+- The pathology input is a global (professional plus technical) cost, but its multiplier uses the
+  professional-fee ratio. The facility-fee ratio is similar for Medicaid (0.87) and higher for
+  commercial (2.08).
+- Negotiated rates are not paid amounts.
+- Trilliant's terms require attribution and forbid redistributing derived rate data. Only these
+  aggregate ratios are stored here.
+
+These ratios replaced the provisional flat multipliers (Medicaid 0.70, commercial 1.75) on 2026-09-13.
+The empirical commercial ratios bracket 1.75 for procedures and are lower for the office visit. The
+empirical Medicaid ratios are higher than 0.70.

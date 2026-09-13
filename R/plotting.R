@@ -48,8 +48,8 @@ PARAMETER_LABELS <- c(
 SCENARIO_LABELS <- c(
   base_case_medicare = "Base case (Medicare)",
   combined_without_preop_visit = "Combined biopsy without separate preoperative visit",
-  commercial_illustrative = "Illustrative commercial payer",
-  medicaid_illustrative = "Illustrative Medicaid payer",
+  commercial = "Commercial payer",
+  medicaid = "Medicaid payer",
   office_cost_ladabaum_historical = "Office biopsy cost (Ladabaum historical estimate)"
 )
 

@@ -10,11 +10,15 @@
 #' parameter overrides applied via [override_model_parameters()], so
 #' scenario definitions stay declarative and auditable.
 #'
-#' Medicaid and commercial reimbursement multipliers below are
-#' PROVISIONAL and not drawn from a specific published fee schedule --
-#' they exist so the scenario machinery can be exercised end to end. See
-#' docs/data_sources.md for what would be needed to replace them with
-#' real payer-specific rates.
+#' The Medicaid and commercial scenarios scale each reimbursement
+#' parameter by its own empirical payer-to-Medicare ratio: the median,
+#' across hospitals, of each hospital's professional-fee rate for that
+#' payer divided by the same hospital's Medicare rate for the same CPT code,
+#' measured in national hospital price-transparency data (Trilliant Health
+#' Hospital MRF Data Directory, 2026-07-21 snapshot, processed with the
+#' hpt_prices pipeline). The ratios are the `payer_multiplier_*` rows of
+#' config/model_parameters.csv. They replaced the earlier provisional
+#' flat multipliers (Medicaid 0.70, commercial 1.75) on 2026-09-13.
 
 #' Parameter names treated as "reimbursement" costs for payer-mix scenarios
 REIMBURSEMENT_PARAMETER_NAMES <- c(
@@ -34,6 +38,27 @@ build_reimbursement_multiplier_overrides <- function(model_parameters, multiplie
   overrides <- purrr::map(
     REIMBURSEMENT_PARAMETER_NAMES,
     ~ get_parameter_value(model_parameters, .x) * multiplier
+  )
+  stats::setNames(overrides, REIMBURSEMENT_PARAMETER_NAMES)
+}
+
+#' Parameter holding the payer-to-Medicare ratio for one reimbursement input
+payer_multiplier_parameter <- function(payer, parameter_name) {
+  base::paste0("payer_multiplier_", payer, "_", parameter_name)
+}
+
+#' Payer-scenario overrides with a separate empirical multiplier per
+#' reimbursement parameter
+#'
+#' @param payer "medicaid" or "commercial".
+#' @return A named list suitable for [override_model_parameters()].
+build_payer_multiplier_overrides <- function(model_parameters, payer) {
+  overrides <- purrr::map(
+    REIMBURSEMENT_PARAMETER_NAMES,
+    function(parameter_name) {
+      get_parameter_value(model_parameters, parameter_name) *
+        get_parameter_value(model_parameters, payer_multiplier_parameter(payer, parameter_name))
+    }
   )
   stats::setNames(overrides, REIMBURSEMENT_PARAMETER_NAMES)
 }
@@ -66,15 +91,15 @@ build_scenario_definitions <- function(
       description = "Base case: CPT-based Medicare national allowed amounts, including the combined arm's separate preop office visit (combined_requires_preop_office_visit = TRUE, per the model owner's confirmed clinical practice).",
       provisional = FALSE
     ),
-    medicaid_illustrative = list(
-      overrides = build_reimbursement_multiplier_overrides(model_parameters, 0.70),
-      description = "PROVISIONAL: illustrative Medicaid reimbursement at 70% of the Medicare rates used in this repository. Not a state-specific Medicaid fee schedule.",
-      provisional = TRUE
+    medicaid = list(
+      overrides = build_payer_multiplier_overrides(model_parameters, "medicaid"),
+      description = "Medicaid reimbursement: each professional-fee input scaled by its empirical Medicaid-to-Medicare ratio from national hospital price-transparency data (payer_multiplier_medicaid_* parameters).",
+      provisional = FALSE
     ),
-    commercial_illustrative = list(
-      overrides = build_reimbursement_multiplier_overrides(model_parameters, 1.75),
-      description = "PROVISIONAL: illustrative commercial reimbursement at 175% of the Medicare rates used in this repository. Not drawn from a specific payer contract.",
-      provisional = TRUE
+    commercial = list(
+      overrides = build_payer_multiplier_overrides(model_parameters, "commercial"),
+      description = "Commercial reimbursement: each professional-fee input scaled by its empirical commercial-to-Medicare ratio from national hospital price-transparency data (payer_multiplier_commercial_* parameters).",
+      provisional = FALSE
     ),
     combined_without_preop_visit = list(
       overrides = list(combined_requires_preop_office_visit = "FALSE"),

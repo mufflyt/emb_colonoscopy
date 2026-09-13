@@ -66,8 +66,8 @@ was the directly observed rate from a 10.5-year, 111-visit MD Anderson combined-
 Every parameter was assigned an evidence tier: **A** (Lynch-specific direct data), **B** (contemporary
 U.S. public cost/reimbursement data), **C** (general or adjacent-population literature), **D**
 (provisional placeholder with no source yet), or **structural** (an analysis convention, not an
-evidence claim, e.g. the 2026 reference dollar year). Of 66 parameters in the current model, 10 (15.2%)
-are tier A, 24 (36.4%) tier B, 24 (36.4%) tier C, 6 (9.1%) tier D, and 2 (3.0%) structural (Table 8).
+evidence claim, e.g. the 2026 reference dollar year). Of 77 parameters in the current model, 10 (13.0%)
+are tier A, 32 (41.6%) tier B, 27 (35.1%) tier C, 6 (7.8%) tier D, and 2 (2.6%) structural (Table 8).
 Four provisional (tier D or otherwise unresolved) parameters remain in the base case: the
 coordination-cost time estimate, the office-arm escalation-to-D&C fraction (fixed at 100%, discussed
 below), and two documented exclusions retained only to enforce a regression test against double-counting.
@@ -86,9 +86,10 @@ We conducted five complementary sensitivity analyses:
    Figure 4).
 3. **Threshold analysis:** solving for the parameter value at which the combined strategy's cost
    advantage over office EMB is lost, for four candidate parameters (Table 6, Figure 3a-3b).
-4. **Scenario analysis:** illustrative Medicaid (70% of Medicare) and commercial (175% of Medicare)
-   reimbursement scenarios, and a structural scenario in which the combined arm's separate preoperative
-   office visit is removed (Figure 5).
+4. **Scenario analysis:** Medicaid and commercial reimbursement scenarios that scale each professional-fee
+   input by its own payer-to-Medicare ratio measured in national hospital price-transparency data
+   (Medicaid 0.78-0.92, commercial 1.49-1.80; `payer_multiplier_*` in Table 1), and a structural scenario
+   in which the combined arm's separate preoperative office visit is removed (Figure 5).
 5. **Budget impact analysis:** annualized cost savings across illustrative cohort sizes of 10 to 1,000
    patients per year (Table 7).
 

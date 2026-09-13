@@ -106,3 +106,24 @@ test_that("the Ladabaum-historical scenario reproduces the documented ~1.529x in
 
   expect_equal(base::round(ladabaum_scenario_cost / 224, 3), 1.529)
 })
+
+test_that("payer scenarios scale each reimbursement input by its own empirical multiplier", {
+  model_parameters <- test_model_parameters()
+  scenario_definitions <- build_scenario_definitions(model_parameters, test_price_index_table())
+
+  for (payer in c("medicaid", "commercial")) {
+    overrides <- scenario_definitions[[payer]]$overrides
+    expect_setequal(names(overrides), REIMBURSEMENT_PARAMETER_NAMES)
+    expect_false(scenario_definitions[[payer]]$provisional)
+
+    for (parameter_name in REIMBURSEMENT_PARAMETER_NAMES) {
+      multiplier <- get_parameter_value(model_parameters, payer_multiplier_parameter(payer, parameter_name))
+      expect_equal(
+        overrides[[parameter_name]],
+        get_parameter_value(model_parameters, parameter_name) * multiplier
+      )
+    }
+  }
+
+  expect_false(any(c("medicaid_illustrative", "commercial_illustrative") %in% names(scenario_definitions)))
+})
