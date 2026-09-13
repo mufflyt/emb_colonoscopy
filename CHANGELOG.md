@@ -16,19 +16,20 @@ grouped by date.
   fixed, tier B). Each is the median, across hospitals, of the within-hospital ratio of that payer's
   professional-fee rate to the same hospital's Medicare rate. The data are national hospital
   price-transparency files (Trilliant Health Hospital MRF Data Directory, 2026-07-21 snapshot),
-  processed with github.com/mufflyt/hpt_prices @ 6de7ea8.
+  processed with github.com/mufflyt/hpt_prices @ e9d2a44 (after its line-type cleanup, which
+  moved only the commercial D&C ratio, from 1.666 to 1.626).
 
   | Input | CPT | Medicaid | Commercial |
   |---|---|---|---|
   | EMB professional | 58100 | 0.883 | 1.775 |
   | Pathology | 88305 | 0.916 | 1.800 |
-  | D&C professional | 58120 | 0.775 | 1.666 |
+  | D&C professional | 58120 | 0.775 | 1.626 |
   | Office visit | 99213 | 0.836 | 1.492 |
 
 - Scenario results (combined vs office vs D&C):
   - Medicaid: $465 / $690 / $3,771 (was $442 / $646 / $3,744). Combined's advantage over office is
     $225 (was $204).
-  - Commercial: $573 / $911 / $4,005 (was $593 / $931 / $4,020). Advantage $339 (was $338).
+  - Commercial: $573 / $910 / $3,996 (was $593 / $931 / $4,020). Advantage $338 (unchanged).
   - Combined remains the least expensive strategy under both payers. The base case is unchanged.
 - `manuscript/manuscript.qmd`:
   - Methods describes the payer scenarios as using hospital price-transparency payer ratios, citing a

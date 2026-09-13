@@ -1070,8 +1070,8 @@ contracts. Low and high values are the 25th and 75th percentiles across hospital
 | Input | CPT | Medicaid | Commercial | Hospitals |
 |---|---|---|---|---|
 | `emb_office_professional_cost` | 58100 | 0.883 | 1.775 | 72-73 |
-| `emb_pathology_cost` | 88305 | 0.916 | 1.800 | 56-61 |
-| `dc_professional_cost` | 58120 | 0.775 | 1.666 | 67-68 |
+| `emb_pathology_cost` | 88305 | 0.916 | 1.800 | 55-60 |
+| `dc_professional_cost` | 58120 | 0.775 | 1.626 | 65-66 |
 | `office_visit_em_cost` | 99213 | 0.836 | 1.492 | 110-114 |
 
 **Source:** Trilliant Health Hospital MRF Data Directory, consolidated DuckLake snapshot of 2026-07-21
