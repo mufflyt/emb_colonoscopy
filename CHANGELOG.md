@@ -5,6 +5,25 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-09-13 (a tested refresh step for the payer multipliers)
+
+### Added
+- `R/payer_multipliers.R` and `analysis/17_refresh_payer_multipliers.R`: copy hpt_prices'
+  `payer_to_medicare_ratios.csv` into the eight `payer_multiplier_*` rows of
+  `config/model_parameters.csv`. Each row gets base, low, and high values, the cited hpt_prices
+  commit (`HPT_PRICES_COMMIT`, required), and its hospital count. This replaces the two by-hand
+  updates made while building the scenarios.
+  - Only rows whose values change are rewritten, with minimal CSV quoting, so line endings,
+    quoting, and every other row stay byte-identical.
+  - `DRY_RUN=true` prints the before-and-after table and writes nothing.
+  - A missing ratio, a bad commit, or a missing file fails before anything is written.
+  - Run against the current hpt_prices output with `HPT_PRICES_COMMIT=e9d2a44`, it reports no
+    changes, so the multipliers are current.
+- `tests/testthat/test-payer-multipliers.R`: rows update from a synthetic ratios file, and other
+  lines stay byte-identical. Dry run writes nothing, and an unchanged refresh leaves the file
+  byte-identical. CRLF endings survive, and missing ratios or bad inputs fail without writing.
+- `docs/data_sources.md` ("Refreshing the multipliers"), README script list.
+
 ## 2026-09-13 (empirical payer multipliers replace the provisional Medicaid/commercial scenarios)
 
 ### Changed
