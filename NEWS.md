@@ -3,6 +3,39 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-09-13 (what Medicaid and commercial insurers actually pay, measured)
+
+The Medicaid and commercial scenarios used to rest on two round guesses: Medicaid pays 0.70x Medicare
+and commercial insurers pay 1.75x, for everything. They now use measured ratios, one per service,
+from national hospital price-transparency data. Within each hospital that posts both, each
+insurer's professional fee is compared with that same hospital's Medicare fee, and the median is
+taken across hospitals (55 to 114 hospitals per service).
+
+| Service | Medicaid | Commercial |
+|---|---|---|
+| Endometrial biopsy (58100) | 0.883x | 1.775x |
+| Pathology (88305) | 0.916x | 1.800x |
+| D&C (58120) | 0.775x | 1.626x |
+| Office visit (99213) | 0.836x | 1.492x |
+
+Medicaid pays more relative to Medicare than the old guess, and commercial insurers pay about what
+was assumed for procedures but less for the office visit. The answer to the paper's question did not
+change: combined biopsy is still the least expensive strategy under both insurers.
+
+| Scenario | Combined | Office biopsy | D&C | Combined's advantage over office |
+|---|---|---|---|---|
+| Medicaid | $465 | $690 | $3,771 | $225 |
+| Commercial | $573 | $910 | $3,996 | $338 |
+
+The source is the Trilliant Health Hospital MRF Data Directory (2026-07-21 snapshot), processed by
+the separate hpt_prices pipeline. Price-transparency rates are posted contract rates, not paid claims,
+and the professional-fee ratios come only from hospitals that list employed-physician fees.
+
+When hpt_prices produces new ratios, one command now copies them in:
+`analysis/17_refresh_payer_multipliers.R`. It rewrites only the eight multiplier rows, cites the
+hpt_prices version it used, and can preview the change first. After a cleanup of the hospital data
+on the same day, commercial D&C was the only ratio that moved (1.666 to 1.626).
+
 ## 2026-09-02 (what does this cost the patient, not just the health system?)
 
 Every number in this model up to now has answered "what does the health system pay?" -- Medicare

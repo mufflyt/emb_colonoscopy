@@ -87,7 +87,11 @@ source_files <- c(
   "colonoscopy_setting.R",
   # real multi-hospital opportunity-cost-of-displaced-case exercise --
   # see docs/data_sources.md. Only depends on parameters.R.
-  "opportunity_cost_colonoscopy.R"
+  "opportunity_cost_colonoscopy.R",
+  # refresh of the payer_multiplier_* rows from hpt_prices' payer ratios;
+  # uses REIMBURSEMENT_PARAMETER_NAMES and payer_multiplier_parameter() from
+  # scenarios.R.
+  "payer_multipliers.R"
 )
 
 for (source_file in source_files) {

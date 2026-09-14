@@ -1091,3 +1091,15 @@ known hospital answers.
 These ratios replaced the provisional flat multipliers (Medicaid 0.70, commercial 1.75) on 2026-09-13.
 The empirical commercial ratios bracket 1.75 for procedures and are lower for the office visit. The
 empirical Medicaid ratios are higher than 0.70.
+
+**Refreshing the multipliers.** When hpt_prices produces a new `payer_to_medicare_ratios.csv`:
+
+1. Run `HPT_PRICES_COMMIT=<hpt_prices commit> Rscript analysis/17_refresh_payer_multipliers.R`.
+   - The ratios file is the first argument or `HPT_PAYER_RATIOS`; the default is the hpt_prices
+     output folder on the external drive.
+   - The script rewrites the eight rows' base, low, and high values, the cited commit, and the
+     hospital counts, and leaves every other byte of the file untouched.
+   - Set `DRY_RUN=true` to see the before-and-after table without writing anything.
+2. Rerun `analysis/05_scenario_analysis.R`, `07_manuscript_outputs.R`, and
+   `11_manuscript_table10_summary.R`.
+3. Update the table above and any scenario numbers quoted in the CHANGELOG or manuscript.

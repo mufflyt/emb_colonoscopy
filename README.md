@@ -283,6 +283,7 @@ Rscript analysis/10_decision_tree_figure.R       # decision-tree model diagram (
 Rscript analysis/07_manuscript_outputs.R         # consolidated Tables 1-9
 Rscript analysis/11_manuscript_table10_summary.R # base-case + PSA clinical-outcome summary table
 Rscript analysis/12_independent_psa_verification.R # re-derives PSA clinical-outcome claims without calling model code
+HPT_PRICES_COMMIT=<sha> Rscript analysis/17_refresh_payer_multipliers.R  # copy hpt_prices payer ratios into the payer_multiplier_* rows (DRY_RUN=true to preview)
 ```
 
 Every script logs its inputs, major transformations, and exact output file paths via
