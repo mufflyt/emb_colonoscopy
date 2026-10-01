@@ -261,7 +261,7 @@ was charged; only incremental costs were included.
 Clinical probabilities were drawn preferentially from Lynch-syndrome-specific
 literature. The office biopsy failure probability was pooled from three
 studies confirmed genuinely specific to the Pipelle device by direct
-full-text verification (22 of 166 attempts, 13.3%).^5-7^ After a failed
+full-text verification (22 of 166 attempts, 13.3%).^2-4^ After a failed
 office attempt, we modeled two pathways rather than assuming universal
 escalation to D&C: a repeat office attempt, estimated to occur in 5% of
 failures based on a Pipelle decision-tree model's expert clinical
