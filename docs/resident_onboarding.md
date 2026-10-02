@@ -109,7 +109,7 @@ Full explanation, with the reasoning for why these are kept separate rather than
 | "Does this hold up outside [X]?" | `docs/vignettes/03_interpreting_evidence_tiers_and_sensitivity.md` and the geographic-sensitivity figure |
 | "Where did this number come from?" | `docs/data_sources.md` -- the exhaustive provenance log for every parameter, in the order it was investigated |
 | "Has anyone checked this against a published study?" | `docs/validation_notes.md` and `tables/manuscript_table9_validation_status.csv` |
-| "What would it take to get real Medicaid/commercial data here instead of Medicare?" | `docs/data_sources.md`'s hospital payer-rate sections, and `docs/vignettes/02_adding_a_new_hospital_payer_rate.md` if you want to extend that sample |
+| "What would it take to get real Medicaid/commercial data here instead of Medicare?" | `docs/mrf_hospital_data_overview.md` for the what/why/which-hospitals summary; `docs/data_sources.md`'s hospital payer-rate sections for the full provenance log; `docs/vignettes/02_adding_a_new_hospital_payer_rate.md` if you want to extend that sample |
 | "Can I see the full manuscript?" | `manuscript/manuscript.qmd` (render with `quarto render manuscript/manuscript.qmd`); `manuscript/manuscript_slides.pptx` for a slide-deck version with speaker notes |
 | "What does this figure/table actually mean?" | `docs/figures_reference.md` and `docs/tables_dictionary.md` |
 

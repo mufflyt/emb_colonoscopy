@@ -527,6 +527,9 @@ for the full component-by-component mapping of what was reused, adapted, or newl
   builds it, and how the file-name, README, and manuscript figure numbers map to each other
 - [`docs/tables_dictionary.md`](docs/tables_dictionary.md) -- a column-by-column data dictionary for
   every CSV in `tables/` and `data/`, and which script produces each one
+- [`docs/mrf_hospital_data_overview.md`](docs/mrf_hospital_data_overview.md) -- what a hospital price-
+  transparency MRF is, why this project collected them, how, and the full list of every hospital in
+  both the 6-hospital and 74-hospital samples, by outcome (full data / partial data / no data, and why)
 - [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
   adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
   sensitivity analyses

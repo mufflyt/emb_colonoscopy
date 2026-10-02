@@ -5,6 +5,21 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-02 (MRF hospital data overview)
+
+### Added
+- `docs/mrf_hospital_data_overview.md`: a single orientation page explaining what a
+  hospital price-transparency MRF is, why this project collected them (an opportunity-cost
+  sensitivity check at 6 hospitals, and a broader real-world cross-check against the
+  Medicare-only base case at 74 FREIDA-sampled hospitals), and how (FREIDA sampling frame,
+  `cms-hpt.txt` discovery, size-tiered download/extraction, honest confidence/data-quality
+  flagging). Lists every hospital in both samples by outcome -- 41 full, 26 partial (with
+  codes-found counts), 7 zero-data (each with its specific documented reason) -- derived
+  directly from `data/gyn_onc_hospital_payer_rates.csv` and
+  `data/colonoscopy_multi_hospital_rates.csv`, not retyped from memory. Cross-linked from
+  `docs/data_sources.md`'s detailed provenance log and `docs/resident_onboarding.md`'s
+  lookup table.
+
 ## 2026-10-02 (R-package-style knittable vignettes)
 
 ### Added

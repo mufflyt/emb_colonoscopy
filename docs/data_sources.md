@@ -1058,6 +1058,10 @@ cross-check each other.
 
 ## Hospital payer-rate sample expansion: `data/gyn_onc_hospital_payer_rates.csv` (2026-10-01)
 
+**For a shorter summary of what an MRF is, why this sample exists, and the full hospital
+list by outcome, see `docs/mrf_hospital_data_overview.md` -- this section is the detailed
+provenance log behind that summary.**
+
 **Purpose.** The six-hospital `colonoscopy_multi_hospital_rates.csv`
 sample above was convenience-selected (whichever hospitals' `cms-hpt.txt`
 files were found first) and covers only the colonoscopy code. This

@@ -3,6 +3,15 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (what the hospital pricing data actually is, in one place)
+
+A new page, `docs/mrf_hospital_data_overview.md`, answers a question that otherwise took
+reading a long technical log to piece together: what is a hospital price-transparency
+file, why did this project go collect 74 of them, how, and which hospitals actually gave
+us usable numbers versus which ones didn't (and why not). The hospital-by-hospital list
+is pulled straight from the data files, not retyped from memory. No model numbers
+changed.
+
 ## 2026-10-02 (the vignettes, now also as runnable R Markdown)
 
 The same three vignette topics added earlier today -- running the base case, adding a
