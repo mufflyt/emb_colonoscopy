@@ -3,6 +3,21 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (sorting out the figure numbers, and a dictionary for every table)
+
+Two more documentation-only additions. This repository had quietly ended up with three
+different ways of numbering the same 7 figures -- one for the file names, one for the
+plain-language walkthrough in the README, and one for the journal manuscript, which only
+uses 3 of the 7 as main-text figures and proposes the other 4 as supplemental content.
+`docs/figures_reference.md` lays out the mapping explicitly so "Figure 2" doesn't mean
+three different pictures depending on which document you're reading.
+
+Second, every one of the roughly 40 CSV files this project generates (plus the raw CMS/CPI
+input files) now has a plain-English, column-by-column explanation of what each field
+means and which script produced it -- `docs/tables_dictionary.md`. No model numbers
+changed; this just makes the existing output readable without having to open the R code
+that made it.
+
 ## 2026-10-02 (a coding reference and three how-to guides)
 
 Two documentation additions, no model changes. First, a single page

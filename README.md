@@ -516,6 +516,10 @@ for the full component-by-component mapping of what was reused, adapted, or newl
   model prices and the ICD-10-CM codes relevant to its population, plus five Mermaid diagrams (decision
   tree, model-population eligibility, literature inclusion/exclusion for a pooled parameter, the
   analysis-script data pipeline, and the hospital MRF data-collection pipeline)
+- [`docs/figures_reference.md`](docs/figures_reference.md) -- every file in `figures/`, which script
+  builds it, and how the file-name, README, and manuscript figure numbers map to each other
+- [`docs/tables_dictionary.md`](docs/tables_dictionary.md) -- a column-by-column data dictionary for
+  every CSV in `tables/` and `data/`, and which script produces each one
 - [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
   adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
   sensitivity analyses

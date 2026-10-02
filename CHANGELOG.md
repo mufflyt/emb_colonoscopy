@@ -5,6 +5,19 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-02 (figures reference and a full tables/data dictionary)
+
+### Added
+- `docs/figures_reference.md`: documents all 7 files in `figures/`, which `analysis/*.R` script builds
+  each one, and reconciles the three independent figure-numbering schemes in use (file-name number,
+  the README's 4-figure plain-language walkthrough, and the manuscript's 3 main-text figures plus 4
+  Supplemental-Digital-Content candidates) so a reader isn't left guessing why "Figure 2" means a
+  different image in each of the three places it appears.
+- `docs/tables_dictionary.md`: a column-by-column data dictionary for every CSV in `tables/` (34 files)
+  and `data/` (7 files), naming the producing script for each (traced via `save_table()`/`write_csv()`
+  call sites across `analysis/*.R` and `R/*.R`) and the two auto-generated summary-sentence `.txt`
+  files. No existing documentation previously described table schemas at the column level.
+
 ## 2026-10-02 (clinical coding reference and three vignettes)
 
 ### Added
