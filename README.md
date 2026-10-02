@@ -259,7 +259,9 @@ emb_colonoscopy/
                    title_page.qmd, manuscript.qmd, cheers_checklist.qmd (Quarto,
                    render with `quarto render manuscript/<file>.qmd`)
   docs/            reuse mapping, data source provenance, methods notes, validation
-                   notes, CHEERS 2022 audit, testing philosophy, appendix
+                   notes, CHEERS 2022 audit, testing philosophy, appendix,
+                   clinical coding reference (CPT/HCPCS/ICD-10 + Mermaid diagrams),
+                   vignettes/ (narrative walkthroughs)
 ```
 
 ## Quick start
@@ -510,6 +512,13 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/ae_cost_evidence_table.md`](docs/ae_cost_evidence_table.md) -- management-pathway adverse-event
   costing evidence table (what's sourced, what's explicitly flagged unsourceable, and why); not yet
   wired into any cost function
+- [`docs/clinical_coding_reference.md`](docs/clinical_coding_reference.md) -- every CPT/HCPCS code this
+  model prices and the ICD-10-CM codes relevant to its population, plus five Mermaid diagrams (decision
+  tree, model-population eligibility, literature inclusion/exclusion for a pooled parameter, the
+  analysis-script data pipeline, and the hospital MRF data-collection pipeline)
+- [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
+  adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
+  sensitivity analyses
 
 Every blocking test in `tests/testthat/` is required to be proven to fail on a
 planted defect and pass when reverted, and any finding capable of changing the

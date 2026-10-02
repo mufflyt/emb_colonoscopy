@@ -5,6 +5,30 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-02 (clinical coding reference and three vignettes)
+
+### Added
+- `docs/clinical_coding_reference.md`: a single reference table of every CPT/HCPCS code this model
+  prices (58100, 88305, 99213, 99214, 58120, 00952, 45378, G0105, G0121, 49320, 49000, 58555, 58558),
+  cross-referenced against `config/model_parameters.csv`'s actual parameter names and dollar values; a
+  second table of ICD-10-CM codes relevant to this model's clinical population (Z15.04, Z15.06, Z15.09,
+  C54.1, Z80.0, Z80.49, Z12.79), looked up directly against ICD-10-CM FY2026 descriptions on 2026-10-02
+  since no ICD-10 code previously existed anywhere in this repository; five Mermaid diagrams (decision
+  tree/model structure, model-population eligibility, literature inclusion/exclusion for
+  `emb_failure_lynch`'s evidence pool, the analysis-script data-flow pipeline, and the hospital MRF
+  data-collection pipeline); and a "fine details" section covering the CPT 58100 facility/nonfacility
+  split, the CPT 49000 unsourceable-laparotomy gap, and the CPT 58558 resolved data-quality history.
+  None of this changes any model parameter -- orientation/reference only, same as the hospital
+  payer-rate sample's "does not feed the base-case cost engine" caveat.
+- `docs/vignettes/01_running_the_base_case.md`, `docs/vignettes/02_adding_a_new_hospital_payer_rate.md`,
+  `docs/vignettes/03_interpreting_evidence_tiers_and_sensitivity.md`: three narrative walkthroughs
+  (this repository's first use of a `vignettes/` directory) covering, respectively, the real end-to-end
+  script execution order from `config/model_parameters.csv` through the manuscript and slide deck; the
+  real process used to build the 74-hospital and 6-hospital MRF payer-rate samples, for extending them
+  to a new hospital; and how to read the evidence-tier system (A/B/C/D/structural) together with the
+  three distinct sensitivity analyses (deterministic one-way, probabilistic/PSA, geographic) without
+  conflating "how sure is this input" with "how much does the conclusion depend on it."
+
 ## 2026-10-01 (manuscript slide deck, and a 74-hospital payer-rate sample)
 
 ### Added

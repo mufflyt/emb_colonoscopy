@@ -3,6 +3,23 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (a coding reference and three how-to guides)
+
+Two documentation additions, no model changes. First, a single page
+(`docs/clinical_coding_reference.md`) that lays out every billing code this study actually touches --
+the procedure codes (CPT/HCPCS) priced throughout the model, and the diagnosis codes (ICD-10-CM) a
+clinician or biller would use alongside them -- next to five diagrams: how the three surveillance
+strategies branch, who the model's population actually is, how one of the model's most-scrutinized
+numbers (the office biopsy failure rate) was built from four candidate studies down to three, how the
+analysis scripts flow from the parameter table to the manuscript, and how the 74-hospital pricing
+sample was collected. None of the diagnosis codes were already in this repository, so they were looked
+up fresh against current ICD-10-CM listings rather than assumed from memory.
+
+Second, three short guides in `docs/vignettes/` aimed at someone picking up this repository for the
+first time: how to run the whole model end to end, how the real-hospital pricing data was collected (if
+you want to add another hospital), and how to read the model's "how sure are we" labels together with
+its three different sensitivity analyses without mixing them up.
+
 ## 2026-10-01 (a slide deck, and a much bigger real-hospital pricing sample)
 
 Two additions. First, a PowerPoint summary of the whole study
