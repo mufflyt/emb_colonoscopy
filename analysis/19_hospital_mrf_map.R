@@ -9,7 +9,7 @@
 #' Files, not a geocoded street address). Run from the repository root:
 #'   Rscript analysis/19_hospital_mrf_map.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Static map of hospitals with usable MRF-derived payer-rate data ===")
 

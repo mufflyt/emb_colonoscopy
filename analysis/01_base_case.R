@@ -7,7 +7,7 @@
 #' repository root:
 #'   Rscript analysis/01_base_case.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== EMB vs. colonoscopy-combined vs. D&C: base-case analysis ===")
 

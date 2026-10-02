@@ -1,3 +1,4 @@
+#' @export
 quote_r_string <- function(value) {
   base::encodeString(
     value,
@@ -5,6 +6,7 @@ quote_r_string <- function(value) {
   )
 }
 
+#' @export
 set_public_input_env <- function(office_xlsx,
                                  jobs_xlsx,
                                  hpt_manifest) {
@@ -19,6 +21,7 @@ set_public_input_env <- function(office_xlsx,
   base::invisible(TRUE)
 }
 
+#' @export
 write_public_input_config <- function(
     office_xlsx,
     jobs_xlsx,

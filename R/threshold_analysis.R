@@ -1,11 +1,11 @@
-#' Threshold analysis
-#'
-#' Answers "how far can parameter X move before the conclusion flips?"
-#' using root-finding (`stats::uniroot()`) on the full strategy-cost model
-#' rather than a closed-form formula, so every threshold automatically
-#' accounts for second-order effects -- e.g. raising the D&C cost also
-#' raises the office and combined arms' expected cost through their
-#' escalation-to-D&C branches (see `R/strategy_costs.R`).
+# Threshold analysis
+#
+# Answers "how far can parameter X move before the conclusion flips?"
+# using root-finding (`stats::uniroot()`) on the full strategy-cost model
+# rather than a closed-form formula, so every threshold automatically
+# accounts for second-order effects -- e.g. raising the D&C cost also
+# raises the office and combined arms' expected cost through their
+# escalation-to-D&C branches (see `R/strategy_costs.R`).
 
 #' Generic threshold finder
 #'
@@ -22,6 +22,7 @@
 #'   sign change is found in the search interval, `threshold_value` is
 #'   `NA` and `converged` is `FALSE` (with a message explaining why,
 #'   rather than a silent failure).
+#' @export
 find_parameter_threshold <- function(
   model_parameters,
   parameter_name,
@@ -83,6 +84,7 @@ find_parameter_threshold <- function(
 #' @param strategy_costs Tibble from
 #'   `compute_strategy_costs()$strategy_costs`.
 #' @return Numeric scalar.
+#' @export
 metric_combined_vs_min_other <- function(strategy_costs) {
   combined_cost <- strategy_costs$expected_total_cost[
     strategy_costs$strategy == "combined_emb"
@@ -100,6 +102,7 @@ metric_combined_vs_min_other <- function(strategy_costs) {
 #'
 #' @inheritParams metric_combined_vs_min_other
 #' @return Numeric scalar.
+#' @export
 metric_dnc_dominated <- function(strategy_costs) {
   dnc_cost <- strategy_costs$expected_total_cost[strategy_costs$strategy == "dnc"]
   other_costs <- strategy_costs$expected_total_cost[
@@ -116,6 +119,7 @@ metric_dnc_dominated <- function(strategy_costs) {
 #'
 #' @inheritParams find_parameter_threshold
 #' @return A one-row tibble, see [find_parameter_threshold()].
+#' @export
 threshold_combined_added_minutes <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -135,6 +139,7 @@ threshold_combined_added_minutes <- function(
 #'
 #' @inheritParams find_parameter_threshold
 #' @return A one-row tibble, see [find_parameter_threshold()].
+#' @export
 threshold_office_failure_probability <- function(
   model_parameters,
   price_index_table = load_price_index_table()
@@ -153,6 +158,7 @@ threshold_office_failure_probability <- function(
 #'
 #' @inheritParams find_parameter_threshold
 #' @return A one-row tibble, see [find_parameter_threshold()].
+#' @export
 threshold_dnc_dominated_facility_fee <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -172,6 +178,7 @@ threshold_dnc_dominated_facility_fee <- function(
 #'
 #' @inheritParams find_parameter_threshold
 #' @return A one-row tibble, see [find_parameter_threshold()].
+#' @export
 threshold_coordination_cost_ceiling <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -191,6 +198,7 @@ threshold_coordination_cost_ceiling <- function(
 #' @return A tibble binding the results of every `threshold_*()`
 #'   convenience function, with a `question` column describing each row
 #'   in plain language.
+#' @export
 run_threshold_analyses <- function(
   model_parameters,
   price_index_table = load_price_index_table()

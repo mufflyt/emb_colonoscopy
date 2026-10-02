@@ -1,23 +1,24 @@
-#' Refresh the empirical payer multipliers from hpt_prices
-#'
-#' The Medicaid and commercial scenarios (R/scenarios.R) scale each
-#' reimbursement input by a `payer_multiplier_<payer>_<parameter>` row of
-#' config/model_parameters.csv. Each row is the median, across hospitals, of
-#' the within-hospital ratio of that payer's professional-fee rate to the same
-#' hospital's traditional Medicare rate for one CPT code, computed by the
-#' hpt_prices pipeline (github.com/mufflyt/hpt_prices,
-#' analysis/14_emb_payer_ratios.R, which writes payer_to_medicare_ratios.csv).
-#'
-#' [refresh_payer_multipliers()] copies those ratios into the eight rows:
-#' `base_value` (median ratio), `low_value`/`high_value` (interhospital 25th
-#' and 75th percentiles), the hpt_prices commit cited in `source`, and the
-#' hospital count in `notes`. Only a row whose values change is rewritten,
-#' field by field with minimal CSV quoting, so every other byte of the file
-#' (line endings, quoting, other rows) is preserved. Run it through
-#' analysis/17_refresh_payer_multipliers.R, then rerun the scenario analysis
-#' and manuscript outputs (analysis/05, 07, and 11).
+# Refresh the empirical payer multipliers from hpt_prices
+#
+# The Medicaid and commercial scenarios (R/scenarios.R) scale each
+# reimbursement input by a `payer_multiplier_<payer>_<parameter>` row of
+# config/model_parameters.csv. Each row is the median, across hospitals, of
+# the within-hospital ratio of that payer's professional-fee rate to the same
+# hospital's traditional Medicare rate for one CPT code, computed by the
+# hpt_prices pipeline (github.com/mufflyt/hpt_prices,
+# analysis/14_emb_payer_ratios.R, which writes payer_to_medicare_ratios.csv).
+#
+# [refresh_payer_multipliers()] copies those ratios into the eight rows:
+# `base_value` (median ratio), `low_value`/`high_value` (interhospital 25th
+# and 75th percentiles), the hpt_prices commit cited in `source`, and the
+# hospital count in `notes`. Only a row whose values change is rewritten,
+# field by field with minimal CSV quoting, so every other byte of the file
+# (line endings, quoting, other rows) is preserved. Run it through
+# analysis/17_refresh_payer_multipliers.R, then rerun the scenario analysis
+# and manuscript outputs (analysis/05, 07, and 11).
 
 #' CPT code whose ratio each reimbursement input takes
+#' @export
 payer_multiplier_codes <- function() {
   codes <- base::c(
     emb_office_professional_cost = "58100",
@@ -30,6 +31,7 @@ payer_multiplier_codes <- function() {
   codes
 }
 
+#' @export
 payer_multiplier_payers <- function() {
   base::c("medicaid", "commercial")
 }
@@ -39,6 +41,7 @@ payer_multiplier_payers <- function() {
 #' @param path Path to the file.
 #' @return Tibble with code, fee_type, payer_type, n_hospitals, median_ratio,
 #'   p25_ratio, p75_ratio (ratios numeric).
+#' @export
 read_payer_ratios <- function(path) {
   if (!base::file.exists(path)) {
     base::stop("Payer ratio file not found: ", path,
@@ -56,6 +59,12 @@ read_payer_ratios <- function(path) {
 }
 
 #' Split one CSV line into its fields, verbatim (no trimming, "NA" kept as text)
+#'
+#' @param line Character scalar, one raw CSV line.
+#' @param n_fields Optional integer; if supplied, errors unless the parsed
+#'   line has exactly this many fields.
+#' @return Character vector of the line's fields, in order.
+#' @export
 csv_line_fields <- function(line, n_fields = NULL) {
   fields <- readr::read_csv(
     I(line), col_names = FALSE, col_types = readr::cols(.default = readr::col_character()),
@@ -70,6 +79,10 @@ csv_line_fields <- function(line, n_fields = NULL) {
 }
 
 #' Join fields into one CSV line with minimal quoting (the file's own style)
+#'
+#' @param fields Character vector of fields to join.
+#' @return Character scalar, one CSV line.
+#' @export
 csv_line_join <- function(fields) {
   needs_quotes <- stringr::str_detect(fields, "[\",\r\n]")
   quoted <- base::ifelse(needs_quotes, base::paste0("\"", stringr::str_replace_all(fields, "\"", "\"\""), "\""), fields)
@@ -86,6 +99,7 @@ csv_line_join <- function(fields) {
 #' @return Tibble, one row per multiplier: parameter, n_hospitals, and the old
 #'   and new base/low/high values, plus `changed`. The file is rewritten only
 #'   when `dry_run` is FALSE and at least one row changed.
+#' @export
 refresh_payer_multipliers <- function(params_path, ratios_path, hpt_commit, dry_run = FALSE) {
   if (base::missing(hpt_commit) || !base::is.character(hpt_commit) || !stringr::str_detect(hpt_commit, "^[0-9a-f]{7,40}$")) {
     base::stop("hpt_commit must be the hpt_prices commit the ratios came from (7-40 hex characters).", call. = FALSE)

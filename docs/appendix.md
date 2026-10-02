@@ -151,9 +151,9 @@ actually present in the response and raises an error if not -- see
 1. Checks out the repository.
 2. Installs R via `r-lib/actions/setup-r` (with RStudio Package Manager binaries for
    speed on Ubuntu).
-3. Installs the package list from `R/00_source_all.R`'s `required_packages` plus
-   `testthat`, via `r-lib/actions/setup-r-dependencies` (listed explicitly since this
-   repository has no `DESCRIPTION` to resolve dependencies from).
+3. Installs the `samevisit` package (this repository's `R/`, via its `DESCRIPTION`) and
+   everything it depends on, via `r-lib/actions/setup-r-dependencies` with
+   `extra-packages: local::.`.
 4. Runs `Rscript tests/testthat.R`.
 
 The suite is fully offline -- no test calls the live CMS API or requires local

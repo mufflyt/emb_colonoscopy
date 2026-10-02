@@ -1,19 +1,19 @@
-#' Inflation adjustment utilities
-#'
-#' Costs in this model come from different source years (e.g. the 2014
-#' ambulatory-OR cost-per-minute study vs. 2026 CMS fee-schedule figures).
-#' `adjust_for_inflation()` puts every cost on a common `reference_dollar_year`
-#' basis using a caller-supplied price-index table, keeping the adjustment
-#' mechanism decoupled from any specific index's actual values.
-#'
-#' `data/cpi_medical_care.csv` carries three BLS CPI-U Medical Care values
-#' (series CUUR0000SAM), all confirmed against the BLS Public Data API on
-#' 2026-09-13: the 2010 annual average (388.436) and July 2026 (593.781),
-#' used to cross-check the Ladabaum et al. 2011 office-EMB cost anchor, and
-#' the 2014 annual average (435.292), used for the Childers/Maggard-Gibbons
-#' per-minute OR/anesthesia parameters. The 2014 row replaced an
-#' interpolated placeholder (431.9). `is_placeholder` is kept so any future
-#' estimated row still triggers the loader's warning.
+# Inflation adjustment utilities
+#
+# Costs in this model come from different source years (e.g. the 2014
+# ambulatory-OR cost-per-minute study vs. 2026 CMS fee-schedule figures).
+# `adjust_for_inflation()` puts every cost on a common `reference_dollar_year`
+# basis using a caller-supplied price-index table, keeping the adjustment
+# mechanism decoupled from any specific index's actual values.
+#
+# `data/cpi_medical_care.csv` carries three BLS CPI-U Medical Care values
+# (series CUUR0000SAM), all confirmed against the BLS Public Data API on
+# 2026-09-13: the 2010 annual average (388.436) and July 2026 (593.781),
+# used to cross-check the Ladabaum et al. 2011 office-EMB cost anchor, and
+# the 2014 annual average (435.292), used for the Childers/Maggard-Gibbons
+# per-minute OR/anesthesia parameters. The 2014 row replaced an
+# interpolated placeholder (431.9). `is_placeholder` is kept so any future
+# estimated row still triggers the loader's warning.
 
 #' Adjust a cost from its source year to a reference year
 #'
@@ -26,6 +26,7 @@
 #' @return Numeric scalar: `cost_value` rescaled to `reference_year`
 #'   dollars. Returns `cost_value` unchanged (with a message) if
 #'   `source_year` equals `reference_year` or is `NA`.
+#' @export
 adjust_for_inflation <- function(
   cost_value,
   source_year,
@@ -96,6 +97,7 @@ adjust_for_inflation <- function(
 #' @param path Character scalar path to a CSV with `year`, `index_value`,
 #'   `index_source`, and `is_placeholder` columns.
 #' @return A tibble price-index table.
+#' @export
 load_price_index_table <- function(path = "data/cpi_medical_care.csv") {
   if (!base::file.exists(path)) {
     base::stop("Price index file not found at: ", path)

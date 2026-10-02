@@ -1,18 +1,19 @@
-#' Deterministic (one-way) sensitivity analysis
-#'
-#' Re-runs the full strategy-cost model with one parameter perturbed to
-#' its `low_value` and `high_value`, holding everything else at base
-#' case, and reports the effect on a chosen scalar metric. Adapted from
-#' the tornado-diagram pattern in `colpocleisis_costeff/generate_figures.R`
-#' (which looped a `get_preferred_nmb()` helper over a small hard-coded
-#' parameter table); here the mechanism is generalized to work over any
-#' row of `config/model_parameters.csv` and any target metric function.
+# Deterministic (one-way) sensitivity analysis
+#
+# Re-runs the full strategy-cost model with one parameter perturbed to
+# its `low_value` and `high_value`, holding everything else at base
+# case, and reports the effect on a chosen scalar metric. Adapted from
+# the tornado-diagram pattern in `colpocleisis_costeff/generate_figures.R`
+# (which looped a `get_preferred_nmb()` helper over a small hard-coded
+# parameter table); here the mechanism is generalized to work over any
+# row of `config/model_parameters.csv` and any target metric function.
 
 #' Default target metric: incremental cost of combined_emb vs. office_emb
 #'
 #' @param strategy_costs Tibble from
 #'   `compute_strategy_costs()$strategy_costs`.
 #' @return Numeric scalar.
+#' @export
 metric_combined_vs_office_incremental <- function(strategy_costs) {
   compare_combined_vs_office(strategy_costs)$incremental_cost_combined_vs_office
 }
@@ -22,6 +23,7 @@ metric_combined_vs_office_incremental <- function(strategy_costs) {
 #' @param strategy_name One of `"office_emb"`, `"dnc"`, `"combined_emb"`.
 #' @return A function of `strategy_costs` returning that strategy's
 #'   `expected_total_cost`.
+#' @export
 metric_expected_total_cost <- function(strategy_name) {
   function(strategy_costs) {
     strategy_costs$expected_total_cost[strategy_costs$strategy == strategy_name]
@@ -37,6 +39,7 @@ metric_expected_total_cost <- function(strategy_name) {
 #' @param target_metric_fn Function of `strategy_costs` returning a
 #'   numeric scalar.
 #' @return Numeric scalar: the target metric at `parameter_value`.
+#' @export
 evaluate_metric_at <- function(
   model_parameters,
   parameter_name,
@@ -72,6 +75,7 @@ evaluate_metric_at <- function(
 #'   `base_value`, `low_value`, `high_value`, `metric_at_base`,
 #'   `metric_at_low`, `metric_at_high`, and `spread` (the absolute range
 #'   of the metric across low/high, used to rank a tornado plot).
+#' @export
 run_one_way_sensitivity <- function(
   model_parameters,
   parameter_names = model_parameters$parameter[

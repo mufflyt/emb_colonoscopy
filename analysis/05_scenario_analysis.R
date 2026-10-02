@@ -6,7 +6,7 @@
 #' visit required). Run from the repository root:
 #'   Rscript analysis/05_scenario_analysis.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Scenario analysis ===")
 

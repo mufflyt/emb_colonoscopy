@@ -1,16 +1,17 @@
-#' Validation utilities
-#'
-#' Small, composable input-validation helpers used throughout the model.
-#' Adapted from the validation pattern in `colpocleisis_costeff`
-#' (`colpocleisis_selective_testing_model.R`), where scalar validators were
-#' defined inline inside the model function. Here they are pulled out into
-#' standalone, reusable, individually testable functions.
+# Validation utilities
+#
+# Small, composable input-validation helpers used throughout the model.
+# Adapted from the validation pattern in `colpocleisis_costeff`
+# (`colpocleisis_selective_testing_model.R`), where scalar validators were
+# defined inline inside the model function. Here they are pulled out into
+# standalone, reusable, individually testable functions.
 
 #' Validate a single probability
 #'
 #' @param numeric_value Value to check.
 #' @param value_name Character scalar used in the error message.
 #' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
 validate_probability <- function(numeric_value, value_name) {
   if (!base::is.numeric(numeric_value) ||
       length(numeric_value) != 1 ||
@@ -26,6 +27,7 @@ validate_probability <- function(numeric_value, value_name) {
 #'
 #' @inheritParams validate_probability
 #' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
 validate_non_negative <- function(numeric_value, value_name) {
   if (!base::is.numeric(numeric_value) ||
       length(numeric_value) != 1 ||
@@ -40,6 +42,7 @@ validate_non_negative <- function(numeric_value, value_name) {
 #'
 #' @inheritParams validate_probability
 #' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
 validate_positive <- function(numeric_value, value_name) {
   if (!base::is.numeric(numeric_value) ||
       length(numeric_value) != 1 ||
@@ -54,6 +57,7 @@ validate_positive <- function(numeric_value, value_name) {
 #'
 #' @inheritParams validate_probability
 #' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
 validate_boolean <- function(logical_value, value_name) {
   if (!base::is.logical(logical_value) ||
       length(logical_value) != 1 ||
@@ -72,6 +76,7 @@ validate_boolean <- function(logical_value, value_name) {
 #'
 #' @param model_parameters Tibble produced by [load_model_parameters()].
 #' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
 validate_model_parameters <- function(model_parameters) {
   required_columns <- c(
     "parameter", "category", "strategy", "description", "base_value",
@@ -157,6 +162,7 @@ validate_model_parameters <- function(model_parameters) {
 #'   `base_value` to numeric. Set to `FALSE` for boolean/text parameters
 #'   such as `combined_requires_preop_office_visit`.
 #' @return The `base_value` for `parameter_name`.
+#' @export
 get_parameter_value <- function(model_parameters, parameter_name, as_numeric = TRUE) {
   matched_rows <- model_parameters %>%
     dplyr::filter(.data$parameter == parameter_name)

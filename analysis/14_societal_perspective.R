@@ -17,7 +17,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/14_societal_perspective.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Societal-perspective secondary analysis ===")
 

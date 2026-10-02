@@ -1,83 +1,83 @@
-#' Diagnostic-yield extension (additive to the cost-minimization base case)
-#'
-#' `docs/methods_notes.md` states the condition under which this repository's
-#' cost-minimization analysis would need to become a cost-effectiveness
-#' analysis: "If a future extension adds differences in adequate-sampling
-#' probability *combined with* differences in downstream diagnostic
-#' consequences (cancer detection, time-to-diagnosis, QALYs), the analysis
-#' would become a true cost-effectiveness analysis at that point." This file
-#' is that extension's first piece. It does NOT change the base-case cost
-#' engine in `R/strategy_costs.R` and is not called by
-#' `compute_strategy_costs()`.
-#'
-#' Two deliberately separate functions, answering two different questions:
-#'
-#' - [compute_strategy_clinical_outcomes()] -- the PRIMARY, repo-native
-#'   question: does office EMB's higher inadequate-sampling probability
-#'   leave a meaningful fraction of patients with a delayed cancer/precancer
-#'   diagnosis, and how much operative-adverse-event exposure does each
-#'   strategy's D&C-rescue rate imply? Built entirely from parameters
-#'   already resident in this repository (`cancer_or_precancer_after_failed_sample`,
-#'   a `future_extension` row since before this file existed) plus newly
-#'   added, real-cited D&C/hysteroscopy adverse-event probabilities. Wired
-#'   into [run_probabilistic_sensitivity()] so cost and clinical-outcome
-#'   findings share the same Monte Carlo draws.
-#' - [compute_diagnostic_yield()] -- a SECONDARY, broader question (Pipelle
-#'   vs. D&C sensitivity/specificity for cancer/precancer detection) that
-#'   this repository deliberately does not build out further yet (no PSA
-#'   wiring, no equivalence-margin testing) -- see `docs/methods_notes.md`'s
-#'   note on why replicating a full diagnostic-accuracy decision tree
-#'   (`docs/validation_notes.md`'s discussion of Yi et al. 2018) is a larger
-#'   undertaking than this repository's cost-minimization scope currently
-#'   calls for. Kept as a documented, tested, but intentionally
-#'   not-yet-extended building block for that larger future piece.
-#'
-#' Every underlying diagnostic-sensitivity and adverse-event parameter is
-#' drawn from non-Lynch, symptomatic (mostly postmenopausal-bleeding)
-#' populations -- see `evidence_tier = "C"` and the per-parameter notes in
-#' `config/model_parameters.csv` and `docs/data_sources.md`. This is
-#' explicitly indirect evidence, not a direct measurement of Lynch
-#' surveillance outcomes.
-#'
-#' **Escalation consistency, by design:** both functions reuse the exact
-#' same escalation parameters already wired into
-#' `compute_office_emb_strategy_cost()` and `compute_combined_emb_strategy_cost()`
-#' (`emb_failure_lynch`, `office_repeat_attempt_fraction`,
-#' `office_repeat_attempt_success_probability`, `combined_to_dnc_probability`),
-#' rather than introducing a second, differently-sourced escalation
-#' probability. Using two different escalation numbers for cost and for
-#' clinical outcomes in the same strategy would be internally inconsistent
-#' and would let the two halves of the model quietly disagree about how
-#' often a failed sample is rescued.
-#'
-#' **`office_unresolved_probability` is 0, by design, as of 2026-09-02.**
-#' Before that date, this was a nonzero PSA artifact of the old single-parameter
-#' `office_to_dnc_escalation_fraction` (a `triangular(0.5, 1, 1)` distribution
-#' whose PSA draws below 1.0 mechanically implied "not escalated, therefore
-#' unresolved," even though no source actually described a distinct
-#' unresolved/no-further-action pathway). The current two-parameter
-#' repeat-attempt structure is built directly from Yi et al. 2018's own
-#' decision tree, which has no such branch: a failed repeat Pipelle attempt
-#' always proceeds to D&C in their model ("the physician will then move to
-#' the D&C route"). `office_neoplasia_delayed_probability` is therefore 0 in
-#' every draw now, not just in the base case -- see
-#' `docs/methods_notes.md` and the manuscript's Discussion for how this
-#' changed the office-arm delayed-neoplasia finding.
-#' The newer, more granular `office_failed_emb_further_workup_fraction`
-#' parameter (Slaager et al. 2025) is intentionally NOT wired in here for
-#' the same reason -- it measures a different clinical pathway (further
-#' workup via hysteroscopy or saline infusion sonography, not specifically
-#' D&C) and is kept as a documented reference value pending a real
-#' Lynch-specific or D&C-specific escalation study.
-#'
-#' **No adverse-event dollar costs anywhere in this file.** The AE
-#' probabilities added alongside this file (`dnc_perforation_probability`,
-#' `dnc_overall_complication_probability`, etc.) have no companion cost
-#' parameters. `docs/validation_notes.md` explicitly warns against adding
-#' unsupported structure to hit a target number; a per-event dollar cost
-#' would need a real CMS resource-pathway costing exercise (or a genuinely
-#' comparable published cost anchor) before being added, not an invented
-#' placeholder.
+# Diagnostic-yield extension (additive to the cost-minimization base case)
+#
+# `docs/methods_notes.md` states the condition under which this repository's
+# cost-minimization analysis would need to become a cost-effectiveness
+# analysis: "If a future extension adds differences in adequate-sampling
+# probability *combined with* differences in downstream diagnostic
+# consequences (cancer detection, time-to-diagnosis, QALYs), the analysis
+# would become a true cost-effectiveness analysis at that point." This file
+# is that extension's first piece. It does NOT change the base-case cost
+# engine in `R/strategy_costs.R` and is not called by
+# `compute_strategy_costs()`.
+#
+# Two deliberately separate functions, answering two different questions:
+#
+# - [compute_strategy_clinical_outcomes()] -- the PRIMARY, repo-native
+#   question: does office EMB's higher inadequate-sampling probability
+#   leave a meaningful fraction of patients with a delayed cancer/precancer
+#   diagnosis, and how much operative-adverse-event exposure does each
+#   strategy's D&C-rescue rate imply? Built entirely from parameters
+#   already resident in this repository (`cancer_or_precancer_after_failed_sample`,
+#   a `future_extension` row since before this file existed) plus newly
+#   added, real-cited D&C/hysteroscopy adverse-event probabilities. Wired
+#   into [run_probabilistic_sensitivity()] so cost and clinical-outcome
+#   findings share the same Monte Carlo draws.
+# - [compute_diagnostic_yield()] -- a SECONDARY, broader question (Pipelle
+#   vs. D&C sensitivity/specificity for cancer/precancer detection) that
+#   this repository deliberately does not build out further yet (no PSA
+#   wiring, no equivalence-margin testing) -- see `docs/methods_notes.md`'s
+#   note on why replicating a full diagnostic-accuracy decision tree
+#   (`docs/validation_notes.md`'s discussion of Yi et al. 2018) is a larger
+#   undertaking than this repository's cost-minimization scope currently
+#   calls for. Kept as a documented, tested, but intentionally
+#   not-yet-extended building block for that larger future piece.
+#
+# Every underlying diagnostic-sensitivity and adverse-event parameter is
+# drawn from non-Lynch, symptomatic (mostly postmenopausal-bleeding)
+# populations -- see `evidence_tier = "C"` and the per-parameter notes in
+# `config/model_parameters.csv` and `docs/data_sources.md`. This is
+# explicitly indirect evidence, not a direct measurement of Lynch
+# surveillance outcomes.
+#
+# **Escalation consistency, by design:** both functions reuse the exact
+# same escalation parameters already wired into
+# `compute_office_emb_strategy_cost()` and `compute_combined_emb_strategy_cost()`
+# (`emb_failure_lynch`, `office_repeat_attempt_fraction`,
+# `office_repeat_attempt_success_probability`, `combined_to_dnc_probability`),
+# rather than introducing a second, differently-sourced escalation
+# probability. Using two different escalation numbers for cost and for
+# clinical outcomes in the same strategy would be internally inconsistent
+# and would let the two halves of the model quietly disagree about how
+# often a failed sample is rescued.
+#
+# **`office_unresolved_probability` is 0, by design, as of 2026-09-02.**
+# Before that date, this was a nonzero PSA artifact of the old single-parameter
+# `office_to_dnc_escalation_fraction` (a `triangular(0.5, 1, 1)` distribution
+# whose PSA draws below 1.0 mechanically implied "not escalated, therefore
+# unresolved," even though no source actually described a distinct
+# unresolved/no-further-action pathway). The current two-parameter
+# repeat-attempt structure is built directly from Yi et al. 2018's own
+# decision tree, which has no such branch: a failed repeat Pipelle attempt
+# always proceeds to D&C in their model ("the physician will then move to
+# the D&C route"). `office_neoplasia_delayed_probability` is therefore 0 in
+# every draw now, not just in the base case -- see
+# `docs/methods_notes.md` and the manuscript's Discussion for how this
+# changed the office-arm delayed-neoplasia finding.
+# The newer, more granular `office_failed_emb_further_workup_fraction`
+# parameter (Slaager et al. 2025) is intentionally NOT wired in here for
+# the same reason -- it measures a different clinical pathway (further
+# workup via hysteroscopy or saline infusion sonography, not specifically
+# D&C) and is kept as a documented reference value pending a real
+# Lynch-specific or D&C-specific escalation study.
+#
+# **No adverse-event dollar costs anywhere in this file.** The AE
+# probabilities added alongside this file (`dnc_perforation_probability`,
+# `dnc_overall_complication_probability`, etc.) have no companion cost
+# parameters. `docs/validation_notes.md` explicitly warns against adding
+# unsupported structure to hit a target number; a per-event dollar cost
+# would need a real CMS resource-pathway costing exercise (or a genuinely
+# comparable published cost anchor) before being added, not an invented
+# placeholder.
 
 #' Compute each strategy's clinical-outcome profile (sampling adequacy,
 #' unresolved-failure risk, and adverse-event exposure)
@@ -100,7 +100,7 @@
 #' For the office arm, as of 2026-09-02 (see `office_repeat_attempt_fraction`/
 #' `office_repeat_attempt_success_probability` in `config/model_parameters.csv`
 #' and R/strategy_costs.R for the full derivation):
-#'   P(rescue D&C) = P(office failure) x [1 - P(repeat attempted) x P(repeat succeeds)]
+#'   P(rescue D&C) = P(office failure) x (1 - P(repeat attempted) x P(repeat succeeds))
 #'   P(unresolved failure) = 0 (Yi et al. 2018's own decision tree has no
 #'     branch where a failed repeat attempt is simply left unresolved)
 #'   P(neoplasia delayed)  = P(unresolved failure) * P(cancer/precancer | failed sample) = 0
@@ -131,6 +131,7 @@
 #'   `rescue_dnc_probability`, `unresolved_sampling_probability`,
 #'   `neoplasia_delayed_probability`, `neoplasia_delayed_per_1000`,
 #'   `major_ae_probability`, `major_ae_per_1000`.
+#' @export
 compute_strategy_clinical_outcomes <- function(model_parameters) {
   base::message("Computing strategy clinical outcomes.")
 
@@ -239,6 +240,7 @@ compute_strategy_clinical_outcomes <- function(model_parameters) {
 #'   the value `compute_strategy_costs()` uses for that strategy),
 #'   `detection_probability` (probability of detecting disease, given
 #'   disease is present).
+#' @export
 compute_diagnostic_yield <- function(
   model_parameters,
   disease = c("cancer", "precancer")

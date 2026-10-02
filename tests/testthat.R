@@ -4,14 +4,20 @@
 #' Run from the repository root:
 #'   Rscript tests/testthat.R
 
-if (!base::file.exists("R/00_source_all.R")) {
+if (!base::file.exists("config/model_parameters.csv")) {
   base::stop(
     "Run tests from the repository root, e.g. `Rscript tests/testthat.R`, ",
     "not from inside tests/."
   )
 }
 
-base::source("R/00_source_all.R")
+if (!base::requireNamespace("samevisit", quietly = TRUE)) {
+  base::stop(
+    "Package 'samevisit' is not installed. Install it from the repository ",
+    "root with `R CMD INSTALL .` or `remotes::install_local(\".\")`."
+  )
+}
+library(samevisit)
 
 # testthat::test_dir() changes the working directory to tests/testthat/
 # while tests run, so anchor an absolute repo-root path for fixtures

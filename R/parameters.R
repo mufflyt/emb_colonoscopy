@@ -1,13 +1,13 @@
-#' Model parameter loading and overriding
-#'
-#' Model parameters are stored separately from model logic in
-#' `config/model_parameters.csv`, following the "separate parameters from
-#' functions" convention requested for this repository (and a deliberate
-#' improvement over `colpocleisis_costeff`, where every default was a
-#' hard-coded function argument). Every row carries a base value, unit,
-#' plausible low/high bounds, source, dollar year, a `provisional` flag,
-#' and free-text notes -- so no assumption can silently become
-#' undocumented.
+# Model parameter loading and overriding
+#
+# Model parameters are stored separately from model logic in
+# `config/model_parameters.csv`, following the "separate parameters from
+# functions" convention requested for this repository (and a deliberate
+# improvement over `colpocleisis_costeff`, where every default was a
+# hard-coded function argument). Every row carries a base value, unit,
+# plausible low/high bounds, source, dollar year, a `provisional` flag,
+# and free-text notes -- so no assumption can silently become
+# undocumented.
 
 #' Load the model parameter table
 #'
@@ -15,6 +15,7 @@
 #'   `config/model_parameters.csv` relative to the current working
 #'   directory, which is how the `analysis/` scripts invoke it.
 #' @return A validated tibble of model parameters.
+#' @export
 load_model_parameters <- function(path = "config/model_parameters.csv") {
   base::message("Loading model parameters from: ", path)
 
@@ -67,6 +68,7 @@ load_model_parameters <- function(path = "config/model_parameters.csv") {
 #'   Names must already exist in `model_parameters$parameter`.
 #' @return `model_parameters` with `base_value` replaced for each name in
 #'   `overrides`.
+#' @export
 override_model_parameters <- function(model_parameters, overrides) {
   if (length(overrides) == 0) {
     return(model_parameters)
@@ -98,6 +100,7 @@ override_model_parameters <- function(model_parameters, overrides) {
 #'   should be kept as logical/character rather than coerced to numeric
 #'   (e.g. `combined_requires_preop_office_visit`).
 #' @return A named list of base-case values.
+#' @export
 model_parameters_as_list <- function(
   model_parameters,
   boolean_parameters = c("combined_requires_preop_office_visit")

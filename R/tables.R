@@ -1,9 +1,9 @@
-#' Table generation
-#'
-#' Formats analysis outputs into plain, human-readable tables and writes
-#' them to `tables/` as CSV (kept dependency-light -- no `gt`/`kableExtra`
-#' requirement -- consistent with `colpocleisis_costeff`'s CSV-first
-#' convention).
+# Table generation
+#
+# Formats analysis outputs into plain, human-readable tables and writes
+# them to `tables/` as CSV (kept dependency-light -- no `gt`/`kableExtra`
+# requirement -- consistent with `colpocleisis_costeff`'s CSV-first
+# convention).
 
 #' Save a tibble to `tables/` with a timestamped or fixed filename
 #'
@@ -11,6 +11,7 @@
 #' @param file_name Character scalar, e.g. `"strategy_costs.csv"`.
 #' @param output_dir Character scalar directory. Default `"tables"`.
 #' @return Invisibly, the path the file was saved to.
+#' @export
 save_table <- function(table_data, file_name, output_dir = "tables") {
   if (!base::dir.exists(output_dir)) {
     base::message("Creating output directory: ", output_dir)
@@ -30,6 +31,7 @@ save_table <- function(table_data, file_name, output_dir = "tables") {
 #'   [compare_strategies_to_cheapest()].
 #' @return A tibble formatted for reporting: dollar amounts rounded to
 #'   the nearest cent, strategy labels applied.
+#' @export
 build_strategy_comparison_table <- function(strategy_comparison) {
   strategy_comparison %>%
     dplyr::mutate(
@@ -62,6 +64,7 @@ build_strategy_comparison_table <- function(strategy_comparison) {
 #' @param probabilistic_estimates Tibble from [run_probabilistic_sensitivity()].
 #' @return A tibble with one row per strategy: `strategy`, `mean_cost`,
 #'   `sd_cost`, `p2_5`, `p97_5`, `n_draws_cheapest`, `pct_draws_cheapest`.
+#' @export
 build_psa_summary_table <- function(probabilistic_estimates) {
   cost_summary <- probabilistic_estimates %>%
     tidyr::pivot_longer(
@@ -105,6 +108,7 @@ build_psa_summary_table <- function(probabilistic_estimates) {
 #' @param combined_vs_office Tibble from [compare_combined_vs_office()].
 #' @param threshold_estimates Tibble from [run_threshold_analyses()].
 #' @return A character scalar.
+#' @export
 build_summary_sentence <- function(
   strategy_comparison,
   combined_vs_office,

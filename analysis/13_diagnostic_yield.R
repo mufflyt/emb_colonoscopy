@@ -18,7 +18,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/13_diagnostic_yield.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Diagnostic-yield secondary analysis ===")
 

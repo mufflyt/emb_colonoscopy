@@ -1,26 +1,26 @@
-#' Strategy cost functions
-#'
-#' Each endometrial-sampling strategy is modeled as a one-step decision
-#' tree: an initial attempt, which either succeeds, or fails and escalates
-#' to operative D&C. This mirrors how MD Anderson's combined-screening
-#' program actually behaves in practice (Nebgen et al. 2014 explicitly
-#' describe escalation to hysteroscopy/D&C after inadequate combined
-#' sampling), and it gives office-first and combined-first strategies a
-#' structurally identical -- and therefore directly comparable -- shape:
-#'
-#'   E(cost) = initial_cost + P(escalation) * E(cost_dnc)
-#'
-#' D&C is modeled as the deterministic reference arm with no escalation
-#' branch of its own (a simplifying assumption; see docs/methods_notes.md).
-#'
-#' The **incremental-cost principle** governs the combined-EMB arm: no
-#' colonoscopy base cost, GI professional fee, or baseline sedation cost
-#' is charged to this strategy, because the Lynch patient is assumed to be
-#' undergoing that colonoscopy regardless of whether EMB is added.
-#' `colonoscopy_anesthesia_episode_cost` is deliberately never referenced
-#' in `compute_combined_emb_strategy_cost()` -- see
-#' `tests/testthat/test-strategy-costs.R` for a unit test that enforces
-#' this.
+# Strategy cost functions
+#
+# Each endometrial-sampling strategy is modeled as a one-step decision
+# tree: an initial attempt, which either succeeds, or fails and escalates
+# to operative D&C. This mirrors how MD Anderson's combined-screening
+# program actually behaves in practice (Nebgen et al. 2014 explicitly
+# describe escalation to hysteroscopy/D&C after inadequate combined
+# sampling), and it gives office-first and combined-first strategies a
+# structurally identical -- and therefore directly comparable -- shape:
+#
+#   E(cost) = initial_cost + P(escalation) * E(cost_dnc)
+#
+# D&C is modeled as the deterministic reference arm with no escalation
+# branch of its own (a simplifying assumption; see docs/methods_notes.md).
+#
+# The **incremental-cost principle** governs the combined-EMB arm: no
+# colonoscopy base cost, GI professional fee, or baseline sedation cost
+# is charged to this strategy, because the Lynch patient is assumed to be
+# undergoing that colonoscopy regardless of whether EMB is added.
+# `colonoscopy_anesthesia_episode_cost` is deliberately never referenced
+# in `compute_combined_emb_strategy_cost()` -- see
+# `tests/testthat/test-strategy-costs.R` for a unit test that enforces
+# this.
 
 #' Look up a base-case value and inflation-adjust it if needed
 #'
@@ -29,6 +29,7 @@
 #' @param price_index_table Tibble from [load_price_index_table()].
 #' @param reference_year Numeric scalar target year.
 #' @return Numeric scalar, adjusted to `reference_year` dollars.
+#' @export
 get_adjusted_cost_parameter <- function(
   model_parameters,
   parameter_name,
@@ -60,7 +61,7 @@ get_adjusted_cost_parameter <- function(
 #' (methodologically linked to OPPS): "Medicare pays for facility
 #' services provided in ASCs -- such as nursing, recovery care,
 #' anesthetics, drugs, and other supplies -- using a payment system that
-#' is primarily linked to [OPPS]... Within each APC, CMS packages most
+#' is primarily linked to `OPPS`... Within each APC, CMS packages most
 #' ancillary items and services with the primary service." Recovery-room
 #' cost is therefore already inside `dnc_facility_or_asc_fee`; adding a
 #' separate `dnc_recovery_room_cost` component would double-count it.
@@ -74,6 +75,7 @@ get_adjusted_cost_parameter <- function(
 #' @return A list with `components` (tibble) and `expected_total_cost`
 #'   (numeric scalar; identical to `initial_cost` since D&C has no
 #'   escalation branch in the base-case model).
+#' @export
 compute_dnc_strategy_cost <- function(
   model_parameters,
   price_index_table,
@@ -168,6 +170,7 @@ compute_dnc_strategy_cost <- function(
 #' @return A list with `components`, `escalation_probability`,
 #'   `escalation_cost`, `repeat_attempt_probability`, `repeat_visit_cost`,
 #'   `initial_cost`, and `expected_total_cost`.
+#' @export
 compute_office_emb_strategy_cost <- function(
   model_parameters,
   dnc_expected_cost,
@@ -284,6 +287,7 @@ compute_office_emb_strategy_cost <- function(
 #' @inheritParams compute_office_emb_strategy_cost
 #' @return A list with `components`, `escalation_probability`,
 #'   `escalation_cost`, `initial_cost`, and `expected_total_cost`.
+#' @export
 compute_combined_emb_strategy_cost <- function(
   model_parameters,
   dnc_expected_cost,
@@ -408,6 +412,7 @@ compute_combined_emb_strategy_cost <- function(
 #' @return A named list with `strategy_costs` (tibble, one row per
 #'   strategy) and `cost_components` (long tibble, one row per
 #'   strategy-component).
+#' @export
 compute_strategy_costs <- function(
   model_parameters,
   price_index_table = load_price_index_table(),

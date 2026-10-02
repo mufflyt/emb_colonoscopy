@@ -1,26 +1,27 @@
-#' Scenario analysis
-#'
-#' Distinguishes the base-case analysis (Medicare-anchored CPT allowed
-#' amounts; as of 2026-08-30 the combined arm's base case includes a
-#' separate preop office visit, per the model owner's confirmed clinical
-#' practice -- see `combined_requires_preop_office_visit` in
-#' `config/model_parameters.csv` and `docs/methods_notes.md`) from named
-#' scenario analyses that substitute alternative payer assumptions or
-#' structural choices. Every scenario is expressed as a named list of
-#' parameter overrides applied via [override_model_parameters()], so
-#' scenario definitions stay declarative and auditable.
-#'
-#' The Medicaid and commercial scenarios scale each reimbursement
-#' parameter by its own empirical payer-to-Medicare ratio: the median,
-#' across hospitals, of each hospital's professional-fee rate for that
-#' payer divided by the same hospital's Medicare rate for the same CPT code,
-#' measured in national hospital price-transparency data (Trilliant Health
-#' Hospital MRF Data Directory, 2026-07-21 snapshot, processed with the
-#' hpt_prices pipeline). The ratios are the `payer_multiplier_*` rows of
-#' config/model_parameters.csv. They replaced the earlier provisional
-#' flat multipliers (Medicaid 0.70, commercial 1.75) on 2026-09-13.
+# Scenario analysis
+#
+# Distinguishes the base-case analysis (Medicare-anchored CPT allowed
+# amounts; as of 2026-08-30 the combined arm's base case includes a
+# separate preop office visit, per the model owner's confirmed clinical
+# practice -- see `combined_requires_preop_office_visit` in
+# `config/model_parameters.csv` and `docs/methods_notes.md`) from named
+# scenario analyses that substitute alternative payer assumptions or
+# structural choices. Every scenario is expressed as a named list of
+# parameter overrides applied via [override_model_parameters()], so
+# scenario definitions stay declarative and auditable.
+#
+# The Medicaid and commercial scenarios scale each reimbursement
+# parameter by its own empirical payer-to-Medicare ratio: the median,
+# across hospitals, of each hospital's professional-fee rate for that
+# payer divided by the same hospital's Medicare rate for the same CPT code,
+# measured in national hospital price-transparency data (Trilliant Health
+# Hospital MRF Data Directory, 2026-07-21 snapshot, processed with the
+# hpt_prices pipeline). The ratios are the `payer_multiplier_*` rows of
+# config/model_parameters.csv. They replaced the earlier provisional
+# flat multipliers (Medicaid 0.70, commercial 1.75) on 2026-09-13.
 
 #' Parameter names treated as "reimbursement" costs for payer-mix scenarios
+#' @export
 REIMBURSEMENT_PARAMETER_NAMES <- c(
   "emb_office_professional_cost",
   "emb_pathology_cost",
@@ -34,6 +35,7 @@ REIMBURSEMENT_PARAMETER_NAMES <- c(
 #' @param multiplier Numeric scalar applied to every parameter in
 #'   `REIMBURSEMENT_PARAMETER_NAMES`.
 #' @return A named list suitable for [override_model_parameters()].
+#' @export
 build_reimbursement_multiplier_overrides <- function(model_parameters, multiplier) {
   overrides <- purrr::map(
     REIMBURSEMENT_PARAMETER_NAMES,
@@ -43,6 +45,12 @@ build_reimbursement_multiplier_overrides <- function(model_parameters, multiplie
 }
 
 #' Parameter holding the payer-to-Medicare ratio for one reimbursement input
+#'
+#' @param payer "medicaid" or "commercial".
+#' @param parameter_name One of `REIMBURSEMENT_PARAMETER_NAMES`.
+#' @return Character scalar, the `payer_multiplier_<payer>_<parameter_name>`
+#'   row name in `config/model_parameters.csv`.
+#' @export
 payer_multiplier_parameter <- function(payer, parameter_name) {
   base::paste0("payer_multiplier_", payer, "_", parameter_name)
 }
@@ -50,8 +58,10 @@ payer_multiplier_parameter <- function(payer, parameter_name) {
 #' Payer-scenario overrides with a separate empirical multiplier per
 #' reimbursement parameter
 #'
+#' @param model_parameters Tibble from [load_model_parameters()].
 #' @param payer "medicaid" or "commercial".
 #' @return A named list suitable for [override_model_parameters()].
+#' @export
 build_payer_multiplier_overrides <- function(model_parameters, payer) {
   overrides <- purrr::map(
     REIMBURSEMENT_PARAMETER_NAMES,
@@ -71,6 +81,7 @@ build_payer_multiplier_overrides <- function(model_parameters, payer) {
 #'   cost anchor for the `office_cost_ladabaum_historical` scenario.
 #' @param reference_year Numeric scalar target year for that adjustment.
 #' @return A named list of override lists, one per scenario.
+#' @export
 build_scenario_definitions <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -133,6 +144,7 @@ build_scenario_definitions <- function(
 #' @param price_index_table Tibble from [load_price_index_table()].
 #' @return A tibble binding `strategy_costs` for every scenario, with a
 #'   leading `scenario` column and the scenario's `provisional` flag.
+#' @export
 run_scenario_analysis <- function(
   model_parameters,
   price_index_table = load_price_index_table()

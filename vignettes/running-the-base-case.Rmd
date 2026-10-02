@@ -12,19 +12,17 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 knitr::opts_knit$set(root.dir = normalizePath(".."))
 ```
 
-This repository is a collection of sourced `R/` files rather than an installed package
-(see `R/00_source_all.R`'s own docblock) -- there is no `DESCRIPTION`, so this vignette
-cannot be built with `devtools::build_vignettes()` the way a real package's vignettes
-would be. It is written in the standard R-package vignette format anyway (YAML
-`vignette:` block, knittable code chunks) so it reads the same way, and it knits
-directly with `rmarkdown::render("vignettes/running-the-base-case.Rmd")` from the
-repository root. The narrative, non-code walkthrough of the same material lives in
-`docs/vignettes/01_running_the_base_case.md`, if you'd rather read it without running R.
+`R/` is the `samevisit` package (see `DESCRIPTION`) -- install it from the repository
+root with `R CMD INSTALL .` or `remotes::install_local(".")`, then this vignette builds
+the normal way with `devtools::build_vignettes()`, or knits directly with
+`rmarkdown::render("vignettes/running-the-base-case.Rmd")`. The narrative, non-code
+walkthrough of the same material lives in `docs/vignettes/01_running_the_base_case.md`,
+if you'd rather read it without running R.
 
 ## Load every model function
 
 ```{r setup}
-source("R/00_source_all.R")
+library(samevisit)
 ```
 
 ## Load the parameter table and the price index

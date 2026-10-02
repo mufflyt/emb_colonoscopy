@@ -12,10 +12,11 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 knitr::opts_knit$set(root.dir = normalizePath(".."))
 ```
 
-Like the other vignettes here, this file knits directly --
+Like the other vignettes here, this file builds via `devtools::build_vignettes()` or
+`R CMD build .` once the `samevisit` package (`DESCRIPTION`) is installed
+(`R CMD INSTALL .` or `remotes::install_local(".")`), or knits directly with
 `rmarkdown::render("vignettes/adding-a-hospital-payer-rate.Rmd")` from the repository
-root -- since this repository has no `DESCRIPTION` and is not built as an installed
-package. The step-by-step *data-collection* process (finding a hospital's machine-readable
+root. The step-by-step *data-collection* process (finding a hospital's machine-readable
 file, downloading it, flagging data-quality issues) is not itself R code and is covered
 in full in `docs/vignettes/02_adding_a_new_hospital_payer_rate.md`; this vignette covers
 the one part of that process that *is* real, executable R: loading the resulting table
@@ -23,7 +24,7 @@ with its enforced schema, and seeing exactly how a new row changes a real downst
 calculation.
 
 ```{r setup}
-source("R/00_source_all.R")
+library(samevisit)
 model_parameters <- load_model_parameters("config/model_parameters.csv")
 ```
 

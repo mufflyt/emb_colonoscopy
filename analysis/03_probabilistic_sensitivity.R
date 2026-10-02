@@ -4,7 +4,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/03_probabilistic_sensitivity.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Probabilistic sensitivity analysis ===")
 

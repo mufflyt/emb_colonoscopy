@@ -1,3 +1,4 @@
+#' @export
 normalize_hpt_names <- function(column_names) {
   column_names |>
     stringr::str_replace("^\\ufeff", "") |>
@@ -5,6 +6,7 @@ normalize_hpt_names <- function(column_names) {
     stringr::str_replace_all("\\s*\\|\\s*", "|")
 }
 
+#' @export
 read_hpt_prefix <- function(path_or_url,
                             n_lines = 12L) {
   base::message("Inspecting HPT MRF header: ", path_or_url)
@@ -43,6 +45,7 @@ read_hpt_prefix <- function(path_or_url,
   )
 }
 
+#' @export
 detect_hpt_charge_header <- function(lines) {
   cleaned <- lines |>
     stringr::str_replace("^\\ufeff", "") |>
@@ -67,6 +70,7 @@ detect_hpt_charge_header <- function(lines) {
   matches[[1]]
 }
 
+#' @export
 read_hpt_csv <- function(path_or_url) {
   prefix_lines <- read_hpt_prefix(path_or_url)
   header_line <- detect_hpt_charge_header(prefix_lines)
@@ -96,6 +100,7 @@ read_hpt_csv <- function(path_or_url) {
   hpt_tbl
 }
 
+#' @export
 find_hpt_column <- function(column_names,
                             patterns,
                             required = TRUE) {
@@ -130,6 +135,7 @@ find_hpt_column <- function(column_names,
   matches[[1]]
 }
 
+#' @export
 hpt_code_columns <- function(column_names) {
   normalized <- normalize_hpt_names(column_names)
 
@@ -144,6 +150,7 @@ hpt_code_columns <- function(column_names) {
   ]
 }
 
+#' @export
 hpt_target_code <- function(service_tbl,
                             code_columns,
                             codes) {
@@ -162,6 +169,7 @@ hpt_target_code <- function(service_tbl,
   )
 }
 
+#' @export
 materialize_hpt_target_rows <- function(hpt_tbl,
                                         codes) {
   column_names <- base::names(hpt_tbl)
@@ -206,6 +214,7 @@ materialize_hpt_target_rows <- function(hpt_tbl,
   service_tbl
 }
 
+#' @export
 hpt_get_column <- function(service_tbl,
                            column_name) {
   if (base::is.na(column_name)) {
@@ -220,6 +229,7 @@ hpt_get_column <- function(service_tbl,
   base::as.character(service_tbl[[column_name]])
 }
 
+#' @export
 extract_hpt_tall_prices <- function(service_tbl) {
   column_names <- base::names(service_tbl)
 
@@ -286,6 +296,7 @@ extract_hpt_tall_prices <- function(service_tbl) {
     )
 }
 
+#' @export
 parse_hpt_wide_column <- function(column_name) {
   normalized <- normalize_hpt_names(column_name)
   parts <- base::strsplit(normalized, "\\|", fixed = FALSE)[[1]]
@@ -333,6 +344,7 @@ parse_hpt_wide_column <- function(column_name) {
   )
 }
 
+#' @export
 hpt_wide_metadata <- function(column_names) {
   purrr::map_dfr(
     column_names,
@@ -346,6 +358,7 @@ hpt_wide_metadata <- function(column_names) {
     )
 }
 
+#' @export
 hpt_wide_metric_column <- function(metadata_tbl,
                                    payer_name,
                                    plan_name,
@@ -365,6 +378,7 @@ hpt_wide_metric_column <- function(metadata_tbl,
   matched[[1]]
 }
 
+#' @export
 extract_hpt_wide_prices <- function(service_tbl) {
   metadata_tbl <- hpt_wide_metadata(
     base::names(service_tbl)
@@ -450,6 +464,7 @@ extract_hpt_wide_prices <- function(service_tbl) {
     )
 }
 
+#' @export
 extract_hpt_sampling_prices <- function(
     hpt_tbl,
     codes = base::c("58100", "58120", "58558", "88305")) {
@@ -505,6 +520,7 @@ extract_hpt_sampling_prices <- function(
   base::stop("Could not identify CMS HPT tall or wide format.")
 }
 
+#' @export
 summarize_hpt_prices <- function(price_tbl) {
   base::message("Summarizing commercial HPT prices.")
 
@@ -560,6 +576,7 @@ summarize_hpt_prices <- function(price_tbl) {
     )
 }
 
+#' @export
 read_hpt_manifest <- function(path) {
   base::message("Reading HPT manifest: ", path)
 
@@ -590,6 +607,7 @@ read_hpt_manifest <- function(path) {
   manifest_tbl
 }
 
+#' @export
 extract_one_hpt_manifest_row <- function(manifest_row,
                                          codes) {
   hospital_name <- manifest_row$hospital_name[[1]]
@@ -650,6 +668,7 @@ extract_one_hpt_manifest_row <- function(manifest_row,
   )
 }
 
+#' @export
 extract_hpt_manifest_prices_safe <- function(
     manifest_tbl,
     codes = base::c("58100", "58120", "58558", "88305")) {
@@ -695,6 +714,7 @@ extract_hpt_manifest_prices_safe <- function(
   )
 }
 
+#' @export
 extract_hpt_manifest_prices <- function(
     manifest_tbl,
     codes = base::c("58100", "58120", "58558", "88305")) {

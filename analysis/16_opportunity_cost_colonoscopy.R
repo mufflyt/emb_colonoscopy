@@ -8,7 +8,7 @@
 #' sensitivity exercise. Run from the repository root:
 #'   Rscript analysis/16_opportunity_cost_colonoscopy.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Opportunity cost of a displaced colonoscopy-suite case ===")
 

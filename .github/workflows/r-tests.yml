@@ -20,30 +20,10 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Install R package dependencies
+      - name: Install samevisit and its dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: |
-            any::readr
-            any::dplyr
-            any::tibble
-            any::tidyr
-            any::purrr
-            any::ggplot2
-            any::scales
-            any::forcats
-            any::rlang
-            any::duckplyr
-            any::httr2
-            any::readxl
-            any::stringr
-            any::openssl
-            any::DiagrammeR
-            any::DiagrammeRsvg
-            any::rsvg
-            any::maps
-            any::mapproj
-            any::testthat
+          extra-packages: local::.
 
       - name: Run test suite
         run: Rscript tests/testthat.R

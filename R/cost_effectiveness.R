@@ -1,47 +1,47 @@
-#' Cost-consequence secondary analysis (cost per additional true case detected)
-#'
-#' The base case is a cost-minimization analysis: it assumes equivalent
-#' diagnostic effectiveness across strategies (see
-#' `docs/methods_notes.md`'s "This is a cost-minimization analysis, not a
-#' cost-effectiveness analysis"). `R/diagnostic_yield.R::compute_diagnostic_yield()`
-#' already computes a genuine effectiveness measure -- each strategy's
-#' overall probability of detecting a true cancer or precancer, using
-#' published (non-Lynch) Pipelle/D&C sensitivities (Sakna et al. 2023) --
-#' but that secondary analysis only reports detection probabilities, not
-#' cost per unit of effectiveness. This file adds that missing piece: a
-#' deliberately LIGHTER alternative to a full cost-utility analysis (no
-#' QALYs, no stage-shift/survival model, no utility values -- see
-#' `docs/methods_notes.md` for why a full cost-utility extension is a much
-#' larger undertaking this repository does not attempt). It computes
-#' incremental cost-effectiveness ratios (ICERs) directly from data this
-#' repository already has: `compute_strategy_costs()`'s healthcare-sector
-#' cost and `compute_diagnostic_yield()`'s detection probability.
-#'
-#' **What an ICER means here:** dollars per additional expected true-positive
-#' case detected, per patient screened -- e.g., an ICER of $20,000 between
-#' two strategies means switching from the cheaper to the costlier strategy
-#' costs an additional $20,000, on average, for every additional expected
-#' true cancer case detected across a cohort of patients screened. No
-#' disease-prevalence parameter is needed for this interpretation: dividing
-#' a cost difference by a detection-*probability* difference already yields
-#' dollars per additional expected case in a cohort of any size (the
-#' prevalence cancels out of the ratio).
-#'
-#' **Standard health-economic dominance rules, both implemented:**
-#' - **Strict dominance:** a strategy is dominated if another strategy costs
-#'   the same or less AND detects the same or more (this repository's real
-#'   three strategies never happen to trigger this, but the function
-#'   handles it correctly for scenarios/disease types where they might).
-#' - **Extended (weak) dominance:** among strategies that survive strict
-#'   dominance, sorted by cost, ICERs computed strategy-to-strategy along
-#'   the frontier must increase monotonically. If they do not, the middle
-#'   strategy is excluded (a combination of its cheaper and costlier
-#'   neighbors would be more efficient), and the remaining frontier is
-#'   re-checked.
-#'
-#' **Deliberately NOT PSA-integrated**, matching `compute_diagnostic_yield()`'s
-#' own scope discipline: a deterministic point-estimate secondary analysis,
-#' not folded into the probabilistic sensitivity analysis.
+# Cost-consequence secondary analysis (cost per additional true case detected)
+#
+# The base case is a cost-minimization analysis: it assumes equivalent
+# diagnostic effectiveness across strategies (see
+# `docs/methods_notes.md`'s "This is a cost-minimization analysis, not a
+# cost-effectiveness analysis"). `R/diagnostic_yield.R::compute_diagnostic_yield()`
+# already computes a genuine effectiveness measure -- each strategy's
+# overall probability of detecting a true cancer or precancer, using
+# published (non-Lynch) Pipelle/D&C sensitivities (Sakna et al. 2023) --
+# but that secondary analysis only reports detection probabilities, not
+# cost per unit of effectiveness. This file adds that missing piece: a
+# deliberately LIGHTER alternative to a full cost-utility analysis (no
+# QALYs, no stage-shift/survival model, no utility values -- see
+# `docs/methods_notes.md` for why a full cost-utility extension is a much
+# larger undertaking this repository does not attempt). It computes
+# incremental cost-effectiveness ratios (ICERs) directly from data this
+# repository already has: `compute_strategy_costs()`'s healthcare-sector
+# cost and `compute_diagnostic_yield()`'s detection probability.
+#
+# **What an ICER means here:** dollars per additional expected true-positive
+# case detected, per patient screened -- e.g., an ICER of $20,000 between
+# two strategies means switching from the cheaper to the costlier strategy
+# costs an additional $20,000, on average, for every additional expected
+# true cancer case detected across a cohort of patients screened. No
+# disease-prevalence parameter is needed for this interpretation: dividing
+# a cost difference by a detection-*probability* difference already yields
+# dollars per additional expected case in a cohort of any size (the
+# prevalence cancels out of the ratio).
+#
+# **Standard health-economic dominance rules, both implemented:**
+# - **Strict dominance:** a strategy is dominated if another strategy costs
+#   the same or less AND detects the same or more (this repository's real
+#   three strategies never happen to trigger this, but the function
+#   handles it correctly for scenarios/disease types where they might).
+# - **Extended (weak) dominance:** among strategies that survive strict
+#   dominance, sorted by cost, ICERs computed strategy-to-strategy along
+#   the frontier must increase monotonically. If they do not, the middle
+#   strategy is excluded (a combination of its cheaper and costlier
+#   neighbors would be more efficient), and the remaining frontier is
+#   re-checked.
+#
+# **Deliberately NOT PSA-integrated**, matching `compute_diagnostic_yield()`'s
+# own scope discipline: a deterministic point-estimate secondary analysis,
+# not folded into the probabilistic sensitivity analysis.
 
 #' Compute incremental cost-effectiveness ratios from a generic cost/effect table
 #'
@@ -55,6 +55,7 @@
 #'   and `icer` (numeric; `NA` for the cheapest frontier strategy and for
 #'   any non-frontier strategy -- an ICER is only defined as the
 #'   incremental cost/effect between adjacent frontier strategies).
+#' @export
 compute_incremental_cost_effectiveness <- function(cost_effect_table) {
   required_columns <- c("strategy", "cost", "effect")
   missing_columns <- base::setdiff(required_columns, base::names(cost_effect_table))
@@ -149,6 +150,7 @@ compute_incremental_cost_effectiveness <- function(cost_effect_table) {
 #' @return A tibble, one row per strategy: `strategy`, `disease`, `cost`
 #'   (healthcare-sector `expected_total_cost`), `effect`
 #'   (`detection_probability`), `status`, `icer`.
+#' @export
 compute_diagnostic_yield_cost_effectiveness <- function(
   model_parameters,
   price_index_table,

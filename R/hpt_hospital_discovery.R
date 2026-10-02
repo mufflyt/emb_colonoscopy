@@ -1,3 +1,4 @@
+#' @export
 normalize_public_names <- function(column_names) {
   normalized <- column_names |>
     stringr::str_to_lower() |>
@@ -22,6 +23,7 @@ normalize_public_names <- function(column_names) {
 #'
 #' @param hospital_tbl A tibble/data.frame with raw CMS column headers.
 #' @return `hospital_tbl` with normalized, `citytown`-corrected names.
+#' @export
 normalize_cms_hospital_frame_names <- function(hospital_tbl) {
   base::names(hospital_tbl) <- normalize_public_names(
     base::names(hospital_tbl)
@@ -35,6 +37,7 @@ normalize_cms_hospital_frame_names <- function(hospital_tbl) {
   hospital_tbl
 }
 
+#' @export
 cms_provider_dataset_metadata <- function(
     identifier = "xubh-q36u") {
   metadata_url <- base::paste0(
@@ -59,6 +62,7 @@ cms_provider_dataset_metadata <- function(
   )
 }
 
+#' @export
 cms_csv_distribution_url <- function(metadata) {
   distributions <- metadata$distribution
 
@@ -99,6 +103,7 @@ cms_csv_distribution_url <- function(metadata) {
   x
 }
 
+#' @export
 download_cms_hospital_frame <- function(
     directory = "data-raw/cms/hospitals",
     identifier = "xubh-q36u") {
@@ -191,6 +196,7 @@ download_cms_hospital_frame <- function(
   hospital_tbl
 }
 
+#' @export
 census_region_from_state <- function(state) {
   northeast <- base::c(
     "CT", "ME", "MA", "NH", "RI", "VT",
@@ -221,6 +227,7 @@ census_region_from_state <- function(state) {
   )
 }
 
+#' @export
 ownership_group_from_text <- function(ownership) {
   dplyr::case_when(
     stringr::str_detect(
@@ -239,6 +246,7 @@ ownership_group_from_text <- function(ownership) {
   )
 }
 
+#' @export
 classify_hpt_hospitals <- function(hospital_tbl) {
   base::message("Classifying hospitals for HPT sampling.")
 
@@ -251,6 +259,7 @@ classify_hpt_hospitals <- function(hospital_tbl) {
     )
 }
 
+#' @export
 sample_hpt_hospitals <- function(hospital_tbl,
                                  per_stratum = 10L,
                                  seed = 20260828L) {
@@ -328,6 +337,7 @@ sample_hpt_hospitals <- function(hospital_tbl,
   sampled_tbl
 }
 
+#' @export
 write_hpt_sample_files <- function(
     sample_tbl,
     config_dir = "config",
@@ -388,6 +398,7 @@ write_hpt_sample_files <- function(
   )
 }
 
+#' @export
 normalize_hpt_domain <- function(domain) {
   normalized <- domain |>
     stringr::str_trim() |>
@@ -401,6 +412,7 @@ normalize_hpt_domain <- function(domain) {
   normalized
 }
 
+#' @export
 hpt_field_value <- function(key,
                             value,
                             target) {
@@ -413,6 +425,7 @@ hpt_field_value <- function(key,
   matches[[1]]
 }
 
+#' @export
 parse_cms_hpt_text <- function(hpt_text) {
   base::message("Parsing cms-hpt.txt content.")
 
@@ -485,6 +498,7 @@ parse_cms_hpt_text <- function(hpt_text) {
     dplyr::select(-"location_block")
 }
 
+#' @export
 fetch_cms_hpt_text <- function(domain) {
   normalized_domain <- normalize_hpt_domain(domain)
 
@@ -547,6 +561,7 @@ fetch_cms_hpt_text <- function(domain) {
   )
 }
 
+#' @export
 normalize_hospital_name <- function(name) {
   name |>
     stringr::str_to_upper() |>
@@ -554,6 +569,7 @@ normalize_hospital_name <- function(name) {
     stringr::str_squish()
 }
 
+#' @export
 hospital_name_tokens <- function(name) {
   stop_words <- base::c(
     "HOSPITAL",
@@ -573,6 +589,7 @@ hospital_name_tokens <- function(name) {
   base::setdiff(tokens, stop_words)
 }
 
+#' @export
 hospital_name_score <- function(reference_name,
                                 candidate_name) {
   reference_tokens <- hospital_name_tokens(reference_name)
@@ -592,6 +609,7 @@ hospital_name_score <- function(reference_name,
   ) / base::length(union_tokens)
 }
 
+#' @export
 select_hpt_location <- function(discovered_tbl,
                                 facility_name,
                                 min_score = 0.40) {
@@ -640,6 +658,7 @@ select_hpt_location <- function(discovered_tbl,
     dplyr::slice(1L)
 }
 
+#' @export
 infer_mrf_format <- function(mrf_url) {
   clean_url <- stringr::str_remove(mrf_url, "[?#].*$")
 
@@ -656,6 +675,7 @@ infer_mrf_format <- function(mrf_url) {
   )
 }
 
+#' @export
 check_mrf_head <- function(mrf_url) {
   checked <- base::tryCatch(
     {
@@ -677,6 +697,7 @@ check_mrf_head <- function(mrf_url) {
   checked
 }
 
+#' @export
 resolve_one_hpt_hospital <- function(facility_id,
                                      facility_name,
                                      citytown,
@@ -777,6 +798,7 @@ resolve_one_hpt_hospital <- function(facility_id,
   )
 }
 
+#' @export
 resolve_hpt_manifest <- function(sample_tbl,
                                  domains_tbl) {
   base::message("Joining HPT sample to hospital domains.")
@@ -850,6 +872,7 @@ resolve_hpt_manifest <- function(sample_tbl,
   )
 }
 
+#' @export
 write_hpt_resolution_files <- function(
     resolution,
     config_dir = "config") {
@@ -895,6 +918,7 @@ write_hpt_resolution_files <- function(
   )
 }
 
+#' @export
 hpt_historical_index_resource <- function() {
   tibble::tibble(
     source = "TPAFS transparency-data",
@@ -910,6 +934,7 @@ hpt_historical_index_resource <- function() {
   )
 }
 
+#' @export
 download_hpt_historical_index <- function(
     directory = "data-raw/hpt/index") {
   base::message("Downloading historical HPT URL index.")
@@ -989,6 +1014,7 @@ download_hpt_historical_index <- function(
   index_tbl
 }
 
+#' @export
 extract_url_hostname <- function(url) {
   if (base::is.na(url) || !base::nzchar(url)) {
     return(NA_character_)
@@ -1011,6 +1037,7 @@ extract_url_hostname <- function(url) {
   stringr::str_to_lower(hostname)
 }
 
+#' @export
 build_hpt_domain_hints <- function(index_tbl) {
   base::message("Building HPT domain hints by CMS certification number.")
 
@@ -1062,6 +1089,7 @@ build_hpt_domain_hints <- function(index_tbl) {
     )
 }
 
+#' @export
 prefill_hpt_domains <- function(domain_path,
                                 index_tbl) {
   base::message("Prefilling HPT domains from historical URL hints.")
@@ -1136,6 +1164,7 @@ prefill_hpt_domains <- function(domain_path,
   updated_tbl
 }
 
+#' @export
 read_hpt_sample <- function(path) {
   base::message("Reading frozen HPT hospital sample: ", path)
 
@@ -1169,6 +1198,7 @@ read_hpt_sample <- function(path) {
   sample_tbl
 }
 
+#' @export
 load_or_create_hpt_sample <- function(
     hospital_tbl,
     config_dir = "config",

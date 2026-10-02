@@ -12,14 +12,15 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 knitr::opts_knit$set(root.dir = normalizePath(".."))
 ```
 
-As with the other vignettes in this directory, this repository is not an installed
-package (no `DESCRIPTION`), so this file is knit directly --
+As with the other vignettes in this directory, this builds via `devtools::build_vignettes()`
+once the `samevisit` package (`DESCRIPTION`) is installed (`R CMD INSTALL .` or
+`remotes::install_local(".")`), or knits directly with
 `rmarkdown::render("vignettes/evidence-tiers-and-sensitivity.Rmd")` from the repository
-root -- rather than built by `devtools::build_vignettes()`. The non-code narrative
-covering the same ground is `docs/vignettes/03_interpreting_evidence_tiers_and_sensitivity.md`.
+root. The non-code narrative covering the same ground is
+`docs/vignettes/03_interpreting_evidence_tiers_and_sensitivity.md`.
 
 ```{r setup}
-source("R/00_source_all.R")
+library(samevisit)
 model_parameters <- load_model_parameters("config/model_parameters.csv")
 price_index_table <- load_price_index_table("data/cpi_medical_care.csv")
 ```

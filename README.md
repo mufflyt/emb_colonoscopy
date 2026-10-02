@@ -287,24 +287,20 @@ emb_colonoscopy/
                    resident onboarding guide, figures reference, tables dictionary,
                    vignettes/ (narrative walkthroughs)
   vignettes/       the same three docs/vignettes/ topics plus the hospital MRF map,
-                   as knittable R Markdown, in standard R-package vignette format
-                   (no DESCRIPTION/installed package -- render directly with
-                   rmarkdown::render())
+                   as knittable R Markdown (vignettes for the samevisit package below)
+  DESCRIPTION,     R/ is the installable samevisit package (Package: samevisit) --
+  NAMESPACE,       install with `R CMD INSTALL .` or `remotes::install_local(".")`;
+  man/             see "The samevisit package" below
 ```
 
 ## Quick start
 
+`R/` is the installable `samevisit` package (`DESCRIPTION`) -- install it and its
+dependencies, then run the test suite and any analysis script:
+
 ```r
-install.packages(c(
-  "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
-  "forcats", "rlang", "testthat",
-  # evidence layer + public-input acquisition
-  "duckplyr", "httr2", "readxl", "stringr", "openssl",
-  # decision-tree figure (analysis/10_decision_tree_figure.R)
-  "DiagrammeR", "DiagrammeRsvg", "rsvg",
-  # hospital MRF map (analysis/19_hospital_mrf_map.R)
-  "maps", "mapproj"
-))
+install.packages(c("remotes", "testthat"))
+remotes::install_local(".", dependencies = TRUE)  # or: R CMD INSTALL . from the shell
 ```
 
 ```sh
@@ -325,11 +321,25 @@ Rscript analysis/11_manuscript_table10_summary.R # base-case + PSA clinical-outc
 Rscript analysis/12_independent_psa_verification.R # re-derives PSA clinical-outcome claims without calling model code
 HPT_PRICES_COMMIT=<sha> Rscript analysis/17_refresh_payer_multipliers.R  # copy hpt_prices payer ratios into the payer_multiplier_* rows (DRY_RUN=true to preview)
 Rscript analysis/18_manuscript_slides.R          # builds manuscript/manuscript_slides.pptx from the committed tables/figures
-Rscript analysis/19_hospital_mrf_map.R           # static state-level map of hospitals with usable MRF payer-rate data (Figure 5)
+Rscript analysis/19_hospital_mrf_map.R           # static map of hospitals with usable MRF payer-rate data (README Figure 5 -- see docs/figures_reference.md on the 3 different figure-numbering schemes in this repo)
 ```
 
 Every script logs its inputs, major transformations, and exact output file paths via
 `base::message()` as it runs.
+
+## The samevisit package
+
+`R/`'s cost-component, escalation-probability, and sensitivity-analysis machinery is also
+published standalone as [`mufflyt/samevisit`](https://github.com/mufflyt/samevisit) --
+"same visit" for the general pattern this model is one worked example of: comparing a
+standalone procedure against the same procedure performed during an already-scheduled
+encounter instead of its own separate visit. Its function and parameter names are still
+this specific application's names (`compute_strategy_costs()`, `emb_failure_lynch`, etc.)
+-- generalizing those is a deliberate follow-up, not done yet; see that repo's README for
+its current status. This repository maintains its own local copy of the same source
+(installed here as the `samevisit` package via `DESCRIPTION`/`NAMESPACE`) rather than
+depending on the GitHub repo directly, so a change to one does not automatically appear in
+the other yet.
 
 ## Threshold questions this model answers
 
@@ -494,8 +504,8 @@ pipeline that produced it. `analysis/12_independent_psa_verification.R` re-deriv
 clinical-outcome and joint cost/outcome claim in the manuscript's Results and Discussion sections
 (the 91.4% probability combined EMB is cheaper, the 0.36-vs-2.48-per-1,000 adverse-event exposure,
 the 100% no-worse-delayed-neoplasia-risk claim) directly from the saved
-`tables/probabilistic_sensitivity_draws.csv`, using only base R -- it never sources
-`R/00_source_all.R` and never calls `compute_strategy_clinical_outcomes()` or
+`tables/probabilistic_sensitivity_draws.csv`, using only base R -- it never calls
+`library(samevisit)` and never calls `compute_strategy_clinical_outcomes()` or
 `run_probabilistic_sensitivity()`. It is read-only (writes nothing) and is meant to be re-run
 whenever the PSA draws file is regenerated -- which, as of 2026-09-01, only actually changes the
 numbers if `config/model_parameters.csv`, `n_simulations`, or the `seed` argument changes:
@@ -576,12 +586,11 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
   adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
   sensitivity analyses
-- [`vignettes/`](vignettes/) -- the same three topics as knittable R Markdown, written in the
-  standard R-package vignette format (even though this repository has no `DESCRIPTION` and is not
-  built as an installed package -- see `R/00_source_all.R`'s own docblock), plus a fourth,
-  `mapping-hospital-mrf-sample.Rmd` (building the Figure 5 hospital map below). Render with
-  `rmarkdown::render("vignettes/<name>.Rmd")` from the repository root to see the real,
-  live-executed output of each step.
+- [`vignettes/`](vignettes/) -- the same three topics as knittable R Markdown, in standard
+  R-package vignette format, plus a fourth, `mapping-hospital-mrf-sample.Rmd` (building the
+  Figure 5 hospital map below). Build with `devtools::build_vignettes()` once `samevisit` is
+  installed, or render any one directly with `rmarkdown::render("vignettes/<name>.Rmd")` from
+  the repository root, to see the real, live-executed output of each step.
 
 Every blocking test in `tests/testthat/` is required to be proven to fail on a
 planted defect and pass when reverted, and any finding capable of changing the

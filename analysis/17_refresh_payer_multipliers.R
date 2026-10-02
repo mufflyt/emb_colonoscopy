@@ -24,7 +24,7 @@
 #' rerun analysis/05_scenario_analysis.R, 07_manuscript_outputs.R, and
 #' 11_manuscript_table10_summary.R.
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 args <- base::commandArgs(trailingOnly = TRUE)
 ratios_path <- if (base::length(args) >= 1L) {

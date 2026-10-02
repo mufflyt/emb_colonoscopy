@@ -3,6 +3,33 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (this is now a real, installable R package -- and a public one, too)
+
+The biggest structural change of the project so far: `R/` is no longer just a folder of
+scripts that get pieced together by hand -- it's a proper, installable R package now,
+`samevisit`. The name is new on purpose: the reusable idea underneath this whole model
+isn't really "Lynch syndrome" or "colonoscopy," it's a more general question -- what
+happens, clinically and financially, when a procedure that could be its own separate
+visit gets folded into one that's already happening. The actual code inside still speaks
+in this project's own terms (endometrial biopsy, D&C, Lynch syndrome) and hasn't been
+rewritten to match the broader framing yet -- that's a real follow-up, not done today --
+but the package wrapper around it is general enough to carry that framing forward.
+
+While getting the package to build cleanly, a real documentation bug turned up and got
+fixed along the way: 23 of the 30 files in `R/` had a stray introductory comment that was
+silently getting glued onto the first function's own documentation, producing wrong or
+garbled descriptions. That's fixed now, with zero change to how any of the actual
+calculations behave (double-checked: the base-case result file came out byte-for-byte
+identical before and after).
+
+The package is also now published on its own, publicly, at
+[github.com/mufflyt/samevisit](https://github.com/mufflyt/samevisit), separate from this
+project's own copy -- so it can eventually be reused by, or reused from, other projects
+(an earlier check this session found that `colpocleisis_costeff`, an older related model,
+has a strategy -- concurrent D&C during surgery -- that fits this same "same visit" idea
+structurally, though it would need more than what's built today to fully model that
+project's cost-effectiveness analysis).
+
 ## 2026-10-02 (checked the author's other tools; used one of them)
 
 Went through every other repository the author maintains on GitHub looking for code worth reusing

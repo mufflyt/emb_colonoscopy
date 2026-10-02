@@ -1,3 +1,4 @@
+#' @export
 colonoscopy_base_codes <- function() {
   base::c(
     "45378",
@@ -6,6 +7,7 @@ colonoscopy_base_codes <- function() {
   )
 }
 
+#' @export
 colonoscopy_setting_codes <- function() {
   base::c(
     "45378",
@@ -23,6 +25,7 @@ colonoscopy_setting_codes <- function() {
 }
 
 
+#' @export
 resolve_cms_column <- function(table_names,
                                candidates,
                                required = TRUE) {
@@ -42,6 +45,7 @@ resolve_cms_column <- function(table_names,
   NA_character_
 }
 
+#' @export
 pull_cms_column <- function(cms_tbl,
                             column_name,
                             default = NA_character_) {
@@ -52,6 +56,7 @@ pull_cms_column <- function(cms_tbl,
   cms_tbl[[column_name]]
 }
 
+#' @export
 classify_ruca_group <- function(ruca_code) {
   numeric_code <- base::suppressWarnings(
     base::as.numeric(ruca_code)
@@ -67,6 +72,7 @@ classify_ruca_group <- function(ruca_code) {
   )
 }
 
+#' @export
 is_asc_provider_type <- function(provider_type) {
   normalized <- stringr::str_to_lower(
     stringr::str_squish(provider_type)
@@ -78,6 +84,7 @@ is_asc_provider_type <- function(provider_type) {
   )
 }
 
+#' @export
 standardize_physician_colonoscopy <- function(cms_tbl,
                                                data_year) {
   base::message(
@@ -272,6 +279,7 @@ standardize_physician_colonoscopy <- function(cms_tbl,
   standardized_tbl
 }
 
+#' @export
 summarize_colonoscopy_code_mix <- function(physician_tbl) {
   base::message("Summarizing colonoscopy-coded service mix.")
 
@@ -301,6 +309,7 @@ summarize_colonoscopy_code_mix <- function(physician_tbl) {
     dplyr::ungroup()
 }
 
+#' @export
 summarize_base_code_place <- function(physician_tbl) {
   base::message(
     "Running conservative base/screening-code setting sensitivity."
@@ -346,6 +355,7 @@ summarize_base_code_place <- function(physician_tbl) {
 }
 
 
+#' @export
 weighted_sd <- function(x,
                         weights) {
   valid <- base::is.finite(x) &
@@ -371,6 +381,7 @@ weighted_sd <- function(x,
   base::sqrt(variance)
 }
 
+#' @export
 summarize_colonoscopy_place <- function(physician_tbl) {
   base::message(
     "Summarizing colonoscopy facility versus nonfacility services."
@@ -411,6 +422,7 @@ summarize_colonoscopy_place <- function(physician_tbl) {
   summary_tbl
 }
 
+#' @export
 summarize_colonoscopy_state <- function(physician_tbl) {
   base::message("Summarizing colonoscopy setting by provider state.")
 
@@ -448,6 +460,7 @@ summarize_colonoscopy_state <- function(physician_tbl) {
     dplyr::ungroup()
 }
 
+#' @export
 summarize_colonoscopy_rurality <- function(physician_tbl) {
   base::message("Summarizing colonoscopy setting by provider RUCA group.")
 
@@ -483,6 +496,7 @@ summarize_colonoscopy_rurality <- function(physician_tbl) {
     dplyr::ungroup()
 }
 
+#' @export
 summarize_colonoscopy_specialty <- function(physician_tbl) {
   base::message("Summarizing colonoscopy services by provider specialty.")
 
@@ -518,6 +532,7 @@ summarize_colonoscopy_specialty <- function(physician_tbl) {
     )
 }
 
+#' @export
 summarize_colonoscopy_allowed <- function(physician_tbl) {
   base::message("Summarizing colonoscopy Medicare allowed amounts.")
 
@@ -565,6 +580,7 @@ summarize_colonoscopy_allowed <- function(physician_tbl) {
     )
 }
 
+#' @export
 summarize_colonoscopy_concentration <- function(physician_tbl) {
   base::message("Calculating colonoscopy provider concentration.")
 
@@ -613,6 +629,7 @@ summarize_colonoscopy_concentration <- function(physician_tbl) {
     )
 }
 
+#' @export
 build_asc_colonoscopy_directory <- function(physician_tbl) {
   base::message("Building observed ASC colonoscopy directory.")
 
@@ -646,6 +663,7 @@ build_asc_colonoscopy_directory <- function(physician_tbl) {
     )
 }
 
+#' @export
 estimate_facility_type_share <- function(physician_tbl) {
   base::message(
     "Estimating ASC versus other-facility share from public PUF rows."
@@ -707,6 +725,7 @@ estimate_facility_type_share <- function(physician_tbl) {
     )
 }
 
+#' @export
 decompose_colonoscopy_observed_settings <- function(physician_tbl,
                                                     data_year) {
   base::message(
@@ -778,6 +797,7 @@ decompose_colonoscopy_observed_settings <- function(physician_tbl,
 }
 
 
+#' @export
 fit_colonoscopy_facility_trend <- function(place_tbl) {
   base::message("Fitting facility-share trend across available years.")
 
@@ -815,6 +835,7 @@ fit_colonoscopy_facility_trend <- function(place_tbl) {
   )
 }
 
+#' @export
 format_colonoscopy_trend_sentence <- function(trend_tbl) {
   direction <- dplyr::case_when(
     trend_tbl$annual_change_pp[[1]] > 0 ~ "increased",
@@ -880,6 +901,7 @@ format_colonoscopy_trend_sentence <- function(trend_tbl) {
   )
 }
 
+#' @export
 plot_colonoscopy_place_trend <- function(place_tbl) {
   base::message("Creating colonoscopy place-of-service trend figure.")
 
@@ -906,6 +928,7 @@ plot_colonoscopy_place_trend <- function(place_tbl) {
     ggplot2::theme_minimal()
 }
 
+#' @export
 plot_state_facility_share <- function(state_tbl,
                                       data_year) {
   base::message(
@@ -946,6 +969,7 @@ plot_state_facility_share <- function(state_tbl,
     ggplot2::theme_minimal()
 }
 
+#' @export
 save_colonoscopy_table <- function(table_tbl,
                                    directory,
                                    stem) {
@@ -968,6 +992,7 @@ save_colonoscopy_table <- function(table_tbl,
   base::invisible(path)
 }
 
+#' @export
 save_colonoscopy_figure <- function(figure_obj,
                                     directory,
                                     stem,
@@ -998,6 +1023,7 @@ save_colonoscopy_figure <- function(figure_obj,
   base::invisible(path)
 }
 
+#' @export
 latest_colonoscopy_cache_path <- function(cache_dir,
                                           data_year) {
   if (!base::dir.exists(cache_dir)) {
@@ -1023,6 +1049,7 @@ latest_colonoscopy_cache_path <- function(cache_dir,
   base::sort(paths, decreasing = TRUE)[[1]]
 }
 
+#' @export
 save_colonoscopy_cache <- function(colonoscopy_tbl,
                                    cache_dir,
                                    data_year) {
@@ -1051,6 +1078,7 @@ save_colonoscopy_cache <- function(colonoscopy_tbl,
   base::invisible(path)
 }
 
+#' @export
 fetch_colonoscopy_physician_year <- function(
     data_year,
     title_pattern = NULL,
@@ -1117,6 +1145,7 @@ fetch_colonoscopy_physician_year <- function(
   standardized_tbl
 }
 
+#' @export
 fetch_colonoscopy_physician_years <- function(
     years = 2019:2024,
     cache_dir = "data-raw/cms_colonoscopy",

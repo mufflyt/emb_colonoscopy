@@ -9,6 +9,7 @@
 #' requires an approved state APCD data use agreement this project does
 #' not currently have, and the model does not need patient-linked claims
 #' to answer its core question -- see docs/evidence_layers.md.
+#' @export
 evidence_layer_catalog <- function() {
   base::message("Building evidence-layer provenance table.")
 

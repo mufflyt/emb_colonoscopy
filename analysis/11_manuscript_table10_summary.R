@@ -20,7 +20,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/11_manuscript_table10_summary.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Manuscript Table: base-case + clinical-outcome summary ===")
 

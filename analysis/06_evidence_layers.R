@@ -26,7 +26,7 @@
 #'     against it returns the entire unfiltered dataset. A HCPCS->APC
 #'     crosswalk (e.g. the annual OPPS Addendum B) would be needed first.
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Evidence-layer pipeline ===")
 print(evidence_layer_catalog())

@@ -1,28 +1,29 @@
-#' Probabilistic sensitivity analysis (PSA)
-#'
-#' `colpocleisis_costeff` did not implement PSA -- only a deterministic
-#' one-way tornado -- so this module is new, not adapted. It follows the
-#' distributional convention used by the NIHR Lynch-syndrome
-#' gynecologic-surveillance economic model (NCBI Bookshelf NBK606810):
-#' costs are drawn from gamma distributions and probabilities from beta
-#' distributions.
-#'
-#' Because most `low_value`/`high_value` bounds in
-#' `config/model_parameters.csv` are plausible sensitivity ranges rather
-#' than formally estimated confidence intervals, this PSA implementation
-#' is a first-pass scaffold: it treats `low_value`/`high_value` as an
-#' approximate 95% interval around `base_value` (except where the source
-#' study reported a true SD, e.g. the per-minute OR/anesthesia costs,
-#' where `low_value`/`high_value` are mean +/- 1 SD -- treated the same
-#' way here for simplicity, which will understate their true variance).
-#' This approximation is documented, not hidden, and should be refined
-#' once better parameter-level uncertainty data are available.
+# Probabilistic sensitivity analysis (PSA)
+#
+# `colpocleisis_costeff` did not implement PSA -- only a deterministic
+# one-way tornado -- so this module is new, not adapted. It follows the
+# distributional convention used by the NIHR Lynch-syndrome
+# gynecologic-surveillance economic model (NCBI Bookshelf NBK606810):
+# costs are drawn from gamma distributions and probabilities from beta
+# distributions.
+#
+# Because most `low_value`/`high_value` bounds in
+# `config/model_parameters.csv` are plausible sensitivity ranges rather
+# than formally estimated confidence intervals, this PSA implementation
+# is a first-pass scaffold: it treats `low_value`/`high_value` as an
+# approximate 95% interval around `base_value` (except where the source
+# study reported a true SD, e.g. the per-minute OR/anesthesia costs,
+# where `low_value`/`high_value` are mean +/- 1 SD -- treated the same
+# way here for simplicity, which will understate their true variance).
+# This approximation is documented, not hidden, and should be refined
+# once better parameter-level uncertainty data are available.
 
 #' Draw one Monte Carlo sample for a single parameter row
 #'
 #' @param parameter_row One-row slice of `model_parameters`.
 #' @return Numeric scalar (or the original base value for `distribution
 #'   == "fixed"`).
+#' @export
 draw_parameter_sample <- function(parameter_row) {
   distribution_type <- parameter_row$distribution[[1]]
   base_value <- base::as.numeric(parameter_row$base_value[[1]])
@@ -84,6 +85,7 @@ draw_parameter_sample <- function(parameter_row) {
 #'
 #' @param min_value,mode_value,max_value Numeric scalars.
 #' @return One draw.
+#' @export
 sample_triangular <- function(min_value, mode_value, max_value) {
   if (base::isTRUE(min_value == max_value)) {
     return(mode_value)
@@ -108,6 +110,7 @@ sample_triangular <- function(min_value, mode_value, max_value) {
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @return `model_parameters` with `base_value` replaced by one Monte
 #'   Carlo draw for every row (fixed/boolean rows are left unchanged).
+#' @export
 draw_parameter_set <- function(model_parameters) {
   sampled_parameters <- model_parameters
   for (row_index in base::seq_len(nrow(model_parameters))) {
@@ -137,6 +140,7 @@ draw_parameter_set <- function(model_parameters) {
 #' @return A tibble with `n_simulations` rows, one per draw, giving each
 #'   strategy's `expected_total_cost` and the combined-vs-office
 #'   incremental cost.
+#' @export
 run_probabilistic_sensitivity <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -260,6 +264,7 @@ run_probabilistic_sensitivity <- function(
 #'   [run_probabilistic_sensitivity()].
 #' @return A tibble with one row per strategy: `strategy`, `mean_cost`,
 #'   `sd_cost`, `ci_low` (2.5th percentile), `ci_high` (97.5th percentile).
+#' @export
 summarize_psa_cost_interval <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -311,6 +316,7 @@ summarize_psa_cost_interval <- function(
 #' @param seed Integer or `NULL`. Same save/restore-on-exit behavior as
 #'   [run_probabilistic_sensitivity()].
 #' @return A one-row tibble: `parameter_value`, `ci_low`, `ci_high`.
+#' @export
 evaluate_metric_psa_interval_at <- function(
   model_parameters,
   parameter_name,
@@ -367,6 +373,7 @@ evaluate_metric_psa_interval_at <- function(
 #'   `cheapest_strategy` column.
 #' @return A tibble with one row per strategy: `strategy`, `n_draws_cheapest`,
 #'   `pct_draws_cheapest`.
+#' @export
 summarize_probability_cheapest <- function(probabilistic_estimates) {
   base::message("Summarizing probability each strategy is least expensive.")
 

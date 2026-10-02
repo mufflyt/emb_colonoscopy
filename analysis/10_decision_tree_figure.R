@@ -13,7 +13,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/10_decision_tree_figure.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Decision-tree model diagram ===")
 

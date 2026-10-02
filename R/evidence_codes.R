@@ -1,11 +1,12 @@
-#' Procedure codebook and canonical claims schema
-#'
-#' Part of the empirical "evidence layer" (APCD/CMS/HPT/MEPS), which
-#' estimates strategy costs directly from claims and public reimbursement
-#' data rather than from the literature-sourced parameters in
-#' `config/model_parameters.csv`. See `docs/evidence_layers.md`.
+# Procedure codebook and canonical claims schema
+#
+# Part of the empirical "evidence layer" (APCD/CMS/HPT/MEPS), which
+# estimates strategy costs directly from claims and public reimbursement
+# data rather than from the literature-sourced parameters in
+# `config/model_parameters.csv`. See `docs/evidence_layers.md`.
 
 #' HCPCS/CPT codebook mapping each billing code to its clinical concept
+#' @export
 sampling_codebook <- function() {
   base::message("Building procedure codebook.")
 
@@ -26,6 +27,7 @@ sampling_codebook <- function() {
   )
 }
 
+#' @export
 sampling_code_vector <- function(concept) {
   sampling_codebook() |>
     dplyr::filter(.data$concept %in% .env$concept) |>

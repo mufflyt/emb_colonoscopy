@@ -86,8 +86,8 @@ not the inputs.
 claims (combined EMB cheaper in 81.4% of draws, 0.36-vs-2.15-per-1,000 adverse-event
 exposure, 100% no-worse-delayed-neoplasia-risk) were re-derived by
 `analysis/12_independent_psa_verification.R`, which reads only the saved
-`tables/probabilistic_sensitivity_draws.csv` and never sources `R/00_source_all.R` or
-calls `compute_strategy_clinical_outcomes()`/`run_probabilistic_sensitivity()`. Every
+`tables/probabilistic_sensitivity_draws.csv` and never calls `library(samevisit)` or
+`compute_strategy_clinical_outcomes()`/`run_probabilistic_sensitivity()`. Every
 number it produces matched the manuscript's Results/Discussion text exactly on the
 2026-09-01 re-run made after `compute_dnc_strategy_cost()` was wired to include a
 partial adverse-event cost (see `docs/ae_cost_evidence_table.md` and CHANGELOG.md),

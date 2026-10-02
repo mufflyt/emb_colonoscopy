@@ -1,9 +1,67 @@
 # Changelog
 
 All notable changes to this project are documented here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project does not use
-semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
-grouped by date.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). `R/` is versioned as the
+`samevisit` package (`DESCRIPTION`), but this changelog predates that and still groups
+entries by date rather than package version.
+
+## 2026-10-02 (R/ converted into the installable samevisit package)
+
+### Added
+- `DESCRIPTION`, `NAMESPACE`, `man/*.Rd` (89 pages): `R/` is now the installable
+  `samevisit` package (`Package: samevisit`, `Version: 0.1.0`), built via
+  `roxygen2::roxygenise()`. Name chosen over the disease-specific `embcolonoscopy`: the
+  model's reusable idea isn't Lynch syndrome specifically, it's "what happens clinically
+  and economically when procedures that could be performed separately are combined into
+  the same encounter" -- a question that generalizes past this one clinical scenario.
+  Function and parameter names inside `R/` are unchanged (still this application's names,
+  e.g. `compute_strategy_costs()`, `emb_failure_lynch`) -- generalizing those is a
+  separate, larger follow-up, not part of this pass.
+- `R/utils-pipe.R`: the standard `usethis::use_pipe()` re-export, so bare `%>%` resolves
+  inside package code without an attached `library(dplyr)` call.
+- All 192 top-level functions (and `STRATEGY_LABELS`/`SCENARIO_LABELS`/
+  `REIMBURSEMENT_PARAMETER_NAMES`, but not the internal-only `PARAMETER_LABELS`) tagged
+  `#' @export`.
+- New standalone public repo [`mufflyt/samevisit`](https://github.com/mufflyt/samevisit):
+  an extraction of `R/`, `DESCRIPTION`, `NAMESPACE`, `man/` (vignettes excluded there --
+  they depend on this repository's `config/`/`data/` fixtures). Verified to install both
+  locally (`R CMD INSTALL .`) and via `remotes::install_github("mufflyt/samevisit")`. This
+  repository keeps its own local copy rather than depending on that repo directly, for now.
+
+### Fixed
+- **23 `R/*.R` files had a stray file-level roxygen header that `roxygen2` silently merged
+  into the first function's documentation**, producing wrong or malformed `\title{}`
+  blocks (worst case, `evidence_synthesis.R`, produced a literally malformed two-line
+  title). Found via an actual dry-run `roxygenise()` build, not guessed. Fixed by
+  demoting each stray header's `#'` to a plain `#` comment in all 23 files (e.g.
+  `budget_impact.R`, `comparison.R`, `parameters.R`, `plotting.R`, `strategy_costs.R`,
+  `tables.R`, and 17 more) -- comment-only changes, confirmed behavior-identical
+  (`tables/summary_sentence.txt` byte-for-byte unchanged before/after).
+- 3 malformed bare `[...]` roxygen markdown links (`diagnostic_yield.R:103`,
+  `strategy_costs.R:63`; the third, `opportunity_cost_colonoscopy.R:30`, was already
+  resolved by the header-demotion fix above since that line was inside the demoted block)
+  that `roxygen2`/`commonmark` tried and failed to resolve as autolinks.
+- 5 functions with incomplete `@param` coverage (`validate_cms_filter_field`,
+  `csv_line_fields`, `csv_line_join`, `payer_multiplier_parameter`,
+  `build_payer_multiplier_overrides`).
+- `DESCRIPTION` declares `Depends: R (>= 4.1.0)` -- several files use the native pipe
+  `|>`, which `R CMD build` flagged as an undeclared dependency.
+
+### Changed
+- `R/00_source_all.R` deleted -- both its roles (dependency list, load ordering) are
+  superseded by `DESCRIPTION`'s `Imports` and R's own package-loading mechanism.
+- All 19 `analysis/*.R` scripts, `tests/testthat.R`, and all 4 `vignettes/*.Rmd` swapped
+  `base::source("R/00_source_all.R")` for `library(samevisit)`.
+  `analysis/12_independent_psa_verification.R` deliberately keeps neither, by design (see
+  its own docblock -- an independent-confirmation script must not reuse the pipeline it's
+  checking).
+- `.github/workflows/r-tests.yml`: replaced the hand-maintained `packages:` list with
+  `extra-packages: local::.`, which installs the `samevisit` package itself (so
+  `library(samevisit)` works in CI) plus everything `DESCRIPTION` declares.
+- README: new "The samevisit package" section; Quick Start now installs via
+  `remotes::install_local(".")`; Repository structure, vignettes, and independent-
+  verification sections updated to match. `docs/appendix.md` and
+  `docs/testing_philosophy.md` updated for the same reason.
 
 ## 2026-10-02 (evaluated other mufflyt repos; adopted researchpaths for one fragile path)
 

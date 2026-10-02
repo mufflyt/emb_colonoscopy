@@ -1,31 +1,31 @@
-#' Geographic sensitivity analysis
-#'
-#' A thin layer around [override_model_parameters()] and
-#' [compute_strategy_costs()], not a new cost engine: for each locality, this
-#' file computes a real CMS GPCI-based multiplier for professional-fee
-#' parameters and a real CMS wage-index-based multiplier for facility-fee
-#' parameters, applies them as overrides, and re-runs the existing cost
-#' engine unchanged. No GPCI or wage-index value is invented here -- the
-#' locality table (`data/cms_geographic_indices_2026.csv`) and the RVU table
-#' (`data/cms_pfs_rvus_2026.csv`) are both external CMS inputs, downloaded
-#' directly from cms.gov (see `docs/data_sources.md` for the exact files and
-#' URLs).
-#'
-#' This is a deliberately **deterministic** analysis, not part of
-#' `run_probabilistic_sensitivity()`. Geography is not a source of parameter
-#' uncertainty the way a study's confidence interval is; it is a question of
-#' whether the base-case conclusion generalizes when the same model is
-#' priced in a different place. Mixing it into the PSA would conflate "the
-#' cited studies could be wrong" with "we costed this for the wrong ZIP
-#' code," which are different claims requiring different evidence.
-#'
-#' **The most important check on any run of this analysis is the `national`
-#' locality**, whose GPCIs and wage index are all 1.0 by construction. It
-#' must reproduce [compute_strategy_costs()]'s own base-case output exactly
-#' (see `tests/testthat/test-geographic-sensitivity.R`'s
-#' INDEPENDENT-CONFIRMATION-flavored check). If it doesn't, stop and find
-#' which "national" parameter is not actually an unadjusted PFS/OPPS anchor
-#' before interpreting any locality comparison.
+# Geographic sensitivity analysis
+#
+# A thin layer around [override_model_parameters()] and
+# [compute_strategy_costs()], not a new cost engine: for each locality, this
+# file computes a real CMS GPCI-based multiplier for professional-fee
+# parameters and a real CMS wage-index-based multiplier for facility-fee
+# parameters, applies them as overrides, and re-runs the existing cost
+# engine unchanged. No GPCI or wage-index value is invented here -- the
+# locality table (`data/cms_geographic_indices_2026.csv`) and the RVU table
+# (`data/cms_pfs_rvus_2026.csv`) are both external CMS inputs, downloaded
+# directly from cms.gov (see `docs/data_sources.md` for the exact files and
+# URLs).
+#
+# This is a deliberately **deterministic** analysis, not part of
+# `run_probabilistic_sensitivity()`. Geography is not a source of parameter
+# uncertainty the way a study's confidence interval is; it is a question of
+# whether the base-case conclusion generalizes when the same model is
+# priced in a different place. Mixing it into the PSA would conflate "the
+# cited studies could be wrong" with "we costed this for the wrong ZIP
+# code," which are different claims requiring different evidence.
+#
+# **The most important check on any run of this analysis is the `national`
+# locality**, whose GPCIs and wage index are all 1.0 by construction. It
+# must reproduce [compute_strategy_costs()]'s own base-case output exactly
+# (see `tests/testthat/test-geographic-sensitivity.R`'s
+# INDEPENDENT-CONFIRMATION-flavored check). If it doesn't, stop and find
+# which "national" parameter is not actually an unadjusted PFS/OPPS anchor
+# before interpreting any locality comparison.
 
 #' Validate required geographic table columns
 #'
@@ -33,6 +33,7 @@
 #' @param required_columns Required column names.
 #' @param input_name Name used in error messages.
 #' @return Invisibly TRUE.
+#' @export
 validate_geographic_columns <- function(input_tbl, required_columns, input_name) {
   missing_columns <- base::setdiff(required_columns, base::names(input_tbl))
   if (base::length(missing_columns) > 0) {
@@ -61,6 +62,7 @@ validate_geographic_columns <- function(input_tbl, required_columns, input_name)
 #' @param gpci_pe Practice-expense GPCI.
 #' @param gpci_mp Malpractice GPCI.
 #' @return Numeric geographic multiplier.
+#' @export
 compute_pfs_geographic_multiplier <- function(
   work_rvu, pe_rvu, mp_rvu, gpci_work, gpci_pe, gpci_mp
 ) {
@@ -89,6 +91,7 @@ compute_pfs_geographic_multiplier <- function(
 #' @param wage_index CMS wage index for the locality.
 #' @param labor_share Fraction of payment treated as labor-related.
 #' @return Numeric geographic multiplier.
+#' @export
 compute_facility_geographic_multiplier <- function(wage_index, labor_share) {
   if (!base::is.finite(wage_index) || wage_index <= 0) {
     base::stop("wage_index must be one positive finite number.")
@@ -105,6 +108,7 @@ compute_facility_geographic_multiplier <- function(wage_index, labor_share) {
 #' @param professional_mapping Mapping of model parameters to PFS RVUs.
 #' @param facility_mapping Mapping of facility parameters to wage indices.
 #' @return Invisibly TRUE.
+#' @export
 validate_geographic_inputs <- function(
   locality_indices, pfs_rvus, professional_mapping, facility_mapping
 ) {
@@ -176,6 +180,7 @@ validate_geographic_inputs <- function(
 #' @param professional_mapping Mapping from model parameters to PFS RVUs.
 #' @param facility_mapping Mapping from model parameters to wage indices.
 #' @return List with `overrides` (named list) and `adjustment_audit` (tibble).
+#' @export
 build_geographic_overrides <- function(
   model_parameters, locality_id, locality_indices, pfs_rvus,
   professional_mapping, facility_mapping
@@ -273,6 +278,7 @@ build_geographic_overrides <- function(
 #' @param price_index_table Medical-care price-index table.
 #' @return List with `strategy_costs` and `adjustment_audit` (both tibbles,
 #'   one row per strategy-locality / adjustment-locality pair).
+#' @export
 run_geographic_sensitivity <- function(
   model_parameters, locality_indices, pfs_rvus, professional_mapping,
   facility_mapping, price_index_table = load_price_index_table()
@@ -328,6 +334,7 @@ run_geographic_sensitivity <- function(
 #'
 #' @param geographic_analysis Return value from [run_geographic_sensitivity()].
 #' @return List with `locality_summary` (tibble) and `summary_sentence` (character).
+#' @export
 summarize_geographic_sensitivity <- function(geographic_analysis) {
   base::message("Summarizing geographic sensitivity.")
 
@@ -368,6 +375,7 @@ summarize_geographic_sensitivity <- function(geographic_analysis) {
 #' @param geographic_summary Geographic summary bundle.
 #' @param directory Destination directory.
 #' @return Named character vector of saved file paths.
+#' @export
 save_geographic_sensitivity <- function(
   geographic_analysis, geographic_summary, directory = "tables"
 ) {

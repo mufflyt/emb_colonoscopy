@@ -1,15 +1,16 @@
-#' Plotting conventions
-#'
-#' `theme_journal()` and the tornado/threshold plotting patterns are
-#' ported directly from `colpocleisis_costeff/generate_figures.R`, which
-#' used a minimal `ggplot2::theme_minimal()`-based journal theme, a
-#' segment-based tornado diagram, and a line-based threshold plot. The
-#' strategy-cost-plane figure is new (this model is cost-minimization,
-#' not cost-utility, so there is no QALY axis to plot against).
+# Plotting conventions
+#
+# `theme_journal()` and the tornado/threshold plotting patterns are
+# ported directly from `colpocleisis_costeff/generate_figures.R`, which
+# used a minimal `ggplot2::theme_minimal()`-based journal theme, a
+# segment-based tornado diagram, and a line-based threshold plot. The
+# strategy-cost-plane figure is new (this model is cost-minimization,
+# not cost-utility, so there is no QALY axis to plot against).
 
 #' Journal-style ggplot2 theme
 #'
 #' @return A `ggplot2` theme object.
+#' @export
 theme_journal <- function() {
   ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(
@@ -24,6 +25,7 @@ theme_journal <- function() {
 }
 
 #' Display labels for the three strategies
+#' @export
 STRATEGY_LABELS <- c(
   office_emb = "Office endometrial biopsy (standalone)",
   dnc = "Operative dilation and curettage",
@@ -45,6 +47,7 @@ PARAMETER_LABELS <- c(
 )
 
 #' Display labels for scenario-analysis scenario names
+#' @export
 SCENARIO_LABELS <- c(
   base_case_medicare = "Base case (Medicare)",
   combined_without_preop_visit = "Combined biopsy without separate preoperative visit",
@@ -62,6 +65,7 @@ SCENARIO_LABELS <- c(
 #'   bar and the dollar-value label is placed above the error bar rather
 #'   than above the bare bar.
 #' @return A `ggplot` object.
+#' @export
 plot_strategy_cost_comparison <- function(strategy_costs) {
   has_ci <- base::all(base::c("ci_low", "ci_high") %in% base::names(strategy_costs))
 
@@ -142,6 +146,7 @@ plot_strategy_cost_comparison <- function(strategy_costs) {
 #'   (typically `sensitivity_estimates$metric_at_base[[1]]`).
 #' @param metric_label Character scalar for the x-axis label.
 #' @return A `ggplot` object.
+#' @export
 plot_tornado <- function(
   sensitivity_estimates,
   base_metric_value = sensitivity_estimates$metric_at_base[[1]],
@@ -198,6 +203,7 @@ plot_tornado <- function(
 #'   run; `geom_ribbon()` interpolates linearly between them.
 #' @param band_n_simulations Integer Monte Carlo draws per band point.
 #' @return A `ggplot` object.
+#' @export
 plot_threshold_sweep <- function(
   model_parameters,
   parameter_name,

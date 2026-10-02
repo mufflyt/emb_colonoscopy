@@ -1,11 +1,11 @@
-#' Strategy comparison
-#'
-#' Builds the primary-analysis comparison table: incremental cost versus
-#' the least expensive strategy, absolute and percentage differences
-#' between every pair of strategies, and the specific incremental cost of
-#' adding EMB to an already-planned colonoscopy compared with performing
-#' EMB as a separate office procedure -- the central economic quantity
-#' this repository exists to estimate (see docs/methods_notes.md).
+# Strategy comparison
+#
+# Builds the primary-analysis comparison table: incremental cost versus
+# the least expensive strategy, absolute and percentage differences
+# between every pair of strategies, and the specific incremental cost of
+# adding EMB to an already-planned colonoscopy compared with performing
+# EMB as a separate office procedure -- the central economic quantity
+# this repository exists to estimate (see docs/methods_notes.md).
 
 #' Compare strategies against the least expensive option
 #'
@@ -13,6 +13,7 @@
 #'   `compute_strategy_costs()$strategy_costs`.
 #' @return `strategy_costs` with added columns `incremental_cost_vs_cheapest`,
 #'   `pct_difference_vs_cheapest`, and `is_cheapest`.
+#' @export
 compare_strategies_to_cheapest <- function(strategy_costs) {
   base::message("Comparing strategies to the least expensive alternative.")
 
@@ -48,6 +49,7 @@ compare_strategies_to_cheapest <- function(strategy_costs) {
 #'   `compute_strategy_costs()$strategy_costs`.
 #' @return A one-row tibble with the incremental cost and percent
 #'   difference of `combined_emb` relative to `office_emb`.
+#' @export
 compare_combined_vs_office <- function(strategy_costs) {
   combined_cost <- strategy_costs$expected_total_cost[
     strategy_costs$strategy == "combined_emb"
@@ -91,6 +93,7 @@ compare_combined_vs_office <- function(strategy_costs) {
 #'   `compute_strategy_costs()$strategy_costs`.
 #' @return A tibble with one row per ordered pair of strategies, giving
 #'   the absolute and percentage cost difference.
+#' @export
 build_pairwise_comparison_table <- function(strategy_costs) {
   strategy_pairs <- tidyr::expand_grid(
     strategy_a = strategy_costs$strategy,

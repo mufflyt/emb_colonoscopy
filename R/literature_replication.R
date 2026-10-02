@@ -1,12 +1,12 @@
-#' External validation against published models
-#'
-#' A generic harness for checking whether this repository's cost engine
-#' (`compute_strategy_costs()`) reproduces a published study's result when
-#' fed that study's own parameters -- real external validation, not
-#' fabricated parameters chosen to hit a target. See
-#' `docs/validation_notes.md` for why this repository refuses to
-#' reverse-engineer unknown internal parameters from a known headline
-#' output.
+# External validation against published models
+#
+# A generic harness for checking whether this repository's cost engine
+# (`compute_strategy_costs()`) reproduces a published study's result when
+# fed that study's own parameters -- real external validation, not
+# fabricated parameters chosen to hit a target. See
+# `docs/validation_notes.md` for why this repository refuses to
+# reverse-engineer unknown internal parameters from a known headline
+# output.
 
 #' Compare this model's output to a published target, given the
 #' published study's own parameters
@@ -22,6 +22,7 @@
 #'   comparison is flagged `within_tolerance = TRUE`. Default 10.
 #' @return A tibble with one row per target: `strategy`, `modeled_cost`,
 #'   `target_cost`, `pct_difference`, `within_tolerance`.
+#' @export
 validate_against_published_model <- function(
   model_parameters,
   price_index_table = load_price_index_table(),
@@ -82,6 +83,7 @@ validate_against_published_model <- function(
 #'   fabricating internal parameters, or bolting on ad hoc adjustment
 #'   factors, to force a numeric match to either study's known output
 #'   would not be a real validation. See docs/validation_notes.md.
+#' @export
 literature_replication_status <- function() {
   base::message("Building literature-replication status table.")
 

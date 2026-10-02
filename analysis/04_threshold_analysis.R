@@ -4,7 +4,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/04_threshold_analysis.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Threshold analysis ===")
 

@@ -1,6 +1,6 @@
 base::message("Starting national colonoscopy-setting analysis.")
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 years <- 2019:2024
 

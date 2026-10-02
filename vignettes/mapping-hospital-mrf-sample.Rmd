@@ -12,15 +12,16 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 knitr::opts_knit$set(root.dir = normalizePath(".."))
 ```
 
-As with the other vignettes in this directory, this repository is not an installed
-package (no `DESCRIPTION`), so this file knits directly --
-`rmarkdown::render("vignettes/mapping-hospital-mrf-sample.Rmd")` from the repository
-root -- rather than through `devtools::build_vignettes()`. The hospital-level list this
-map summarizes is documented in full, with every hospital's name and outcome, in
-`docs/mrf_hospital_data_overview.md`; this vignette covers the map itself.
+As with the other vignettes in this directory, this builds via `devtools::build_vignettes()`
+once the `samevisit` package (`DESCRIPTION`) is installed (`R CMD INSTALL .` or
+`remotes::install_local(".")`), or knits directly with
+`rmarkdown::render("vignettes/mapping-hospital-mrf-sample.Rmd")` from the repository root.
+The hospital-level list this map summarizes is documented in full, with every hospital's
+name and outcome, in `docs/mrf_hospital_data_overview.md`; this vignette covers the map
+itself.
 
 ```{r setup}
-source("R/00_source_all.R")
+library(samevisit)
 ```
 
 ## Load both real-hospital MRF samples

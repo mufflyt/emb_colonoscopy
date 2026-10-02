@@ -1,21 +1,21 @@
-#' Static map of hospitals with usable MRF-derived payer-rate data
-#'
-#' Aggregates the two real-hospital price-transparency MRF samples
-#' (`data/gyn_onc_hospital_payer_rates.csv`, 74 FREIDA gynecologic-oncology-
-#' fellowship hospitals; `data/colonoscopy_multi_hospital_rates.csv`, the
-#' original 6-hospital convenience sample) and plots one approximate point
-#' per hospital at its home city's real coordinates
-#' (`data/gyn_onc_hospital_cities.csv`). Those coordinates are Census Bureau
-#' Gazetteer Files internal-point coordinates for each hospital's home city
-#' (2024 Places file; NYC-borough hospitals fall back to the Gazetteer
-#' Counties file; La Jolla, CA -- an unincorporated San Diego neighborhood
-#' with no Census place of its own -- falls back to San Diego city), not a
-#' geocoded street address -- see that CSV's `coordinate_source` column for
-#' exactly which applies to each row, and `docs/mrf_hospital_data_overview.md`
-#' for the full hospital-level list. City-level precision means hospitals
-#' that share a city (e.g. four NYC hospitals) plot at the same point; the
-#' map jitters them with a fixed seed so every hospital is visible, and
-#' says so in its own subtitle.
+# Static map of hospitals with usable MRF-derived payer-rate data
+#
+# Aggregates the two real-hospital price-transparency MRF samples
+# (`data/gyn_onc_hospital_payer_rates.csv`, 74 FREIDA gynecologic-oncology-
+# fellowship hospitals; `data/colonoscopy_multi_hospital_rates.csv`, the
+# original 6-hospital convenience sample) and plots one approximate point
+# per hospital at its home city's real coordinates
+# (`data/gyn_onc_hospital_cities.csv`). Those coordinates are Census Bureau
+# Gazetteer Files internal-point coordinates for each hospital's home city
+# (2024 Places file; NYC-borough hospitals fall back to the Gazetteer
+# Counties file; La Jolla, CA -- an unincorporated San Diego neighborhood
+# with no Census place of its own -- falls back to San Diego city), not a
+# geocoded street address -- see that CSV's `coordinate_source` column for
+# exactly which applies to each row, and `docs/mrf_hospital_data_overview.md`
+# for the full hospital-level list. City-level precision means hospitals
+# that share a city (e.g. four NYC hospitals) plot at the same point; the
+# map jitters them with a fixed seed so every hospital is visible, and
+# says so in its own subtitle.
 
 #' Classify FREIDA-sample hospitals as full/partial/zero usable data
 #'
@@ -28,6 +28,7 @@
 #'   `readr::read_csv("data/gyn_onc_hospital_payer_rates.csv")`.
 #' @return A tibble with one row per hospital: `hospital`, `state`,
 #'   `codes_usable`, `codes_total`, `has_usable_data` (boolean).
+#' @export
 classify_freida_hospitals <- function(hospital_payer_rates) {
   not_usable <- c("not_found", "inconclusive", "not_applicable")
 
@@ -65,6 +66,7 @@ classify_freida_hospitals <- function(hospital_payer_rates) {
 #' @return A tibble with one row per hospital: `hospital`, `state`,
 #'   `coverage` (`"full"` if every attempted code was usable, else
 #'   `"partial"`), `lat`, `lon`, `coordinate_source`.
+#' @export
 build_hospital_mrf_points <- function(
   hospital_payer_rates,
   colonoscopy_hospital_rates,
@@ -95,6 +97,7 @@ build_hospital_mrf_points <- function(
 #'
 #' @param hospital_points Tibble from [build_hospital_mrf_points()].
 #' @return A `ggplot` object.
+#' @export
 plot_hospital_mrf_map <- function(hospital_points) {
   us_states <- ggplot2::map_data("state")
   jitter_position <- ggplot2::position_jitter(width = 0.25, height = 0.25, seed = 1)

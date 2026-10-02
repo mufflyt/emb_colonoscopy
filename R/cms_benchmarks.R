@@ -1,3 +1,4 @@
+#' @export
 cms_or_else <- function(value,
                         fallback) {
   if (base::is.null(value) || base::length(value) == 0L) {
@@ -7,6 +8,7 @@ cms_or_else <- function(value,
   value
 }
 
+#' @export
 cms_distribution_uuid <- function(download_url) {
   matched <- stringr::str_match(
     download_url,
@@ -25,6 +27,7 @@ cms_distribution_uuid <- function(download_url) {
   uuid
 }
 
+#' @export
 cms_resolve_version_uuid <- function(catalog_payload,
                                      title_pattern,
                                      data_year = 2024L) {
@@ -148,6 +151,7 @@ cms_resolve_version_uuid <- function(catalog_payload,
   uuid
 }
 
+#' @export
 cms_find_dataset_uuid <- function(title_pattern,
                                   data_year = 2024L) {
   catalog_url <- "https://data.cms.gov/data.json"
@@ -174,6 +178,7 @@ cms_find_dataset_uuid <- function(title_pattern,
   )
 }
 
+#' @export
 cms_extract_rows <- function(payload) {
   if (base::is.data.frame(payload)) {
     return(tibble::as_tibble(payload))
@@ -213,6 +218,12 @@ cms_extract_rows <- function(payload) {
 #' silently returned 116,182 unfiltered rows; see docs/evidence_layers.md
 #' and docs/appendix.md). Pulled out as a pure function so this guard can
 #' be unit-tested without a live network call.
+#'
+#' @param page_tbl Tibble of one page of CMS API results.
+#' @param hcpcs_field Character scalar naming the HCPCS/CPT code column to
+#'   check for in `page_tbl`.
+#' @return Invisibly, `TRUE` if the field is present; errors otherwise.
+#' @export
 validate_cms_filter_field <- function(page_tbl, hcpcs_field) {
   if (base::nrow(page_tbl) == 0L) {
     return(base::invisible(TRUE))
@@ -230,6 +241,7 @@ validate_cms_filter_field <- function(page_tbl, hcpcs_field) {
   base::invisible(TRUE)
 }
 
+#' @export
 cms_query_hcpcs <- function(uuid,
                             hcpcs_code,
                             hcpcs_field = "HCPCS_Cd",
@@ -316,6 +328,7 @@ cms_query_hcpcs <- function(uuid,
   combined_tbl
 }
 
+#' @export
 cms_sampling_benchmarks <- function(
     physician_uuid,
     hcpcs_codes = sampling_codebook()$code) {
@@ -352,6 +365,7 @@ cms_sampling_benchmarks <- function(
     )
 }
 
+#' @export
 summarize_cms_benchmarks <- function(cms_tbl) {
   base::message("Summarizing CMS benchmark costs.")
 
@@ -412,6 +426,7 @@ summarize_cms_benchmarks <- function(cms_tbl) {
     )
 }
 
+#' @export
 summarize_cms_facility_benchmarks <- function(
     cms_facility_tbl,
     code_field = "HCPCS_Cd",

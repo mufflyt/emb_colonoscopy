@@ -1,3 +1,4 @@
+#' @export
 meps_2024_resources <- function() {
   base::message("Building 2024 MEPS public-resource registry.")
 
@@ -26,6 +27,7 @@ meps_2024_resources <- function() {
   )
 }
 
+#' @export
 download_public_file <- function(url,
                                  destination,
                                  overwrite = FALSE) {
@@ -64,6 +66,7 @@ download_public_file <- function(url,
   destination
 }
 
+#' @export
 sha256_file <- function(path) {
   if (!base::file.exists(path)) {
     base::stop("Cannot hash missing file: ", path)
@@ -77,6 +80,7 @@ sha256_file <- function(path) {
   base::as.character(hash_raw)
 }
 
+#' @export
 meps_required_columns <- function(file_type) {
   file_type <- base::match.arg(
     file_type,
@@ -105,6 +109,7 @@ meps_required_columns <- function(file_type) {
   )
 }
 
+#' @export
 validate_meps_columns <- function(meps_tbl,
                                   file_type) {
   required_cols <- meps_required_columns(file_type)
@@ -132,6 +137,7 @@ validate_meps_columns <- function(meps_tbl,
   TRUE
 }
 
+#' @export
 find_single_xlsx <- function(directory) {
   candidates <- base::list.files(
     directory,
@@ -158,6 +164,7 @@ find_single_xlsx <- function(directory) {
   candidates[[1]]
 }
 
+#' @export
 extract_meps_xlsx <- function(zip_path,
                               extract_dir,
                               overwrite = FALSE) {
@@ -193,6 +200,7 @@ extract_meps_xlsx <- function(zip_path,
   xlsx_path
 }
 
+#' @export
 validate_meps_xlsx <- function(path,
                                file_type) {
   base::message("Inspecting MEPS workbook: ", path)
@@ -208,6 +216,7 @@ validate_meps_xlsx <- function(path,
   )
 }
 
+#' @export
 download_meps_2024 <- function(
     directory = "data-raw/meps/2024",
     overwrite = FALSE) {

@@ -4,7 +4,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/02_deterministic_sensitivity.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Deterministic one-way sensitivity analysis ===")
 

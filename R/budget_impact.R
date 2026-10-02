@@ -1,9 +1,9 @@
-#' Budget impact
-#'
-#' Scales the per-patient incremental cost from [compare_combined_vs_office()]
-#' (or any pairwise comparison from `R/comparison.R`) up to a cohort size,
-#' answering "what would a health system serving N Lynch patients per year
-#' expect to save (or spend) by adopting the combined strategy?"
+# Budget impact
+#
+# Scales the per-patient incremental cost from [compare_combined_vs_office()]
+# (or any pairwise comparison from `R/comparison.R`) up to a cohort size,
+# answering "what would a health system serving N Lynch patients per year
+# expect to save (or spend) by adopting the combined strategy?"
 
 #' Estimate cohort-level savings from a per-patient incremental cost
 #'
@@ -17,6 +17,7 @@
 #'   EMB is being compared against, for the `comparator` column.
 #' @return A tibble with one row per cohort size: `cohort_size`,
 #'   `comparator`, `per_patient_savings`, `annual_savings`.
+#' @export
 estimate_budget_impact <- function(
   per_patient_incremental_cost,
   cohort_sizes = c(10, 25, 50, 100, 1000),
@@ -56,6 +57,7 @@ estimate_budget_impact <- function(
 #' @param cohort_sizes Numeric vector of annual patient volumes.
 #' @return A tibble binding [estimate_budget_impact()] results for
 #'   combined EMB vs. office EMB and vs. D&C.
+#' @export
 estimate_budget_impact_all_comparators <- function(
   strategy_costs,
   cohort_sizes = c(10, 25, 50, 100, 1000)

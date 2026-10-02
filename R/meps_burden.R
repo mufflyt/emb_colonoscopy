@@ -1,20 +1,22 @@
-#' MEPS patient/societal burden estimation
-#'
-#' Estimates weighted office-visit total and out-of-pocket cost (2024
-#' MEPS office-based visit file) and hourly wage (2024 MEPS Jobs file),
-#' then converts an avoided additional visit into a patient time-cost
-#' estimate. Not used in the payer-perspective base case; feeds a future
-#' patient-time/societal-perspective extension. NOTE: verify the MEPS
-#' variable names below (OBXP24X, OBSF24X, PERWT24F, HRLYWAGE) against the
-#' current MEPS codebook before use -- they were not independently
-#' re-verified when this layer was integrated.
+# MEPS patient/societal burden estimation
+#
+# Estimates weighted office-visit total and out-of-pocket cost (2024
+# MEPS office-based visit file) and hourly wage (2024 MEPS Jobs file),
+# then converts an avoided additional visit into a patient time-cost
+# estimate. Not used in the payer-perspective base case; feeds a future
+# patient-time/societal-perspective extension. NOTE: verify the MEPS
+# variable names below (OBXP24X, OBSF24X, PERWT24F, HRLYWAGE) against the
+# current MEPS codebook before use -- they were not independently
+# re-verified when this layer was integrated.
 
+#' @export
 read_meps_xlsx <- function(path) {
   base::message("Reading MEPS workbook: ", path)
 
   readxl::read_xlsx(path)
 }
 
+#' @export
 estimate_meps_office_visit_cost <- function(office_tbl) {
   base::message("Estimating weighted MEPS office-visit cost.")
 
@@ -63,6 +65,7 @@ estimate_meps_office_visit_cost <- function(office_tbl) {
   )
 }
 
+#' @export
 estimate_meps_hourly_wage <- function(jobs_tbl) {
   base::message("Estimating weighted MEPS hourly wage.")
 
@@ -100,6 +103,7 @@ estimate_meps_hourly_wage <- function(jobs_tbl) {
   )
 }
 
+#' @export
 estimate_patient_time_cost <- function(
     wage_summary_tbl,
     avoided_hours = 4) {

@@ -19,7 +19,7 @@
 #'   Table 8  evidence-tier summary
 #'   Table 9  external-validation (literature-replication) status
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Manuscript output tables ===")
 

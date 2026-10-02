@@ -10,7 +10,7 @@
 #' methodology and citations. Run from the repository root:
 #'   Rscript analysis/09_geographic_sensitivity.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Geographic sensitivity analysis ===")
 

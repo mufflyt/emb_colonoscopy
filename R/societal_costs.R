@@ -1,54 +1,55 @@
-#' Societal-perspective secondary analysis (patient time/travel opportunity cost)
-#'
-#' The base case (`R/strategy_costs.R`) takes a U.S. healthcare-sector
-#' perspective and explicitly excludes patient time, transportation, and
-#' lost productivity (see Methods). This file adds a SEPARATE, clearly
-#' labeled societal-perspective add-on: the expected number of dedicated,
-#' patient-borne in-person encounters each strategy requires, valued at a
-#' single per-visit opportunity-cost estimate (`patient_time_opportunity_cost_per_visit`,
-#' Ray et al. 2015, PMID 26295356). It does NOT change
-#' `compute_strategy_costs()`'s output and is not part of the probabilistic
-#' sensitivity analysis -- a deterministic point-estimate secondary
-#' analysis, the same scope discipline already used for
-#' `compute_diagnostic_yield()` (see `R/diagnostic_yield.R`'s file-level
-#' docblock).
-#'
-#' **Encounter counting, by strategy** (mirrors the escalation/repeat-attempt
-#' probabilities already in `R/strategy_costs.R`, deliberately recomputed
-#' here from the same underlying parameters rather than reusing
-#' `compute_strategy_costs()`'s output shape -- see
-#' `tests/testthat/test-societal-costs.R`'s consistency test, the same
-#' pattern already used in `R/diagnostic_yield.R`):
-#' - `dnc`: exactly 2 encounters (a preoperative clinic visit plus a
-#'   separate OR/procedure day) -- fixed, no escalation branch of its own.
-#' - `office_emb`: 1 initial office visit, plus `repeat_attempt_probability`
-#'   of one more office visit, plus `escalation_probability` of D&C's own 2
-#'   encounters (escalating to D&C means undergoing D&C's full pathway, on
-#'   top of the office visit already taken).
-#' - `combined_emb`: `combined_requires_preop_office_visit` (a structural
-#'   scenario toggle, TRUE in the base case) worth of 1 dedicated
-#'   preoperative office visit, plus `escalation_probability` of D&C's own
-#'   2 encounters. The colonoscopy day itself is never counted, under the
-#'   same incremental-cost principle used for dollar costs -- the patient
-#'   is assumed to be undergoing it regardless of which EMB strategy is
-#'   chosen.
-#'
-#' **Known conservative bias, disclosed rather than corrected for:** every
-#' encounter is valued at the SAME per-visit opportunity cost, including
-#' D&C's OR/anesthesia-day encounter, which plausibly costs the patient
-#' (and any companion/caregiver, not counted at all here) substantially
-#' more time than a routine office visit -- no differentiated,
-#' procedure-day-specific patient-time-cost source was identified. This
-#' likely UNDERSTATES D&C's true relative societal-cost disadvantage. See
-#' `patient_time_opportunity_cost_per_visit`'s own notes in
-#' `config/model_parameters.csv` for the full sourcing and scope caveats
-#' (does not include out-of-pocket travel expense or caregiver time).
+# Societal-perspective secondary analysis (patient time/travel opportunity cost)
+#
+# The base case (`R/strategy_costs.R`) takes a U.S. healthcare-sector
+# perspective and explicitly excludes patient time, transportation, and
+# lost productivity (see Methods). This file adds a SEPARATE, clearly
+# labeled societal-perspective add-on: the expected number of dedicated,
+# patient-borne in-person encounters each strategy requires, valued at a
+# single per-visit opportunity-cost estimate (`patient_time_opportunity_cost_per_visit`,
+# Ray et al. 2015, PMID 26295356). It does NOT change
+# `compute_strategy_costs()`'s output and is not part of the probabilistic
+# sensitivity analysis -- a deterministic point-estimate secondary
+# analysis, the same scope discipline already used for
+# `compute_diagnostic_yield()` (see `R/diagnostic_yield.R`'s file-level
+# docblock).
+#
+# **Encounter counting, by strategy** (mirrors the escalation/repeat-attempt
+# probabilities already in `R/strategy_costs.R`, deliberately recomputed
+# here from the same underlying parameters rather than reusing
+# `compute_strategy_costs()`'s output shape -- see
+# `tests/testthat/test-societal-costs.R`'s consistency test, the same
+# pattern already used in `R/diagnostic_yield.R`):
+# - `dnc`: exactly 2 encounters (a preoperative clinic visit plus a
+#   separate OR/procedure day) -- fixed, no escalation branch of its own.
+# - `office_emb`: 1 initial office visit, plus `repeat_attempt_probability`
+#   of one more office visit, plus `escalation_probability` of D&C's own 2
+#   encounters (escalating to D&C means undergoing D&C's full pathway, on
+#   top of the office visit already taken).
+# - `combined_emb`: `combined_requires_preop_office_visit` (a structural
+#   scenario toggle, TRUE in the base case) worth of 1 dedicated
+#   preoperative office visit, plus `escalation_probability` of D&C's own
+#   2 encounters. The colonoscopy day itself is never counted, under the
+#   same incremental-cost principle used for dollar costs -- the patient
+#   is assumed to be undergoing it regardless of which EMB strategy is
+#   chosen.
+#
+# **Known conservative bias, disclosed rather than corrected for:** every
+# encounter is valued at the SAME per-visit opportunity cost, including
+# D&C's OR/anesthesia-day encounter, which plausibly costs the patient
+# (and any companion/caregiver, not counted at all here) substantially
+# more time than a routine office visit -- no differentiated,
+# procedure-day-specific patient-time-cost source was identified. This
+# likely UNDERSTATES D&C's true relative societal-cost disadvantage. See
+# `patient_time_opportunity_cost_per_visit`'s own notes in
+# `config/model_parameters.csv` for the full sourcing and scope caveats
+# (does not include out-of-pocket travel expense or caregiver time).
 
 #' Compute each strategy's expected number of dedicated patient encounters
 #'
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @return A tibble with one row per strategy: `strategy`,
 #'   `expected_encounters`.
+#' @export
 compute_strategy_expected_encounters <- function(model_parameters) {
   failure_probability <- get_parameter_value(model_parameters, "emb_failure_lynch")
   repeat_attempt_fraction <- get_parameter_value(
@@ -98,6 +99,7 @@ compute_strategy_expected_encounters <- function(model_parameters) {
 #' @return A tibble with one row per strategy: `strategy`,
 #'   `expected_encounters`, `patient_time_cost_per_encounter`,
 #'   `societal_addon`, `healthcare_sector_cost`, `societal_total_cost`.
+#' @export
 compute_strategy_societal_costs <- function(
   model_parameters,
   strategy_costs,

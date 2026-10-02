@@ -35,7 +35,7 @@
 #'
 #' Produces manuscript/manuscript_slides.pptx.
 
-base::source("R/00_source_all.R")
+library(samevisit)
 library(officer)
 library(flextable)
 library(magrittr)

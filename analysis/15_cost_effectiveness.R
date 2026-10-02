@@ -10,7 +10,7 @@
 #' Run from the repository root:
 #'   Rscript analysis/15_cost_effectiveness.R
 
-base::source("R/00_source_all.R")
+library(samevisit)
 
 base::message("=== Cost-consequence secondary analysis ===")
 

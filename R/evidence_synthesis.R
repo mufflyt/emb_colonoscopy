@@ -1,4 +1,4 @@
-#' Evidence-layer formatting and narrative helpers
+# Evidence-layer formatting and narrative helpers
 
 #' Summarize how many parameters fall in each evidence tier
 #'
@@ -15,6 +15,7 @@
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @return A tibble with one row per tier: `evidence_tier`, `n_parameters`,
 #'   `pct_parameters`.
+#' @export
 summarize_evidence_tiers <- function(model_parameters) {
   base::message("Summarizing parameter counts by evidence tier.")
 
@@ -33,6 +34,7 @@ summarize_evidence_tiers <- function(model_parameters) {
   tier_summary
 }
 
+#' @export
 format_cost <- function(x) {
   scales::dollar(
     x,
@@ -41,6 +43,7 @@ format_cost <- function(x) {
   )
 }
 
+#' @export
 format_percent <- function(x) {
   scales::percent(
     x,
@@ -48,6 +51,7 @@ format_percent <- function(x) {
   )
 }
 
+#' @export
 format_external_validation_sentence <- function(
     comparison_tbl,
     start_year,
