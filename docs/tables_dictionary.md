@@ -204,6 +204,16 @@ second, independently-pulled CMS extract. `HCPCS_Cd`, `n_provider_service_rows`,
 HPT manifest/MEPS input files are present, but are not currently checked into `tables/` --
 re-run `analysis/06_evidence_layers.R` with those inputs available to regenerate them.)*
 
+### Hospital MRF map (`analysis/19_hospital_mrf_map.R`)
+
+**`hospital_mrf_points.csv`** -- one row per hospital behind
+`figures/figure8_hospital_mrf_map.jpeg`, from either the 74-hospital FREIDA sample or the
+6-hospital convenience sample (de-duplicated where a hospital appears in both). `hospital`,
+`state`, `coverage` (`full` if every code attempted at that hospital was usable, else
+`partial`), `lat`/`lon` (approximate, joined from `data/gyn_onc_hospital_cities.csv`
+below), `coordinate_source`. See `docs/mrf_hospital_data_overview.md` for the
+hospital-level list this table summarizes.
+
 ### Adverse-event costing evidence (built within `R/strategy_costs.R`)
 
 **`ae_cost_evidence_table.csv`** -- the full D&C uterine-perforation management-pathway
@@ -255,6 +265,16 @@ note for why this distinction matters), `medicare_proxy_low`, `medicare_proxy_hi
 zero-data hospitals' reasons: `docs/data_sources.md`'s "Hospital payer-rate sample
 expansion" section and `docs/vignettes/02_adding_a_new_hospital_payer_rate.md`. Does not
 feed `config/model_parameters.csv` or the base-case cost engine.
+
+**`gyn_onc_hospital_cities.csv`** -- approximate home-city coordinates for every hospital
+in the two MRF samples above, used only by `analysis/19_hospital_mrf_map.R`. `hospital`,
+`city`, `state`, `lat`, `lon`, `coordinate_source` (one of: an exact match against the U.S.
+Census Bureau's 2024 Gazetteer Places file; a Gazetteer Counties centroid, for the two
+NYC-borough hospitals -- Bronx, Brooklyn -- that are not their own Census place; or the
+nearest incorporated city's Gazetteer Places coordinate, for La Jolla, CA, an
+unincorporated San Diego neighborhood with no Census place of its own). These are
+city-level approximations, not geocoded hospital street addresses -- see
+`R/hospital_mrf_map.R`'s file-level docblock for why.
 
 ## 3. Plain-text summary outputs
 

@@ -3,7 +3,10 @@
 A single orientation page for the two real-hospital payer-rate datasets in `data/`.
 `docs/data_sources.md` remains the detailed, chronological provenance log (the full
 verification history, column-by-column); this page is the "what is this and which
-hospitals" summary a reader should start with instead of searching that longer log.
+hospitals" summary a reader should start with instead of searching that longer log. See
+`README.md`'s "Hospital price-transparency (MRF) sample" section for a static state-level
+map of every hospital listed below with usable data
+(`figures/figure8_hospital_mrf_map.jpeg`, built by `analysis/19_hospital_mrf_map.R`).
 
 ## What an MRF is
 

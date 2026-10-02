@@ -227,6 +227,27 @@ deterministic, not part of the PSA (see `docs/methods_notes.md` for why).
 *Figure 4. Expected cost per strategy at four Medicare payment localities
 (`analysis/09_geographic_sensitivity.R`).*
 
+## Hospital price-transparency (MRF) sample
+
+Separately from the base-case model, this repository collected two real-hospital
+price-transparency (MRF) samples as standalone sensitivity/validation exercises -- **neither
+feeds `config/model_parameters.csv` or the base-case cost engine**. `analysis/19_hospital_mrf_map.R`
+maps every hospital with usable Medicare-proxy or commercial payer-rate data from either sample:
+70 hospitals across 29 states, one point per hospital at its home city's approximate coordinates
+(`data/gyn_onc_hospital_cities.csv`, built from the U.S. Census Bureau's 2024 Gazetteer Files --
+each hospital's home city's real internal-point coordinate, not a geocoded street address; NYC
+borough hospitals fall back to their county's centroid, and La Jolla, CA -- an unincorporated San
+Diego neighborhood with no Census place of its own -- falls back to San Diego). Hospitals that
+share a city (e.g. four in New York City) are jittered with a fixed seed so each is visible.
+Points are colored by coverage (usable data for every code attempted vs. some codes). See
+`docs/mrf_hospital_data_overview.md` for the full hospital-by-hospital list (including the 7
+hospitals attempted but excluded here for lacking usable data, and why).
+
+![Hospitals with usable MRF-derived payer-rate data](figures/figure8_hospital_mrf_map.jpeg)
+
+*Figure 5. Hospitals with usable price-transparency (MRF) payer-rate data, by state
+(`analysis/19_hospital_mrf_map.R`).*
+
 ## Repository structure
 
 ```text
@@ -235,13 +256,13 @@ emb_colonoscopy/
                    comparison, deterministic + probabilistic sensitivity, threshold
                    analysis, scenarios, geographic sensitivity, diagnostic yield,
                    plotting, tables
-  analysis/        eighteen numbered scripts: base case, deterministic sensitivity,
+  analysis/        nineteen numbered scripts: base case, deterministic sensitivity,
                    probabilistic sensitivity, threshold analysis, scenario analysis,
                    evidence layers, manuscript outputs, colonoscopy setting,
                    geographic sensitivity, decision-tree figure, manuscript tables,
                    independent PSA verification, diagnostic yield, societal
                    perspective, cost-effectiveness, colonoscopy opportunity cost,
-                   payer-multiplier refresh, manuscript slide deck
+                   payer-multiplier refresh, manuscript slide deck, hospital MRF map
   config/          config/model_parameters.csv -- the single source of truth for every
                    model input
   data/            data/cpi_medical_care.csv (inflation index), real CMS GPCI and PFS
@@ -249,23 +270,26 @@ emb_colonoscopy/
                    colonoscopy_multi_hospital_rates.csv (6-hospital real-MRF sample),
                    gyn_onc_fellowship_programs_freida.csv and
                    gyn_onc_hospital_payer_rates.csv (74-hospital real-MRF sample --
-                   see docs/data_sources.md)
+                   see docs/data_sources.md), gyn_onc_hospital_cities.csv (approximate
+                   hospital coordinates for the MRF map, from Census Gazetteer Files)
   data-raw/        instructions for replacing the placeholder price-index value
                    (deliberately not wired to fetch data automatically)
   tests/           testthat unit and model-identity tests (Rscript tests/testthat.R)
   figures/         generated .jpeg/.png figures
   tables/          generated .csv tables and the model-generated summary sentence
   manuscript/      Green Journal (Obstetrics & Gynecology)-format submission files:
-                   title_page.qmd, manuscript.qmd, cheers_checklist.qmd (Quarto,
-                   render with `quarto render manuscript/<file>.qmd`)
+                   title_page.qmd, manuscript.qmd, cheers_checklist.qmd,
+                   supplemental_hospital_mrf_sample.qmd (Quarto, render with
+                   `quarto render manuscript/<file>.qmd`)
   docs/            reuse mapping, data source provenance, methods notes, validation
                    notes, CHEERS 2022 audit, testing philosophy, appendix,
                    clinical coding reference (CPT/HCPCS/ICD-10 + Mermaid diagrams),
                    resident onboarding guide, figures reference, tables dictionary,
                    vignettes/ (narrative walkthroughs)
-  vignettes/       the same three vignette topics as knittable R Markdown, in
-                   standard R-package vignette format (no DESCRIPTION/installed
-                   package -- render directly with rmarkdown::render())
+  vignettes/       the same three docs/vignettes/ topics plus the hospital MRF map,
+                   as knittable R Markdown, in standard R-package vignette format
+                   (no DESCRIPTION/installed package -- render directly with
+                   rmarkdown::render())
 ```
 
 ## Quick start
@@ -297,6 +321,7 @@ Rscript analysis/11_manuscript_table10_summary.R # base-case + PSA clinical-outc
 Rscript analysis/12_independent_psa_verification.R # re-derives PSA clinical-outcome claims without calling model code
 HPT_PRICES_COMMIT=<sha> Rscript analysis/17_refresh_payer_multipliers.R  # copy hpt_prices payer ratios into the payer_multiplier_* rows (DRY_RUN=true to preview)
 Rscript analysis/18_manuscript_slides.R          # builds manuscript/manuscript_slides.pptx from the committed tables/figures
+Rscript analysis/19_hospital_mrf_map.R           # static state-level map of hospitals with usable MRF payer-rate data (Figure 5)
 ```
 
 Every script logs its inputs, major transformations, and exact output file paths via
@@ -482,7 +507,10 @@ the same parameter table produces byte-identical draws.
 review), `manuscript.qmd` (Introduction/Methods/Results/Discussion, blinded, <=3,000 words), and
 `cheers_checklist.qmd` (the completed CHEERS 2022 28-item reporting checklist, submitted as
 Supplemental Digital Content -- its far-right column quotes the actual manuscript sentence
-satisfying each item, not just a section name). Render any of them with
+satisfying each item, not just a section name), and `supplemental_hospital_mrf_sample.qmd` (also
+proposed Supplemental Digital Content: the two real-hospital price-transparency MRF samples used
+for standalone sensitivity/validation exercises, with the full hospital list by outcome -- the
+manuscript-formatted counterpart to `docs/mrf_hospital_data_overview.md`). Render any of them with
 `quarto render manuscript/<file>.qmd`. See `docs/CHEERS_2022_checklist.md` for the detailed
 internal audit behind the checklist and `docs/manuscript_methods_results.md` for the Methods/
 Results drafting notes.
@@ -498,7 +526,18 @@ regenerate the tables/figures themselves.
 Built by inspecting `mufflyt/colpocleisis_costeff` (a cost-effectiveness model comparing TVUS,
 office Pipelle, and concurrent D&C before LeFort colpocleisis) and porting its validation helpers,
 one-way sensitivity/tornado pattern, plotting theme, and CSV-first table conventions into a cleaner
-structure for this three-strategy comparison. See [`docs/reuse_mapping.md`](docs/reuse_mapping.md)
+structure for this three-strategy comparison. `analysis/17_refresh_payer_multipliers.R` resolves
+the `hpt_prices` ratios file on its external drive via `mufflyt/researchpaths`
+(`remotes::install_github("mufflyt/researchpaths")`) rather than a hardcoded `/Volumes/...` path,
+since macOS remounts the same physical drive under a different name after an unclean unmount and a
+stale hardcoded path is a correctness hazard, not just an inconvenience. `mufflyt/mysterymaps` and
+`mufflyt/mysterynpi` were evaluated for the hospital MRF map (`analysis/19_hospital_mrf_map.R`) and
+are not used: `mysterymaps_geocode()` requires a paid Google Maps API key (this repository's map
+instead uses the free, government-sourced Census Bureau Gazetteer Files), and `mysterymaps`'s other
+functions build interactive leaflet drive-time/choropleth maps for a different use case than this
+repository's one static ggplot2 figure; `mysterynpi` links individual-provider name rosters to NPI
+records, which nothing in this repository does (every hospital here is matched by institution name,
+not individual physician name). See [`docs/reuse_mapping.md`](docs/reuse_mapping.md)
 for the full component-by-component mapping of what was reused, adapted, or newly built.
 
 ## Documentation
@@ -535,7 +574,8 @@ for the full component-by-component mapping of what was reused, adapted, or newl
   sensitivity analyses
 - [`vignettes/`](vignettes/) -- the same three topics as knittable R Markdown, written in the
   standard R-package vignette format (even though this repository has no `DESCRIPTION` and is not
-  built as an installed package -- see `R/00_source_all.R`'s own docblock). Render with
+  built as an installed package -- see `R/00_source_all.R`'s own docblock), plus a fourth,
+  `mapping-hospital-mrf-sample.Rmd` (building the Figure 5 hospital map below). Render with
   `rmarkdown::render("vignettes/<name>.Rmd")` from the repository root to see the real,
   live-executed output of each step.
 

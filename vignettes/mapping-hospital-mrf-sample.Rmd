@@ -1,0 +1,94 @@
+---
+title: "Mapping the Hospital MRF Sample"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Mapping the Hospital MRF Sample}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+As with the other vignettes in this directory, this repository is not an installed
+package (no `DESCRIPTION`), so this file knits directly --
+`rmarkdown::render("vignettes/mapping-hospital-mrf-sample.Rmd")` from the repository
+root -- rather than through `devtools::build_vignettes()`. The hospital-level list this
+map summarizes is documented in full, with every hospital's name and outcome, in
+`docs/mrf_hospital_data_overview.md`; this vignette covers the map itself.
+
+```{r setup}
+source("R/00_source_all.R")
+```
+
+## Load both real-hospital MRF samples
+
+```{r load-data}
+hospital_payer_rates <- readr::read_csv(
+  "data/gyn_onc_hospital_payer_rates.csv", show_col_types = FALSE
+)
+colonoscopy_hospital_rates <- load_colonoscopy_hospital_rates_table()
+
+nrow(hospital_payer_rates)
+nrow(colonoscopy_hospital_rates)
+```
+
+## Classify each FREIDA-sample hospital's data as usable or not
+
+A hospital-code row counts as usable if either confidence column is anything other than
+`not_found`/`inconclusive`/`not_applicable` -- the same rule documented in
+`docs/mrf_hospital_data_overview.md`.
+
+```{r classify}
+freida_classified <- classify_freida_hospitals(hospital_payer_rates)
+freida_classified
+
+table(freida_classified$has_usable_data)
+```
+
+## Build one row per hospital, with approximate coordinates
+
+Unions the FREIDA-sample hospitals with any usable data with the original 6-hospital
+sample, de-duplicating hospitals that appear in both (UCHealth University of Colorado
+Hospital, Emory University Hospital, and NYU Langone Hospitals (Tisch)), then joins each
+hospital to its home city's approximate coordinates from
+`data/gyn_onc_hospital_cities.csv`. Those coordinates come from the U.S. Census Bureau's
+2024 Gazetteer Files -- the real internal-point coordinate of each hospital's home city,
+not a geocoded street address (see that CSV's own `coordinate_source` column for which of
+three methods applies to each row: an exact Census place match, a county centroid for the
+two NYC-borough hospitals that aren't their own Census place, or the nearest incorporated
+city for La Jolla, CA, which is an unincorporated San Diego neighborhood).
+
+```{r build-points}
+hospital_points <- build_hospital_mrf_points(
+  hospital_payer_rates, colonoscopy_hospital_rates
+)
+hospital_points %>% dplyr::arrange(.data$state)
+
+nrow(hospital_points)
+dplyr::n_distinct(hospital_points$state)
+table(hospital_points$coverage)
+```
+
+## The map
+
+Hospitals that share a city (e.g. four in New York City) plot at the same underlying
+coordinate; `plot_hospital_mrf_map()` jitters them with a fixed seed so every hospital is
+visible as its own point, and says so in the plot's own subtitle.
+
+```{r plot, fig.width = 9, fig.height = 6}
+plot_hospital_mrf_map(hospital_points)
+```
+
+This is exactly what `analysis/19_hospital_mrf_map.R` saves to
+`figures/figure8_hospital_mrf_map.jpeg` and what `README.md`'s "Hospital
+price-transparency (MRF) sample" section embeds as Figure 5.
+
+## Where to go next
+
+- `docs/mrf_hospital_data_overview.md` -- the full hospital-by-hospital list (including
+  the 7 hospitals attempted but excluded here for lacking usable data, and why)
+- `vignettes/adding-a-hospital-payer-rate.Rmd` -- extending either sample with a new
+  hospital

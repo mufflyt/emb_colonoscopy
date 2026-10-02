@@ -3,6 +3,42 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (checked the author's other tools; used one of them)
+
+Went through every other repository the author maintains on GitHub looking for code worth reusing
+here, focusing on the three whose names suggested they might apply: a mapping toolkit, a
+physician-name-matching toolkit, and a small utility for finding files on an external drive
+reliably. Only the last one was actually relevant, and it fixed a real fragility: the script that
+refreshes payer multipliers from an external hard drive used to hardcode the drive's mount path,
+which macOS silently changes after the drive is unplugged and replugged without being cleanly
+ejected. It now searches for the drive by name instead of assuming where it's mounted, and refuses
+to guess if the search comes up ambiguous. The mapping and name-matching toolkits were real looks,
+not rubber stamps -- the mapping one needs a paid Google account to geocode anything, which is why
+yesterday's hospital map uses free government location data instead, and the name-matching one
+solves a problem (matching individual physicians' names to a registry) that doesn't come up
+anywhere in this project, which only ever deals with hospital names.
+
+## 2026-10-02 (a map of where the hospital pricing data came from)
+
+A new figure in the README shows, at a glance, where the 70 hospitals with usable
+price-transparency data are: one point per hospital, placed near its home city. The first
+attempt at this used a free online geocoding service and got rate-limited partway through,
+so instead the coordinates come from the U.S. Census Bureau's own published city-location
+data -- a more reliable source anyway, and one that doesn't depend on a third-party service
+staying up. Where several hospitals share a city (four, in New York City's case), the dots
+are nudged apart slightly so every hospital is visible, and the map says so. A new vignette
+(`vignettes/mapping-hospital-mrf-sample.Rmd`) walks through how it's built, with real code.
+
+## 2026-10-02 (the hospital list is now part of the manuscript's supplement, too)
+
+The hospital price-transparency list added to the documentation earlier today is now also
+in the manuscript itself, as a proposed Supplemental Digital Content document
+(`manuscript/supplemental_hospital_mrf_sample.qmd`) -- the same kind of appendix the CHEERS
+checklist already is, separate from the main 5-figure/table submission. It states plainly
+that none of this data feeds the study's actual cost numbers; it's there for transparency
+about a side sensitivity check, not as a new result. The manuscript still renders cleanly
+with this added.
+
 ## 2026-10-02 (what the hospital pricing data actually is, in one place)
 
 A new page, `docs/mrf_hospital_data_overview.md`, answers a question that otherwise took

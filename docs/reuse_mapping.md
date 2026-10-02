@@ -42,6 +42,42 @@ component the user asked us to look for against what `colpocleisis_costeff` actu
   separate parameters from functions and keep functions small and testable, so the equivalent
   logic is spread across `R/parameters.R`, `R/strategy_costs.R`, `R/comparison.R`, etc.
 
+## Other `mufflyt` repositories evaluated (2026-10-02)
+
+Checked every `mufflyt` GitHub repository for reusable code beyond `colpocleisis_costeff`, focused
+on three plausibly relevant ones by name/description (`mysterymaps`, `mysterynpi`,
+`researchpaths`):
+
+- **`mufflyt/researchpaths`** ("Resolve data paths on removable volumes without guessing") --
+  **adopted.** `analysis/17_refresh_payer_multipliers.R` previously hardcoded a fallback path to
+  the `hpt_prices` output file on an external drive
+  (`/Volumes/MufflySamsung 1/hpt_prices/output/payer_to_medicare_ratios.csv`). macOS remounts the
+  same physical drive under a different name (e.g. appending " 1") after an unclean unmount, which
+  silently breaks a hardcoded mount path -- exactly the failure mode `researchpaths` exists to fix.
+  The script now calls `researchpaths::resolve_file_on_volume()`, a glob over the volume name
+  (`"MufflySamsung*"`) with existence validation, rather than a literal path; an explicit
+  `HPT_PAYER_RATIOS` path or a positional argument still takes priority, so normal use is
+  unchanged. Install with `remotes::install_github("mufflyt/researchpaths")`; the script fails
+  with a clear instruction if it is not installed and no explicit path was given.
+- **`mufflyt/mysterymaps`** ("Geographic mapping tools for mystery-caller healthcare access
+  studies") -- **not used.** Its `mysterymaps_geocode()` requires a paid Google Maps Platform API
+  key (`ggmap::geocode`, billing required even for the free-tier quota); this repository's hospital
+  MRF map (`analysis/19_hospital_mrf_map.R`) instead uses the free, government-sourced U.S. Census
+  Bureau Gazetteer Files, which needed no credential and are more directly citable. `mysterymaps`'s
+  other exports (`mysterymaps_county_access_map()`, isochrone/drive-time surfaces, a leaflet-based
+  choropleth-plus-coverage-layer template) build interactive maps for a different use case
+  (mystery-caller accessibility studies with drive-time polygons) than this repository's one static
+  ggplot2 point map, and would be a disproportionately heavy dependency (`leaflet`, `sf`, and
+  related packages) to add for that single figure.
+- **`mufflyt/mysterynpi`** ("Name keys and agreement rules for linking person rosters to NPI") --
+  **not used.** Its entire surface (`middle_agreement()`, `name_key()`, `surname_rarity()`,
+  `nickname_dictionary()`, etc.) solves individual-physician-name record linkage -- matching a
+  roster of people's names to NPI registry entries despite nicknames, accents, and middle-name
+  placement differences. Nothing in `emb_colonoscopy` performs person-level name matching: every
+  hospital in this repository's datasets is identified and matched by institution name (e.g. via
+  FREIDA's fellowship-program listing), not by an individual physician's name, so `mysterynpi`'s
+  problem domain does not apply here.
+
 ## The one-cycle decision-tree structure inherited from `cost_lefort`
 
 `cost_lefort` (the predecessor scaffold named in `colpocleisis_costeff/ONBOARDING.md`) frames its

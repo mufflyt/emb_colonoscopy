@@ -5,6 +5,73 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-02 (evaluated other mufflyt repos; adopted researchpaths for one fragile path)
+
+### Changed
+- `analysis/17_refresh_payer_multipliers.R`: replaced the hardcoded
+  `/Volumes/MufflySamsung 1/hpt_prices/output/payer_to_medicare_ratios.csv` fallback path with
+  `researchpaths::resolve_file_on_volume()` (`mufflyt/researchpaths`,
+  `remotes::install_github("mufflyt/researchpaths")`) -- a glob over the volume name with
+  existence validation, since macOS remounts the same physical drive under a different name after
+  an unclean unmount, which silently breaks a hardcoded mount path. An explicit `HPT_PAYER_RATIOS`
+  env var or positional argument still takes priority and behavior is unchanged for normal use;
+  the script now fails with a clear install instruction if researchpaths is missing and no
+  explicit path was given. Not covered by `tests/testthat.R` (that suite exercises
+  `R/payer_multipliers.R::refresh_payer_multipliers()` directly via fixtures, never this wrapper
+  script), confirmed unaffected.
+- `docs/reuse_mapping.md`: new "Other mufflyt repositories evaluated" section documenting the
+  researchpaths adoption above and why `mysterymaps` (paid Google Maps API key required for
+  geocoding; its other tools build interactive leaflet maps for a different use case) and
+  `mysterynpi` (solves individual-physician-name record linkage; this repository matches
+  hospitals by institution name, not person name) were evaluated and not used.
+- README's "Where this repository's methodology came from" section updated to match.
+
+## 2026-10-02 (static map of the hospital MRF sample)
+
+### Added
+- `data/gyn_onc_hospital_cities.csv`: approximate home-city coordinates (latitude/
+  longitude) for all 77 hospital rows across the two real-hospital MRF samples, built from
+  the U.S. Census Bureau's 2024 Gazetteer Files (Places file for an exact city match; the
+  Counties file as a fallback for the two NYC-borough hospitals -- Bronx, Brooklyn -- that
+  are not their own Census place; nearest-incorporated-city fallback for La Jolla, CA, an
+  unincorporated San Diego neighborhood). A live attempt to geocode these via the
+  OpenStreetMap Nominatim API got 20 real results before hitting its rate limit (HTTP 429)
+  and was abandoned in favor of this fully reproducible, offline, government-sourced
+  approach -- no external service dependency, no mixing of precisely- and
+  approximately-sourced points.
+- `R/hospital_mrf_map.R`: `classify_freida_hospitals()`, `build_hospital_mrf_points()`,
+  `plot_hospital_mrf_map()`. Unions the 74-hospital FREIDA sample's hospitals with usable
+  data (full or partial) with the 6-hospital convenience sample (de-duplicated), joins each
+  to its approximate city-level coordinate, and plots one jittered (fixed seed) point per
+  hospital, colored by coverage (full vs. partial) -- 70 hospitals, 29 states.
+- `analysis/19_hospital_mrf_map.R`: runs the above, saves `tables/hospital_mrf_points.csv`
+  and `figures/figure8_hospital_mrf_map.jpeg`.
+- `vignettes/mapping-hospital-mrf-sample.Rmd`: knittable R Markdown walkthrough of the same
+  pipeline, rendered successfully before committing.
+- README: new "Hospital price-transparency (MRF) sample" section (Figure 5) between
+  "Geographic sensitivity analysis" and "Repository structure"; Quick Start, Repository
+  structure, and Documentation index entries updated (eighteen -> nineteen analysis scripts;
+  three -> four vignettes).
+- `docs/figures_reference.md`, `docs/tables_dictionary.md`,
+  `docs/mrf_hospital_data_overview.md`: cross-linked to the new figure/table.
+- `R/00_source_all.R`: added `hospital_mrf_map.R` to the source list and `maps`/`mapproj` to
+  `required_packages` (back `ggplot2::map_data()` and `ggplot2::coord_map()` respectively).
+
+## 2026-10-02 (hospital MRF list added to the manuscript's Supplemental Digital Content)
+
+### Added
+- `manuscript/supplemental_hospital_mrf_sample.qmd`: a new proposed Supplemental Digital
+  Content document (same category as `cheers_checklist.qmd`, outside the manuscript's
+  already-finalized 5-of-5 main-text figure/table slots), containing the two real-hospital
+  price-transparency MRF samples' full hospital list by outcome (41 full, 26 partial with
+  codes-found counts, 7 zero-data with reasons), matching
+  `docs/mrf_hospital_data_overview.md` exactly. Explicitly states neither sample feeds the
+  base-case cost engine. Rendered to `.docx` and confirmed to build cleanly, as does the
+  main manuscript after the edit.
+- Referenced from `manuscript.qmd`'s top-of-file comment block and its end-of-file
+  "Figures and Tables" SDC-proposal list; from `README.md`'s "Manuscript and reporting"
+  section and "Repository structure" tree.
+
 ## 2026-10-02 (MRF hospital data overview)
 
 ### Added

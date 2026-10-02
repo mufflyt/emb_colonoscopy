@@ -1,0 +1,155 @@
+---
+title: "Supplemental Digital Content: Hospital Price-Transparency Sample"
+format: docx
+---
+
+<!--
+Proposed Supplemental Digital Content, same category as cheers_checklist.qmd
+(an appendix/supplement item, not one of the manuscript's 5 main-text
+figure/table slots, which are already finalized -- see manuscript.qmd's
+top-of-file comment block and its "Figures and Tables" section). Render
+separately:
+
+  quarto render manuscript/supplemental_hospital_mrf_sample.qmd
+
+This documents the two real-hospital, price-transparency machine-readable-
+file (MRF) datasets used for standalone sensitivity/validation exercises
+in this study (the opportunity-cost bound in R/opportunity_cost_colonoscopy.R,
+and a broader real-world cross-check against the Medicare-only base case).
+Neither dataset feeds config/model_parameters.csv or the base-case cost
+engine -- that is stated explicitly below, not left implicit.
+
+For the full method (sampling frame, discovery, extraction, confidence
+flagging), see docs/vignettes/02_adding_a_new_hospital_payer_rate.md. For
+the detailed per-hospital provenance log, see docs/data_sources.md's
+"Hospital payer-rate sample expansion" section. This file's hospital list
+and codes-found counts were generated directly from
+data/gyn_onc_hospital_payer_rates.csv and data/colonoscopy_multi_hospital_rates.csv,
+matching docs/mrf_hospital_data_overview.md exactly -- if that CSV or that
+documentation page changes, this file is stale until re-synced.
+
+Blinded for double-anonymized review: no author or institution names.
+-->
+
+## Purpose
+
+The base-case model in this study prices every strategy using CMS Medicare-allowed
+amounts, since that figure is uniform and publicly auditable nationwide. Medicaid and
+commercial payer rates are not published by CMS and vary by hospital; the only public
+source for them is the hospital-specific machine-readable file (MRF) every U.S. hospital
+must publish under the CMS Hospital Price Transparency Rule (45 CFR 180). This supplement
+documents two real-hospital MRF samples used for standalone sensitivity and validation
+exercises in this study. **Neither sample is an input to the base-case cost-minimization
+model**; both are reported here for transparency and as supporting evidence that the
+base case's Medicare-anchored pricing is a reasonable approximation of real-world rates.
+
+## Sample 1: six-hospital opportunity-cost sample
+
+A convenience sample of six hospitals' MRFs, used to bound the commercial-margin-based
+opportunity cost of displacing a colonoscopy-suite slot for a combined endometrial biopsy
+add-on (`data/colonoscopy_multi_hospital_rates.csv`).
+
+| Hospital | State |
+|---|---|
+| Denver Health Medical Center | CO |
+| UCHealth University of Colorado Hospital | CO |
+| Emory University Hospital | GA |
+| University of Mississippi Medical Center | MS |
+| University of Arkansas for Medical Sciences | AR |
+| NYU Langone Hospitals (Tisch) | NY |
+
+## Sample 2: 74-hospital gynecologic oncology fellowship sample
+
+A criterion-based sample -- all 75 ACGME-accredited gynecologic oncology fellowship
+programs listed in AMA's FREIDA directory (one duplicate excluded, leaving 74 hospitals
+attempted), tied directly to this study's clinical population rather than an arbitrary
+convenience sample. Target codes: endometrial biopsy (CPT 58100), surgical pathology
+(CPT 88305), dilation and curettage (CPT 58120), an established-patient office visit (CPT
+99213), and colonoscopy. Of the 74 hospitals attempted, 41 returned usable data for every
+target code, 26 returned usable data for some codes, and 7 returned none, each for a
+documented reason.
+
+### Hospitals with usable data for every target code (n = 41)
+
+Allegheny General Hospital (PA); Beth Israel Deaconess Medical Center (MA); Brigham and
+Women's Hospital (MA); Cleveland Clinic Foundation, Main Campus (OH); Cooper University
+Hospital (NJ); Corewell Health William Beaumont University Hospital (MI); Detroit Medical
+Center -- Harper University Hospital (MI); Erie County Medical Center/University at
+Buffalo (NY); Froedtert Hospital/Medical College of Wisconsin (WI); H. Lee Moffitt Cancer
+Center (FL); Hospital of the University of Pennsylvania (PA); Loma Linda University
+Medical Center (CA); Los Angeles General Medical Center, formerly LAC+USC (CA); M Health
+Fairview University of Minnesota Medical Center (MN); MUSC Health Main Campus (SC);
+Maimonides Medical Center (NY); Massachusetts General Hospital (MA); Memorial Hospital for
+Cancer and Allied Diseases/Memorial Sloan Kettering (NY); Montefiore Medical Center (NY);
+NYU Langone Hospitals, Tisch (NY); NewYork-Presbyterian/Columbia University Irving Medical
+Center (NY); OU Health University of Oklahoma Medical Center (OK); Robert Wood Johnson
+University Hospital (NJ); St. Luke's University Hospital (PA); Stanford Health Care,
+Stanford Hospital (CA); Strong Memorial Hospital/University of Rochester Medical Center
+(NY); Temple University Hospital, Main Campus (PA); The Ohio State University Wexner
+Medical Center (OH); UC Davis Medical Center (CA); USA Health University Hospital (AL); UT
+MD Anderson Cancer Center (TX); University Health System, San Antonio (TX); University
+Hospitals Cleveland Medical Center (OH); University of Chicago Medical Center (IL);
+University of Michigan Health, University Hospital (MI); University of New Mexico Hospital
+(NM); University of Virginia Medical Center (VA); University of Wisconsin Hospital/UW
+Health (WI); Vanderbilt University Medical Center (TN); Women and Infants Hospital of
+Rhode Island (RI); Yale New Haven Hospital (CT).
+
+### Hospitals with usable data for some target codes (n = 26)
+
+| Hospital | State | Codes found / attempted |
+|---|---|---|
+| AdventHealth Orlando | FL | 4/5 |
+| Atrium Health Carolinas Medical Center | NC | 5/6 |
+| Barnes-Jewish Hospital | MO | 4/6 |
+| Cedars-Sinai Medical Center | CA | 4/5 |
+| City of Hope National Medical Center | CA | 5/6 |
+| Duke University Hospital | NC | 4/5 |
+| Emory University Hospital | GA | 5/6 |
+| Jackson Memorial Hospital | FL | 3/6 |
+| North Shore University Hospital (Northwell Health) | NY | 5/6 |
+| Northwestern Memorial Hospital | IL | 1/6 |
+| Regional One Health (UT Tennessee HSC gyn onc surgical site) | TN | 5/6 |
+| Ronald Reagan UCLA Medical Center | CA | 4/6 |
+| Tampa General Hospital | FL | 4/5 |
+| The University of Kansas Hospital | KS | 1/6 |
+| UC San Diego Health (Jacobs Medical Center) | CA | 5/6 |
+| UCHealth University of Colorado Hospital | CO | 4/5 |
+| UCI Medical Center (UC Irvine Health) | CA | 4/5 |
+| UCSF Medical Center | CA | 5/6 |
+| UNC Medical Center | NC | 2/5 |
+| UPMC Presbyterian (shared with Montefiore/Shadyside campuses) | PA | 4/5 |
+| University of Alabama Hospital (UAB) | AL | 3/5 |
+| University of Iowa Health Care Medical Center | IA | 5/6 |
+| University of Kentucky Albert B. Chandler Hospital | KY | 4/5 |
+| Wake Forest Baptist Medical Center (North Carolina Baptist Hospital) | NC | 2/6 |
+| Wellstar MCG Health (Augusta University Medical Center) | GA | 4/5 |
+| William P. Clements Jr. University Hospital (UT Southwestern) | TX | 1/6 |
+
+### Hospitals with no usable data (n = 7)
+
+| Hospital | State | Reason |
+|---|---|---|
+| Johns Hopkins Hospital | MD | File publishes these codes only as chargemaster gross/cash lines -- no payer-negotiated rate exists at all (confirmed, not a search failure) |
+| Mayo Clinic Hospital Rochester | MN | 13.35 GB file, 63% scanned, zero matches |
+| Mount Sinai Hospital | NY | Bot-protection survived multiple access strategies |
+| Tufts Medical Center | MA | Bot-protection survived multiple access strategies |
+| University of Washington Medical Center | WA | Bot-protection survived multiple access strategies, including a Wayback Machine fallback |
+| IU Health University Hospital | IN | Bot-protection survived multiple access strategies, including a Wayback Machine fallback |
+| Walter Reed National Military Medical Center | MD | Federal military treatment facility, structurally exempt from the price-transparency rule under 45 CFR 180 -- a structural non-finding, not a failed search |
+
+## Cross-validation between the two samples
+
+UCHealth University of Colorado Hospital appears in both samples, pulled independently on
+different dates. The two independently-extracted Medicare rates for colonoscopy (HCPCS
+G0105) matched exactly ($916.25), supporting the reliability of the extraction method
+used for both samples.
+
+## Known data-quality considerations
+
+Several hospitals' files label a Medicaid managed-care plan's ACA-exchange product
+generically as "Commercial"; duplicate chargemaster lines mapping the same procedure code
+to different gross charges and negotiated rates are common enough that no single
+hospital-level "commercial rate" exists for some codes without selecting a specific line;
+and files exceeding approximately 1-2 GB could only be partially scanned, so a "no usable
+data" result for a very large file is weaker evidence than the same result for a small
+one.

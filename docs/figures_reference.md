@@ -1,7 +1,7 @@
 # Figures reference: every file in `figures/`, and three different numbering schemes
 
 This repository uses **three independent figure-numbering schemes** that all refer to the
-same seven image files, for three different audiences. That is a real source of confusion
+same eight image files, for three different audiences. That is a real source of confusion
 if you only look at one of them, so this file exists to make the mapping explicit in one
 place rather than something a reader has to reconstruct from three separate documents.
 
@@ -28,8 +28,9 @@ place rather than something a reader has to reconstruct from three separate docu
 | `figure3a_threshold_minutes.jpeg` | `analysis/04_threshold_analysis.R` | *not shown* | SDC candidate | Threshold sweep on the combined-EMB added-time parameter. |
 | `figure3b_threshold_office_failure.jpeg` | `analysis/04_threshold_analysis.R` | *not shown* | SDC candidate | Threshold sweep on the office-EMB failure-probability parameter. |
 | `figure5_scenario_comparison.jpeg` | `analysis/05_scenario_analysis.R` | *not shown* | SDC candidate | Medicaid/commercial/historical payer-scenario comparison. |
+| `figure8_hospital_mrf_map.jpeg` | `analysis/19_hospital_mrf_map.R` | Figure 5 | Not yet proposed | Point map of hospitals with usable price-transparency (MRF) payer-rate data (70 hospitals, 29 states), one jittered point per hospital at its home city's approximate Census Gazetteer coordinates (`data/gyn_onc_hospital_cities.csv`), colored by coverage. Documentation/transparency figure for a standalone sensitivity exercise -- not part of the base-case model, so not currently proposed for the manuscript's own 5-figure/table or SDC lists (see `manuscript/supplemental_hospital_mrf_sample.qmd` for that data's own manuscript-formatted table instead). |
 
-The four "*not shown*" files are not missing or broken -- they were deliberately left out
+The four figure2/figure3a/figure3b/figure5 files are not missing or broken -- they were deliberately left out
 of the README's 4-figure walkthrough (which is curated for a general reader, not
 exhaustive) and out of the manuscript's main text (which is capped by journal page/figure
 limits). This table is where they're documented instead.

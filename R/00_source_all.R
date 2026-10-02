@@ -13,7 +13,11 @@ required_packages <- c(
   "duckplyr", "httr2", "readxl", "stringr", "openssl",
   # manuscript decision-tree figure only (analysis/10_decision_tree_figure.R)
   # -- see docs/data_sources.md
-  "DiagrammeR", "DiagrammeRsvg", "rsvg"
+  "DiagrammeR", "DiagrammeRsvg", "rsvg",
+  # hospital MRF map only (analysis/19_hospital_mrf_map.R) -- see
+  # docs/mrf_hospital_data_overview.md. "maps" backs ggplot2::map_data();
+  # "mapproj" backs ggplot2::coord_map().
+  "maps", "mapproj"
 )
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
@@ -98,7 +102,12 @@ source_files <- c(
   # refresh of the payer_multiplier_* rows from hpt_prices' payer ratios;
   # uses REIMBURSEMENT_PARAMETER_NAMES and payer_multiplier_parameter() from
   # scenarios.R.
-  "payer_multipliers.R"
+  "payer_multipliers.R",
+  # static state-level map of hospitals with usable MRF-derived payer-rate
+  # data -- see docs/mrf_hospital_data_overview.md. Only depends on
+  # load_colonoscopy_hospital_rates_table() from opportunity_cost_colonoscopy.R,
+  # already sourced above.
+  "hospital_mrf_map.R"
 )
 
 for (source_file in source_files) {

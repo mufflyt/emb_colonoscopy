@@ -44,6 +44,13 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
   items reported in this manuscript; items 27-28 [funding, conflicts of
   interest] have their reporting structure in place on the title page but
   need the author's actual disclosure content).
+- Hospital MRF sample: manuscript/supplemental_hospital_mrf_sample.qmd
+  (renders to supplemental_hospital_mrf_sample.docx), also proposed as
+  Supplemental Digital Content -- the real-hospital price-transparency
+  data used for the opportunity-cost and cross-check sensitivity
+  exercises, full hospital list by outcome. See
+  docs/mrf_hospital_data_overview.md for the same list outside the
+  manuscript, and docs/data_sources.md for the detailed provenance log.
 
 WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
 text only (not this comment block, not the abstract/precis/references/
@@ -794,6 +801,14 @@ PROPOSED FOR SUPPLEMENTAL DIGITAL CONTENT (explicitly exempted from the
     analysis, both scenarios, built by analysis/14_societal_perspective.R)
   - tables/cost_effectiveness.csv (cost-consequence secondary analysis,
     both disease types, built by analysis/15_cost_effectiveness.R)
+  - manuscript/supplemental_hospital_mrf_sample.qmd (renders to .docx
+    separately, same category as cheers_checklist.qmd): the two real-
+    hospital price-transparency MRF samples (6-hospital opportunity-cost
+    sample, 74-hospital FREIDA gynecologic-oncology-fellowship sample)
+    used for standalone sensitivity/validation exercises, with the full
+    hospital list by outcome (41 full, 26 partial, 7 zero-data with
+    reasons). Neither sample feeds the base-case cost engine; stated
+    explicitly in that file.
 
 If a reviewer or the author prefers a different 5, the most likely swap is
 Figure 3 (geographic) <-> figure2_tornado.jpeg (one-way sensitivity/tornado)
