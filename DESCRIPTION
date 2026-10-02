@@ -35,13 +35,14 @@ Imports:
     readxl,
     stringr,
     openssl,
-    DiagrammeR,
-    DiagrammeRsvg,
-    rsvg,
     maps,
-    mapproj
+    mapproj,
+    withr
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    DiagrammeR,
+    DiagrammeRsvg,
+    rsvg
 VignetteBuilder: knitr

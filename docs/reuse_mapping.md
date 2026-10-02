@@ -78,6 +78,40 @@ on three plausibly relevant ones by name/description (`mysterymaps`, `mysterynpi
   FREIDA's fellowship-program listing), not by an individual physician's name, so `mysterynpi`'s
   problem domain does not apply here.
 
+## `mufflyt/iud_bariatric`: the second real test of the `samevisit` generalization (2026-10-02)
+
+After publishing `samevisit`, checked whether a second, unrelated same-visit cost comparison
+could actually depend on it: `mufflyt/iud_bariatric` (standalone office LNG-IUD insertion vs.
+insertion at the time of an already-scheduled bariatric surgery). Its own README explicitly
+calls this "the same structural idea" as `emb_colonoscopy`. Confirmed in its actual code
+(`R/comparison.R`): `compare_combined_vs_standalone()` is structurally identical to
+`samevisit`'s `compare_combined_vs_office()`, just hardcoded to `"standalone"`/`"combined"`
+instead of `"office_emb"`/`"combined_emb"` -- it had already independently reimplemented
+near-duplicate versions of `strategy_costs.R`, `comparison.R`, `sensitivity_deterministic.R`,
+`sensitivity_probabilistic.R`, `scenarios.R`, `inflation.R`, `parameters.R`, and `tables.R`,
+because `samevisit`'s generic layer didn't exist yet.
+
+Reading `samevisit`'s own source found the gap narrower than expected: most of the package
+was already generic (parameter loading, inflation, validation, and even
+`run_one_way_sensitivity()`/`find_parameter_threshold()` already accepted a caller-supplied
+metric function). Only `compute_strategy_costs()` (hardcoded to exactly 3 named strategies),
+`compare_combined_vs_office()` (hardcoded to 2 specific strategy names), and the one internal
+`compute_strategy_costs()` call site inside `evaluate_metric_at()` needed genericizing.
+Added, additively, with every existing Lynch-specific function reimplemented as a thin
+wrapper and the exact-equivalence proven via the existing test suite plus a byte-identical
+`tables/summary_sentence.txt` check: `compute_multi_strategy_costs()` (a named-list-of-
+strategy-functions version of the cost engine, with an optional shared "rescue strategy" for
+projects whose primary strategies can escalate to a third), `compare_two_strategies()` (a
+by-name version of the head-to-head comparison), a `strategy_cost_fn` parameter on
+`run_one_way_sensitivity()`/`find_parameter_threshold()`/`evaluate_metric_at()`, and a new,
+separate `run_probabilistic_sensitivity_generic()` (the existing
+`run_probabilistic_sensitivity()` is too tightly coupled to Lynch-specific clinical-outcome
+columns to generalize as a thin wrapper, so it was left untouched rather than forced). See
+`docs/samevisit_generic_api.md` for the full API and the strategy-cost function contract, and
+`tests`/the ad hoc toy-2-strategy smoke test run this session for verification that the new
+API is actually usable by a 2-arm, no-rescue-strategy comparison -- `iud_bariatric`'s own
+repository was not modified; porting it onto this API is a separate future step.
+
 ## The one-cycle decision-tree structure inherited from `cost_lefort`
 
 `cost_lefort` (the predecessor scaffold named in `colpocleisis_costeff/ONBOARDING.md`) frames its

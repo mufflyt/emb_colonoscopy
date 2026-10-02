@@ -17,6 +17,9 @@
 #' @param search_lower,search_upper Numeric scalars bounding the search
 #'   interval for `parameter_name`.
 #' @param target_value Numeric scalar the metric should cross. Default 0.
+#' @param strategy_cost_fn Passed to [evaluate_metric_at()]. Defaults to
+#'   [compute_strategy_costs()]; pass a different function to find a
+#'   threshold over a different set of strategies.
 #' @return A tibble with `parameter`, `threshold_value`, `converged`
 #'   (logical), and `search_lower`/`search_upper` for provenance. If no
 #'   sign change is found in the search interval, `threshold_value` is
@@ -30,7 +33,8 @@ find_parameter_threshold <- function(
   price_index_table = load_price_index_table(),
   search_lower,
   search_upper,
-  target_value = 0
+  target_value = 0,
+  strategy_cost_fn = compute_strategy_costs
 ) {
   base::message(
     "Threshold search on '", parameter_name, "' over [",
@@ -40,7 +44,7 @@ find_parameter_threshold <- function(
   objective_fn <- function(candidate_value) {
     evaluate_metric_at(
       model_parameters, parameter_name, candidate_value,
-      price_index_table, target_metric_fn
+      price_index_table, target_metric_fn, strategy_cost_fn
     ) - target_value
   }
 
@@ -118,6 +122,8 @@ metric_dnc_dominated <- function(strategy_costs) {
 #' alternative?
 #'
 #' @inheritParams find_parameter_threshold
+#' @param search_upper Numeric scalar, the upper bound of the search
+#'   interval (the lower bound is fixed at 0).
 #' @return A one-row tibble, see [find_parameter_threshold()].
 #' @export
 threshold_combined_added_minutes <- function(
@@ -157,6 +163,8 @@ threshold_office_failure_probability <- function(
 #' before it is dominated by both other strategies?
 #'
 #' @inheritParams find_parameter_threshold
+#' @param search_upper Numeric scalar, the upper bound of the search
+#'   interval (the lower bound is fixed at 0).
 #' @return A one-row tibble, see [find_parameter_threshold()].
 #' @export
 threshold_dnc_dominated_facility_fee <- function(
@@ -177,6 +185,8 @@ threshold_dnc_dominated_facility_fee <- function(
 #' strategy while it retains a cost advantage over standalone office EMB?
 #'
 #' @inheritParams find_parameter_threshold
+#' @param search_upper Numeric scalar, the upper bound of the search
+#'   interval (the lower bound is fixed at 0).
 #' @return A one-row tibble, see [find_parameter_threshold()].
 #' @export
 threshold_coordination_cost_ceiling <- function(

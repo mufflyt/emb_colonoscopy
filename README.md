@@ -341,6 +341,18 @@ its current status. This repository maintains its own local copy of the same sou
 depending on the GitHub repo directly, so a change to one does not automatically appear in
 the other yet.
 
+A real second project, `mufflyt/iud_bariatric` (standalone vs. bariatric-surgery-combined
+LNG-IUD insertion), confirmed the pattern generalizes but exposed that the core cost
+engine and sensitivity-analysis entry points were hardcoded to this model's exact 3
+strategy names. `R/` now also exposes a generic layer next to the Lynch-specific
+functions -- `compute_multi_strategy_costs()`, `compare_two_strategies()`,
+`run_probabilistic_sensitivity_generic()`, and a `strategy_cost_fn` parameter on
+`run_one_way_sensitivity()`/`find_parameter_threshold()` -- so a different same-visit
+comparison can plug in its own strategy-cost functions without copying files the way
+`iud_bariatric` did. See
+[`docs/samevisit_generic_api.md`](docs/samevisit_generic_api.md) for the full API and the
+strategy-cost function contract.
+
 ## Threshold questions this model answers
 
 Run via `analysis/04_threshold_analysis.R`, using root-finding (`stats::uniroot()`) on the full cost
@@ -583,6 +595,10 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/mrf_hospital_data_overview.md`](docs/mrf_hospital_data_overview.md) -- what a hospital price-
   transparency MRF is, why this project collected them, how, and the full list of every hospital in
   both the 6-hospital and 74-hospital samples, by outcome (full data / partial data / no data, and why)
+- [`docs/samevisit_generic_api.md`](docs/samevisit_generic_api.md) -- the generic, non-Lynch-specific
+  layer of the `samevisit` package (`compute_multi_strategy_costs()`, `compare_two_strategies()`,
+  `run_probabilistic_sensitivity_generic()`, and the `strategy_cost_fn` parameter), the strategy-cost
+  function contract, and what a different same-visit-vs.-separate-visit project still needs to add
 - [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
   adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
   sensitivity analyses

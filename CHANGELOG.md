@@ -5,6 +5,98 @@ All notable changes to this project are documented here. Format loosely follows
 `samevisit` package (`DESCRIPTION`), but this changelog predates that and still groups
 entries by date rather than package version.
 
+## 2026-10-02 (documented every exported function; R CMD check now passes clean)
+
+### Added
+- Real roxygen2 documentation (title, every `@param`, `@return`) for the ~108 functions
+  across `colonoscopy_setting.R`, `hpt_hospital_discovery.R`, `hpt_prices.R`,
+  `meps_download.R`, `public_input_config.R`, `cms_benchmarks.R`, `evidence_codes.R`,
+  `evidence_synthesis.R`, `meps_burden.R`, and `payer_multipliers.R` that previously had
+  only a bare `#' @export` line, written by 4 parallel agents (one per file group), each
+  reading the actual function bodies rather than templating placeholder text. No code logic
+  changed anywhere -- verified via the full test suite (zero test changes, all 18 files
+  green) and a byte-identical `tables/summary_sentence.txt` check after re-running the
+  base case.
+- `LICENSE.md`: the full MIT license text, split out from `LICENSE` (which now holds just
+  the short `YEAR`/`COPYRIGHT HOLDER` stub `License: MIT + file LICENSE` requires --
+  standard `usethis::use_mit_license()` convention). The old single-file `LICENSE` passed
+  `R CMD check` with a "License stub is invalid DCF" NOTE; GitHub's license detector reads
+  `LICENSE.md`, so the GitHub repo's license badge is unaffected by the split.
+- `@importFrom rlang .data .env` (`R/utils-pipe.R`) -- used throughout this package's dplyr
+  pipelines but never declared, producing ~40 "no visible binding for global variable"
+  `R CMD check` WARNINGs.
+- `@importFrom maps map` / `@importFrom mapproj mapproject` (`R/hospital_mrf_map.R`) --
+  genuinely needed at runtime by `ggplot2::map_data()`/`coord_map()` even though never
+  called directly; `withr` added to `DESCRIPTION`'s `Imports` (`R/hpt_hospital_discovery.R`
+  genuinely calls `withr::with_seed()`, previously undeclared).
+
+### Removed
+- `DiagrammeR`, `DiagrammeRsvg`, `rsvg` moved from `Imports` to `Suggests` in `DESCRIPTION`
+  -- not used anywhere in `R/`, only by `analysis/10_decision_tree_figure.R`, which isn't
+  part of the package. `R CMD check`'s "all declared Imports should be used" NOTE is now
+  accurate instead of suppressed.
+
+### Why
+The `samevisit` README claimed "`R CMD check` surfaces genuine WARNINGs" as the reason an
+`R-CMD-check` badge wasn't added. Rather than leave that as a permanent disclaimer, fixed
+all of it: `R CMD build . && R CMD check` on the standalone `mufflyt/samevisit` extraction
+now reports `Status: OK` -- 0 errors, 0 warnings, 0 notes. Added a real
+`.github/workflows/R-CMD-check.yaml` to that repo (not decorative -- confirmed it actually
+passes in GitHub Actions CI before adding the badge) and an honest `R-CMD-check` badge to
+its README, replacing the "not yet CRAN-ready" disclaimer with what's actually still true
+(not CRAN-submitted; `save_table()` and similar functions default to writing into a
+working-directory-relative path, which CRAN policy wouldn't allow as-is).
+
+## 2026-10-02 (genericized samevisit's strategy-cost engine)
+
+### Added
+- `compute_multi_strategy_costs()` (`R/strategy_costs.R`): the generic strategy-cost engine
+  behind `compute_strategy_costs()`. Takes a named list of strategy-cost functions (each
+  following the documented contract: `list(components, escalation_probability,
+  escalation_cost, initial_cost, expected_total_cost)`) instead of 3 hardcoded calls, with
+  an optional `rescue_strategy` for projects whose primary strategies may escalate to a
+  shared target (this model's D&C arm); `rescue_strategy = NULL` for projects with no such
+  shared target. `compute_strategy_costs()` reimplemented as a thin wrapper over it.
+- `compare_two_strategies()` (`R/comparison.R`): the generic by-name head-to-head
+  comparison behind `compare_combined_vs_office()`, which is now a thin wrapper that
+  renames its output columns to the existing names.
+- `strategy_cost_fn` parameter on `evaluate_metric_at()`, `run_one_way_sensitivity()`
+  (`R/sensitivity_deterministic.R`), and `find_parameter_threshold()`
+  (`R/threshold_analysis.R`) -- defaults to `compute_strategy_costs()`, so every existing
+  call is unaffected; lets a caller run the same perturb-and-reread/root-finding mechanism
+  over a different strategy-cost function.
+- `run_probabilistic_sensitivity_generic()` (`R/sensitivity_probabilistic.R`): a new,
+  separate Monte Carlo loop (same `draw_parameter_set()`/seeding mechanics as
+  `run_probabilistic_sensitivity()`) that takes a caller-supplied `strategy_cost_fn` and a
+  named list of `metric_fns`, assembling a `draw` + one-column-per-metric tibble with no
+  hardcoded strategy or outcome names. `run_probabilistic_sensitivity()` itself is left
+  untouched -- too tightly coupled to the Lynch-specific clinical-outcome columns
+  (`neoplasia_delayed_per_1000`, `major_ae_per_1000`) to generalize as a thin wrapper.
+- `docs/samevisit_generic_api.md`: the generic API reference and the strategy-cost function
+  contract.
+
+### Why
+`mufflyt/iud_bariatric` (standalone vs. bariatric-surgery-combined LNG-IUD insertion) was
+checked as a second real test of the `samevisit` rename's premise. Its own README calls it
+"the same structural idea" as this model, and its actual code
+(`compare_combined_vs_standalone()`) is structurally identical to
+`compare_combined_vs_office()` -- but it had already independently reimplemented
+near-duplicate files, because this generic layer didn't exist yet. See
+`docs/reuse_mapping.md`'s "`mufflyt/iud_bariatric`: the second real test" section for the
+full account. `iud_bariatric`'s own repository was not modified.
+
+### Verified
+- `Rscript tests/testthat.R` -- all 18 files green, zero test changes (proves the
+  reimplemented wrappers are behaviorally identical, not just API-compatible).
+- `tables/summary_sentence.txt`, `strategy_comparison.csv`, `cost_components.csv`, and
+  `combined_vs_office.csv` byte-for-byte unchanged after re-running
+  `analysis/01_base_case.R` (`pairwise_comparison.csv`/`budget_impact.csv`/
+  `threshold_estimates_base_case.csv` showed only pre-existing 13th-significant-digit
+  floating-point noise, unrelated to this change and reverted).
+- An ad hoc toy 2-strategy model (no rescue strategy, matching `iud_bariatric`'s actual
+  shape) exercised all four new/changed entry points end to end.
+- All 4 `vignettes/*.Rmd` re-rendered cleanly.
+
 ## 2026-10-02 (R/ converted into the installable samevisit package)
 
 ### Added

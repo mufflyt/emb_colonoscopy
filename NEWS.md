@@ -3,6 +3,37 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (made good on a promise about the check mark)
+
+Last time, the honest answer for why `samevisit` didn't have a green "passing checks"
+badge was that it genuinely wasn't passing -- about 108 functions had no real
+documentation, just a bare marker saying they were public. Rather than leave that as a
+permanent asterisk, it got fixed properly: every one of those functions now has real,
+accurate documentation (written by actually reading what each one does, not templated),
+plus three smaller but equally real gaps that turned up along the way -- a malformed
+license file, some undeclared package dependencies, and a few declared-but-unused ones.
+`R CMD check`, run for real, now comes back completely clean. A real automated check now
+runs on every push to confirm it stays that way, and that's what the badge points to.
+
+## 2026-10-02 (put the "general-purpose" claim to a second real test)
+
+Last time, renaming the package to `samevisit` was a bet that the underlying idea -- doing a
+procedure during an already-scheduled visit instead of its own separate one -- generalizes
+past this one study. That bet got tested today against a second, unrelated project of the
+same author's: a model comparing standalone IUD insertion against inserting it at the time
+of bariatric surgery. The idea held up (that project's own documentation independently
+calls it "the same structural idea"), but the code didn't yet -- that project had already
+had to rebuild its own near-identical copies of this package's cost-comparison and
+sensitivity-analysis machinery, because there was no generic way to plug a different pair
+of strategies into it.
+
+That gap is closed now, carefully: every existing function here still behaves exactly as
+before (checked by re-running the whole test suite and confirming the base-case numbers
+come out byte-for-byte identical), and the new, general-purpose versions sit alongside the
+originals rather than replacing them. A quick synthetic test -- a toy two-strategy
+comparison with none of this model's Lynch-specific structure -- confirmed the new version
+actually works end to end for a project shaped differently than this one.
+
 ## 2026-10-02 (this is now a real, installable R package -- and a public one, too)
 
 The biggest structural change of the project so far: `R/` is no longer just a folder of
