@@ -299,7 +299,11 @@ install.packages(c(
   "readr", "dplyr", "tibble", "tidyr", "purrr", "ggplot2", "scales",
   "forcats", "rlang", "testthat",
   # evidence layer + public-input acquisition
-  "duckplyr", "httr2", "readxl", "stringr", "openssl"
+  "duckplyr", "httr2", "readxl", "stringr", "openssl",
+  # decision-tree figure (analysis/10_decision_tree_figure.R)
+  "DiagrammeR", "DiagrammeRsvg", "rsvg",
+  # hospital MRF map (analysis/19_hospital_mrf_map.R)
+  "maps", "mapproj"
 ))
 ```
 

@@ -41,6 +41,8 @@ jobs:
             any::DiagrammeR
             any::DiagrammeRsvg
             any::rsvg
+            any::maps
+            any::mapproj
             any::testthat
 
       - name: Run test suite
