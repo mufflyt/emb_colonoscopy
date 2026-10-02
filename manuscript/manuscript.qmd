@@ -51,6 +51,16 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
   exercises, full hospital list by outcome. See
   docs/mrf_hospital_data_overview.md for the same list outside the
   manuscript, and docs/data_sources.md for the detailed provenance log.
+- Reproducibility environment: rendering this file and its two SDC files
+  only needs Quarto + the packages R/00_source_all.R lists. Fully
+  re-deriving the payer_multiplier_* rows in config/model_parameters.csv
+  that this manuscript's Medicaid/commercial scenario numbers depend on
+  also needs `remotes::install_github("mufflyt/researchpaths")` --
+  analysis/17_refresh_payer_multipliers.R uses it to find the upstream
+  hpt_prices ratios file on an external drive without a hardcoded mount
+  path (macOS renames the same drive after an unclean unmount). Not
+  needed just to render the manuscript from the already-committed
+  config/model_parameters.csv.
 
 WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
 text only (not this comment block, not the abstract/precis/references/
