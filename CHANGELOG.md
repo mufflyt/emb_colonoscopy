@@ -5,6 +5,33 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-01 (manuscript slide deck, and a 74-hospital payer-rate sample)
+
+### Added
+- `analysis/18_manuscript_slides.R`: builds `manuscript/manuscript_slides.pptx` (and a Keynote copy,
+  `manuscript_slides.key`) directly from the already-committed manuscript tables and figures. Every
+  term is spelled out in full (no "EMB"/"D&C"/"CMS"-style abbreviations), each content slide carries
+  a small reference-number footer naming exactly which of the manuscript's 19 numbered references its
+  claims draw on, and every slide has a speaker-notes talking-points script. No author/institution
+  names, matching the manuscript's own double-anonymized-review convention.
+- `data/gyn_onc_fellowship_programs_freida.csv`: all 75 ACGME-accredited gynecologic oncology
+  fellowship programs currently listed in AMA's FREIDA directory, retrieved directly 2026-09-28.
+- `data/gyn_onc_hospital_payer_rates.csv`: Medicare-proxy and commercial payer rate ranges for CPT
+  58100/88305/58120/99213 and colonoscopy (45378/G0105), pulled from 74 of those 75 hospitals' own
+  CMS price-transparency machine-readable files (one row per hospital x code, 414 rows total; see
+  `docs/data_sources.md` "Hospital payer-rate sample expansion" for the method, confidence-column
+  definitions, and the 7 hospitals that returned no usable data and why). Standalone -- like the
+  existing six-hospital `colonoscopy_multi_hospital_rates.csv`, this does not feed
+  `config/model_parameters.csv` or the base-case cost engine.
+- `docs/data_sources.md`: new "Hospital payer-rate sample expansion" section; the six-hospital
+  colonoscopy section's "not yet pursued" note is marked superseded and points to it.
+
+### Fixed
+- `manuscript/manuscript.qmd` line 264: a stale in-text citation marker (`^5-7^`, left over from the
+  2026-09-12 reference-renumbering pass) corrected to `^2-4^`, the actual position of the three
+  Lynch-specific failure-rate cohort studies after that renumbering. Re-verified by re-running the
+  manuscript's own first-appearance citation-order audit (sequence is exactly 1, 2, 3, ..., 19).
+
 ## 2026-09-13 (a tested refresh step for the payer multipliers)
 
 ### Added

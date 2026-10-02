@@ -3,6 +3,26 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-01 (a slide deck, and a much bigger real-hospital pricing sample)
+
+Two additions. First, a PowerPoint summary of the whole study
+(`manuscript/manuscript_slides.pptx`), built straight from the manuscript's own committed tables and
+figures rather than retyped by hand, so it stays in sync and carries the same reference citations.
+
+Second, a much larger real-world check on hospital pricing than the six hospitals used so far: all 75
+hospitals that train gynecologic oncologists (the clinicians who actually perform the surveillance
+this model prices), via AMA's FREIDA directory of fellowship programs. 74 of the 75 were reachable;
+41 returned usable payer rates for every procedure code in the model, 26 for some codes, and 7
+returned nothing -- for reasons ranging from a hospital's file genuinely containing no payer-negotiated
+rates, to a few sites blocking automated access outright, to one hospital (Walter Reed) being a
+federal facility that's legally exempt from publishing this data at all. Where the same hospital
+appeared in both the old six-hospital sample and this new one (UCHealth University of Colorado), the
+two independently-pulled Medicare rates matched exactly.
+
+This data doesn't change any number in the base-case model -- it's a standalone sanity check on the
+Medicaid/commercial payer multipliers already in use, not a replacement for them. See
+`docs/data_sources.md` for what it found and its limits.
+
 ## 2026-09-13 (what Medicaid and commercial insurers actually pay, measured)
 
 The Medicaid and commercial scenarios used to rest on two round guesses: Medicaid pays 0.70x Medicare

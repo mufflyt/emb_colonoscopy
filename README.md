@@ -235,15 +235,21 @@ emb_colonoscopy/
                    comparison, deterministic + probabilistic sensitivity, threshold
                    analysis, scenarios, geographic sensitivity, diagnostic yield,
                    plotting, tables
-  analysis/        twelve numbered scripts: base case, deterministic sensitivity,
+  analysis/        eighteen numbered scripts: base case, deterministic sensitivity,
                    probabilistic sensitivity, threshold analysis, scenario analysis,
                    evidence layers, manuscript outputs, colonoscopy setting,
-                   geographic sensitivity, decision-tree figure, manuscript table,
-                   independent PSA verification
+                   geographic sensitivity, decision-tree figure, manuscript tables,
+                   independent PSA verification, diagnostic yield, societal
+                   perspective, cost-effectiveness, colonoscopy opportunity cost,
+                   payer-multiplier refresh, manuscript slide deck
   config/          config/model_parameters.csv -- the single source of truth for every
                    model input
-  data/            data/cpi_medical_care.csv (inflation index), plus real CMS GPCI and
-                   PFS RVU data used by the geographic sensitivity analysis
+  data/            data/cpi_medical_care.csv (inflation index), real CMS GPCI and PFS
+                   RVU data used by the geographic sensitivity analysis,
+                   colonoscopy_multi_hospital_rates.csv (6-hospital real-MRF sample),
+                   gyn_onc_fellowship_programs_freida.csv and
+                   gyn_onc_hospital_payer_rates.csv (74-hospital real-MRF sample --
+                   see docs/data_sources.md)
   data-raw/        instructions for replacing the placeholder price-index value
                    (deliberately not wired to fetch data automatically)
   tests/           testthat unit and model-identity tests (Rscript tests/testthat.R)
@@ -284,6 +290,7 @@ Rscript analysis/07_manuscript_outputs.R         # consolidated Tables 1-9
 Rscript analysis/11_manuscript_table10_summary.R # base-case + PSA clinical-outcome summary table
 Rscript analysis/12_independent_psa_verification.R # re-derives PSA clinical-outcome claims without calling model code
 HPT_PRICES_COMMIT=<sha> Rscript analysis/17_refresh_payer_multipliers.R  # copy hpt_prices payer ratios into the payer_multiplier_* rows (DRY_RUN=true to preview)
+Rscript analysis/18_manuscript_slides.R          # builds manuscript/manuscript_slides.pptx from the committed tables/figures
 ```
 
 Every script logs its inputs, major transformations, and exact output file paths via
@@ -473,6 +480,12 @@ satisfying each item, not just a section name). Render any of them with
 `quarto render manuscript/<file>.qmd`. See `docs/CHEERS_2022_checklist.md` for the detailed
 internal audit behind the checklist and `docs/manuscript_methods_results.md` for the Methods/
 Results drafting notes.
+
+`manuscript/manuscript_slides.pptx` (and a Keynote copy, `manuscript_slides.key`) is a slide
+summary of the study for presentation, built by `analysis/18_manuscript_slides.R` directly from the
+manuscript's own committed tables and figures, with per-slide reference footers and speaker notes.
+Re-run the script after any change to the manuscript tables to keep the deck in sync; it does not
+regenerate the tables/figures themselves.
 
 ## Where this repository's methodology came from
 

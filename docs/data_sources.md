@@ -1046,6 +1046,132 @@ step if the sample needs to grow further, not pursued here given
 diminishing marginal value at six real, geographically diverse
 hospitals already in hand.
 
+**SUPERSEDED (2026-10-01): the sample was grown far beyond six
+hospitals.** See "Hospital payer-rate sample expansion" below for a
+74-hospital version of this same kind of real-hospital-MRF data,
+covering the model's four non-colonoscopy codes in addition to
+colonoscopy. That larger pull was built independently (different
+hospital-selection method, different extraction runs) rather than by
+continuing this six-hospital list, so the two datasets are not simply
+nested -- see that section for how they relate and do and do not
+cross-check each other.
+
+## Hospital payer-rate sample expansion: `data/gyn_onc_hospital_payer_rates.csv` (2026-10-01)
+
+**Purpose.** The six-hospital `colonoscopy_multi_hospital_rates.csv`
+sample above was convenience-selected (whichever hospitals' `cms-hpt.txt`
+files were found first) and covers only the colonoscopy code. This
+later pull instead samples hospitals by a criterion relevant to this
+study's actual population -- institutions that train gynecologic
+oncologists, i.e., where Lynch-syndrome surveillance of the kind this
+model prices is actually practiced -- and covers all five of the
+model's procedure codes (office endometrial biopsy 58100, pathology
+88305, D&C professional fee 58120, office visit E&M 99213, and
+colonoscopy as 45378/G0105), not just colonoscopy.
+
+**Like the six-hospital sample above, this data does not feed the
+base-case cost engine or `config/model_parameters.csv`.** It is a
+standalone, broader real-world check on the Medicaid/commercial payer
+multipliers currently sourced from Trilliant Health (see "Payer-to-
+Medicare multipliers" below), not a replacement for them -- Trilliant's
+multipliers remain what the `medicaid`/`commercial` scenarios actually
+use.
+
+**Hospital sampling frame: `data/gyn_onc_fellowship_programs_freida.csv`.**
+All 75 ACGME-accredited gynecologic oncology fellowship programs
+currently listed in the AMA's FREIDA directory
+(`freida.ama-assn.org`, specialty code 42941), retrieved directly via
+browser on 2026-09-28 (program name, host city/state, one row each).
+Each program's primary teaching hospital was then identified (by name
+where unambiguous, otherwise by a short web search confirming which
+hospital the program's clinical training actually occurs at -- e.g.,
+the University of Tennessee Health Science Center's program trains at
+Regional One Health in Memphis, not at a hospital named "University of
+Tennessee"). One row in the FREIDA file (`University of South Florida
+Morsani Program`, mislabeled with a Birmingham, AL city by FREIDA
+itself) was excluded as a duplicate: USF's actual program already
+appears twice under its real affiliated hospitals (Moffitt Cancer
+Center and Tampa General Hospital), both pursued.
+
+**Extraction method, per hospital.** Same underlying mechanism as the
+six-hospital sample: each hospital's own CMS Hospital Price
+Transparency machine-readable file (discovered via `<domain>/cms-
+hpt.txt` or the hospital's own billing-transparency page), parsed
+directly for the five target codes. Given the scale (74 hospitals
+attempted), this was run as a set of independent automated per-hospital
+research passes rather than by hand; each pass's own stated access
+date, source URL, and method caveats are preserved per row in the CSV
+(`source_url`, `access_date`, `notes` columns) rather than written out
+as prose here, since a 74-hospital prose citation trail in the style of
+the six-hospital list above would not be load-bearing -- the CSV's own
+columns are the citation trail for this dataset.
+
+**What every row reports and does not report.** Columns: `hospital`,
+`state`, `cpt_code`, `cpt_description`, `rate_basis` (facility vs.
+professional billing class, where the source file distinguished them),
+`medicare_proxy_type` (`FFS` when a true traditional-Medicare row
+existed in the hospital's own file -- rare -- otherwise `MA` for
+Medicare Advantage, which is what most hospitals publish instead),
+`medicare_proxy_low`/`_high`, `medicare_confidence`, `commercial_low`/
+`_high`, `commercial_n_payers`, `commercial_confidence`, `notes`,
+`source_url`, `access_date`. `medicare_confidence` and
+`commercial_confidence` take the values `high`/`medium_high`/`medium`/
+`low_medium`/`low` (real data, confidence reflects payer-count,
+internal consistency, and whether claims-volume fields confirmed real
+utilization) or `not_found`/`inconclusive`/`not_applicable` (no usable
+rate; see `notes` for why). Low/high bounds are the range across the
+named payers actually found for that code at that hospital after
+excluding rows each pass flagged as non-real -- most commonly: rates
+identical to the chargemaster gross charge (a common MRF default/
+placeholder pattern), rates explicitly marked with zero real claims in
+the trailing 12-15 months, rates that recur identically across
+clinically unrelated codes (evidence of a shared bundled/case-rate
+contract rather than code-specific pricing), and payer names that look
+commercial or look like a specific government program but are
+confirmed (from the plan name or file context) to actually be a
+Medicare Advantage or Medicaid managed-care product.
+
+**Coverage, as of the 2026-10-01 pull: 74 of the 75 hospitals
+attempted** (one excluded as a duplicate, see above). Of those 74:
+41 returned usable data for every one of the five codes; 26 returned
+usable data for some codes (the rest genuinely absent from that
+hospital's file, or not reached within that pass's file-size budget);
+7 returned no usable data at all. Of those 7: Johns Hopkins Hospital's
+file publishes these codes only as chargemaster gross/cash lines with
+no payer-negotiated rate at all (confirmed, not a search failure);
+Mayo Clinic Hospital Rochester's file is 13.35 GB and was 63% scanned
+with zero matches (as conclusive as a partial scan of a file this size
+gets); Mount Sinai Hospital, Tufts Medical Center, University of
+Washington Medical Center, and IU Health University Hospital all sit
+behind bot-protection that survived multiple access strategies
+(including, for two of them, a Wayback Machine fallback); and Walter
+Reed National Military Medical Center is a federal military treatment
+facility, exempt from the CMS price-transparency rule under 45 CFR
+180, so no MRF exists for it to find -- a structural non-finding, not
+a failed search.
+
+**One cross-check against the six-hospital sample above.** UCHealth
+University of Colorado Hospital appears in both datasets, pulled
+independently (different pass, different date). The two Medicare rates
+for G0105 agree exactly ($916.25), which is a modest but real
+independent confirmation that both pulls are reading the same
+underlying hospital-published number correctly.
+
+**Known data-quality issues surfaced repeatedly across hospitals,
+worth flagging for anyone using this dataset downstream (beyond the
+per-row `notes` already documenting them):** several hospitals' files
+mislabel a Medicaid managed-care plan's ACA-exchange product as
+generically "Commercial" (the exchange product itself is commercial,
+but the payer's core identity is a state Medicaid MCO, worth knowing if
+classifying by payer brand); duplicate chargemaster lines mapping the
+same CPT code to different gross charges and different negotiated
+rates are common enough that no single hospital-level "the commercial
+rate" exists for some codes without picking a specific line; and files
+over roughly 1-2 GB could only be partially scanned within each
+pass's file-size/time budget, so a `not_found`/`inconclusive` result
+for a large hospital's file should not be read as that hospital
+genuinely omitting the code.
+
 ## What should not be conflated
 
 - **Medicare reimbursement, hospital cost, and charges are conceptually distinct**, per the user's
