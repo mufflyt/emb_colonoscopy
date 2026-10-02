@@ -1,0 +1,92 @@
+---
+title: "Running the Base-Case Model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Running the Base-Case Model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+This repository is a collection of sourced `R/` files rather than an installed package
+(see `R/00_source_all.R`'s own docblock) -- there is no `DESCRIPTION`, so this vignette
+cannot be built with `devtools::build_vignettes()` the way a real package's vignettes
+would be. It is written in the standard R-package vignette format anyway (YAML
+`vignette:` block, knittable code chunks) so it reads the same way, and it knits
+directly with `rmarkdown::render("vignettes/running-the-base-case.Rmd")` from the
+repository root. The narrative, non-code walkthrough of the same material lives in
+`docs/vignettes/01_running_the_base_case.md`, if you'd rather read it without running R.
+
+## Load every model function
+
+```{r setup}
+source("R/00_source_all.R")
+```
+
+## Load the parameter table and the price index
+
+Every dollar figure and every probability this model uses comes from one CSV --
+`config/model_parameters.csv` -- not from anything hardcoded in `R/`.
+
+```{r load-parameters}
+model_parameters <- load_model_parameters("config/model_parameters.csv")
+price_index_table <- load_price_index_table("data/cpi_medical_care.csv")
+
+nrow(model_parameters)
+table(model_parameters$evidence_tier)
+```
+
+## Compute the three strategies' costs
+
+```{r compute-strategies}
+strategy_result <- compute_strategy_costs(model_parameters, price_index_table)
+strategy_result$strategy_costs
+```
+
+`strategy_result$cost_components` has the same result broken into line items
+(professional fee, pathology, anesthesia, facility fee) instead of one total per
+strategy:
+
+```{r cost-components}
+strategy_result$cost_components
+```
+
+## Compare the strategies
+
+```{r compare}
+strategy_comparison <- compare_strategies_to_cheapest(strategy_result$strategy_costs)
+strategy_comparison
+
+combined_vs_office <- compare_combined_vs_office(strategy_result$strategy_costs)
+combined_vs_office
+```
+
+## The threshold question and the auto-generated summary sentence
+
+```{r threshold-and-sentence}
+threshold_estimates <- run_threshold_analyses(model_parameters, price_index_table)
+
+summary_sentence <- build_summary_sentence(
+  strategy_comparison, combined_vs_office, threshold_estimates
+)
+cat(summary_sentence)
+```
+
+This is the exact sentence `analysis/01_base_case.R` writes to
+`tables/summary_sentence.txt` and that `README.md`'s "What the base case currently
+shows" section quotes -- generated from live model output here, not copied. If you
+change a parameter in `config/model_parameters.csv` and re-knit this vignette, this
+sentence changes with it.
+
+## Where to go next
+
+- `vignettes/evidence-tiers-and-sensitivity.Rmd` -- how sure is each input, and how much
+  does the result move when you vary it
+- `docs/clinical_coding_reference.md` -- which CPT/HCPCS code backs each cost parameter
+  used above
+- `docs/resident_onboarding.md` -- a plain-language start-here guide if this is your
+  first time in this repository

@@ -1,0 +1,111 @@
+---
+title: "Adding a New Hospital's Payer-Rate Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Adding a New Hospital's Payer-Rate Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+Like the other vignettes here, this file knits directly --
+`rmarkdown::render("vignettes/adding-a-hospital-payer-rate.Rmd")` from the repository
+root -- since this repository has no `DESCRIPTION` and is not built as an installed
+package. The step-by-step *data-collection* process (finding a hospital's machine-readable
+file, downloading it, flagging data-quality issues) is not itself R code and is covered
+in full in `docs/vignettes/02_adding_a_new_hospital_payer_rate.md`; this vignette covers
+the one part of that process that *is* real, executable R: loading the resulting table
+with its enforced schema, and seeing exactly how a new row changes a real downstream
+calculation.
+
+```{r setup}
+source("R/00_source_all.R")
+model_parameters <- load_model_parameters("config/model_parameters.csv")
+```
+
+## The real 6-hospital table this model actually uses
+
+`data/colonoscopy_multi_hospital_rates.csv` is the one hospital-rate table wired into an
+R function -- `load_colonoscopy_hospital_rates_table()` reads it with an explicit
+`col_types` spec, so a malformed or missing column fails loudly at load time rather than
+silently producing `NA`s downstream.
+
+```{r load-rates}
+rates_table <- load_colonoscopy_hospital_rates_table()
+rates_table
+```
+
+(The larger, 74-hospital `data/gyn_onc_hospital_payer_rates.csv` FREIDA-fellowship sample
+is a standalone reference dataset with no R loader of its own -- it does not feed any
+function in `R/`. See `docs/data_sources.md` and
+`docs/vignettes/02_adding_a_new_hospital_payer_rate.md` for that dataset's own method.)
+
+## What a new row actually feeds
+
+```{r opportunity-cost}
+opportunity_cost_bound <- compute_colonoscopy_opportunity_cost_bound(
+  model_parameters, rates_table
+)
+opportunity_cost_bound
+```
+
+`opportunity_cost_ceiling` is the commercial-margin-based bound on what displacing a
+colonoscopy-suite slot for a combined-EMB add-on could reasonably cost, at each real
+hospital. This is the number a new hospital's row would actually change.
+
+## Demonstration only: adding a hypothetical row
+
+The row below is a made-up illustration, not real hospital data -- it exists only to show
+the mechanics of adding a row and is never written to any file. A real addition must come
+from an actual CMS price-transparency machine-readable file, with its own `source`
+citation and confidence flags, exactly as every other row in this table does.
+
+```{r demo-row}
+demo_row <- tibble::tibble(
+  state_abbr = "XX",
+  hospital = "Example Hospital (demonstration only, not real data)",
+  medicare_rate = rates_table$medicare_rate[1],
+  commercial_mean_rate = rates_table$commercial_mean_rate[1] * 1.1,
+  medicare_confidence = "not_applicable",
+  commercial_confidence = "not_applicable",
+  notes = "Synthetic row for vignette demonstration only -- never a real data point.",
+  commercial_to_medicare_ratio = NA_real_,
+  source = "vignette demonstration, not a real source"
+)
+
+rates_table_demo <- dplyr::bind_rows(rates_table, demo_row)
+
+compute_colonoscopy_opportunity_cost_bound(model_parameters, rates_table_demo) %>%
+  dplyr::filter(.data$hospital == demo_row$hospital)
+```
+
+That is the entire mechanism: a correctly-schemad row flows straight into
+`compute_colonoscopy_opportunity_cost_bound()` with no code changes required. The real
+work in adding a hospital is never the R code -- it is finding, downloading, and honestly
+flagging the confidence of the underlying rate, which is why
+`docs/vignettes/02_adding_a_new_hospital_payer_rate.md` spends almost all of its length on
+that part instead of this one.
+
+## Schema check worth running on any new row before committing it
+
+```{r schema-check}
+allowed_confidence <- c(
+  "high", "medium_high", "medium", "low_medium", "low",
+  "not_found", "inconclusive", "not_applicable"
+)
+
+rates_table %>%
+  dplyr::filter(
+    !.data$medicare_confidence %in% allowed_confidence |
+      !.data$commercial_confidence %in% allowed_confidence
+  )
+```
+
+An empty result (as above) means every row's confidence flags are in the allowed set --
+run this same check against any new row before adding it, since a typo'd confidence
+value (e.g. `"medim"` instead of `"medium"`) will not raise an error on its own, only
+silently fail to mean anything downstream.

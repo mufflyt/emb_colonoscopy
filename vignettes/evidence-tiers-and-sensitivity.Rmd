@@ -1,0 +1,118 @@
+---
+title: "Evidence Tiers and Sensitivity Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Evidence Tiers and Sensitivity Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+As with the other vignettes in this directory, this repository is not an installed
+package (no `DESCRIPTION`), so this file is knit directly --
+`rmarkdown::render("vignettes/evidence-tiers-and-sensitivity.Rmd")` from the repository
+root -- rather than built by `devtools::build_vignettes()`. The non-code narrative
+covering the same ground is `docs/vignettes/03_interpreting_evidence_tiers_and_sensitivity.md`.
+
+```{r setup}
+source("R/00_source_all.R")
+model_parameters <- load_model_parameters("config/model_parameters.csv")
+price_index_table <- load_price_index_table("data/cpi_medical_care.csv")
+```
+
+## Evidence tiers: how sure is each input?
+
+Every parameter carries an `evidence_tier`: `A` (Lynch-specific direct data), `B`
+(contemporary U.S. public cost/reimbursement data), `C` (general/adjacent-population
+literature), `D` (provisional placeholder), or `structural` (an analysis convention, not
+an evidence claim).
+
+```{r evidence-tiers}
+summarize_evidence_tiers(model_parameters)
+```
+
+A tier is not a verdict on whether a number is usable -- it is a label on where the
+number came from. Look at one tier-A parameter's full sourcing:
+
+```{r one-parameter}
+model_parameters %>%
+  dplyr::filter(.data$parameter == "emb_failure_lynch") %>%
+  dplyr::select(parameter, base_value, low_value, high_value, evidence_tier, source)
+```
+
+## Deterministic one-way sensitivity: which single parameter matters most?
+
+Each of these parameters is varied alone, between its low and high bound, with every
+other parameter held at its base value.
+
+```{r one-way}
+key_parameters <- c(
+  "emb_office_professional_cost",
+  "emb_failure_lynch",
+  "combined_to_dnc_probability",
+  "combined_emb_added_minutes",
+  "direct_room_cost_per_minute",
+  "anesthesia_cost_per_minute",
+  "emb_pathology_cost",
+  "dnc_facility_or_asc_fee",
+  "coordination_cost",
+  "emb_disposable_supply_cost"
+)
+
+sensitivity_estimates <- run_one_way_sensitivity(
+  model_parameters,
+  parameter_names = key_parameters,
+  price_index_table = price_index_table
+)
+
+sensitivity_estimates %>%
+  dplyr::arrange(dplyr::desc(.data$spread)) %>%
+  dplyr::select(parameter, metric_at_low, metric_at_base, metric_at_high, spread)
+```
+
+The `spread` column is the tornado-bar length -- the widest row is the single parameter
+this model's conclusion is most sensitive to. `figures/figure2_tornado.jpeg` is this
+same table as a chart.
+
+## Probabilistic sensitivity: how often does each strategy win when everything varies at once?
+
+The committed `figures/figure4_psa_incremental_cost.jpeg` and
+`tables/probabilistic_sensitivity_*.csv` files use 1,000 simulations; this vignette uses
+200 so it knits quickly -- the mechanism is identical, just fewer draws.
+
+```{r psa}
+set.seed(1)
+probabilistic_estimates <- run_probabilistic_sensitivity(
+  model_parameters,
+  price_index_table = price_index_table,
+  n_simulations = 200
+)
+
+probability_cheapest <- summarize_probability_cheapest(probabilistic_estimates)
+probability_cheapest
+```
+
+## Reading the two together
+
+A parameter can be well-sourced (tier A) and still have a wide low/high range, if the
+underlying studies disagreed with each other -- that is honest uncertainty, not a
+documentation gap. A parameter can be a tier-D placeholder and still barely move the
+tornado plot, in which case its missing source is a lower priority to fix than a tier-C
+parameter that *does* produce a wide bar. Cross-reference the tier table above against
+the `spread` column above to find out, right now, which of this model's least-sourced
+parameters would most reward a better source:
+
+```{r cross-reference}
+model_parameters %>%
+  dplyr::filter(.data$parameter %in% key_parameters) %>%
+  dplyr::select(parameter, evidence_tier) %>%
+  dplyr::left_join(
+    sensitivity_estimates %>% dplyr::select(parameter, spread),
+    by = "parameter"
+  ) %>%
+  dplyr::arrange(dplyr::desc(.data$spread))
+```

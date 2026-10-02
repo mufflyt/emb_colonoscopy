@@ -3,6 +3,30 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-10-02 (the vignettes, now also as runnable R Markdown)
+
+The same three vignette topics added earlier today -- running the base case, adding a
+hospital's pricing data, and reading the evidence-tier/sensitivity results together -- are
+now also available as `vignettes/*.Rmd`, written the way a real R package's vignettes are
+written: real code that actually runs the model and prints its real output, not just
+prose describing what running it would show. This repository still isn't a formal
+installed package (no `DESCRIPTION` file), so these are knit by hand with
+`rmarkdown::render()` rather than through `devtools::build_vignettes()`, but they read and
+behave the same way. Along the way, a small latent bug was found and fixed in the
+shared script-loading code (`R/00_source_all.R`) that only showed up when sourcing from
+inside a knitted document -- it's fixed now and doesn't change behavior anywhere else.
+
+## 2026-10-02 (a start-here guide for a new resident)
+
+One more documentation addition: `docs/resident_onboarding.md`, written for someone clinically
+trained but new to this repository and to decision-analytic modeling generally. It walks through
+setting the project up, running the base case yourself, reading the parameter table (especially the
+"how sure are we about this number" column), seeing how a number turns into the headline result, and
+what the three different stress-tests of that result actually check. It ends with a quick-lookup
+table ("if someone asks you X, go read Y"), a short glossary of terms used throughout this project's
+documentation, and a handful of ground rules worth knowing before changing anything. No model numbers
+changed.
+
 ## 2026-10-02 (sorting out the figure numbers, and a dictionary for every table)
 
 Two more documentation-only additions. This repository had quietly ended up with three

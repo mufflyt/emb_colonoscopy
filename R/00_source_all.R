@@ -33,8 +33,15 @@ suppressPackageStartupMessages({
   library(dplyr)
 })
 
-r_directory <- base::dirname(
-  tryCatch(base::sys.frame(1)$ofile, error = function(e) "R/00_source_all.R")
+r_directory <- tryCatch(
+  {
+    ofile <- base::sys.frame(1)$ofile
+    if (base::is.null(ofile)) {
+      base::stop("ofile not available in this execution context")
+    }
+    base::dirname(ofile)
+  },
+  error = function(e) "R"
 )
 if (base::is.null(r_directory) || r_directory == "") {
   r_directory <- "R"

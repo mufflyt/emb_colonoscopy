@@ -5,6 +5,46 @@ All notable changes to this project are documented here. Format loosely follows
 semantic version numbers (there is no `DESCRIPTION`/package version), so entries are
 grouped by date.
 
+## 2026-10-02 (R-package-style knittable vignettes)
+
+### Added
+- `vignettes/running-the-base-case.Rmd`, `vignettes/evidence-tiers-and-sensitivity.Rmd`,
+  `vignettes/adding-a-hospital-payer-rate.Rmd`: the same three topics as
+  `docs/vignettes/*.md`, rewritten as knittable R Markdown in the standard R-package
+  vignette format (YAML `vignette:` block with `\VignetteIndexEntry`/`\VignetteEngine`/
+  `\VignetteEncoding`), with real executable code -- `source("R/00_source_all.R")`,
+  `compute_strategy_costs()`, `run_one_way_sensitivity()`, `run_probabilistic_sensitivity()`,
+  `compute_colonoscopy_opportunity_cost_bound()` -- rather than static prose. Each knits
+  directly via `rmarkdown::render()` from the repository root; there is no `DESCRIPTION`,
+  so `devtools::build_vignettes()` does not apply (noted in each vignette's own text). All
+  three were rendered successfully end to end before committing.
+- `.gitignore`: ignore `vignettes/*.html` and `vignettes/*.R` (knitted/purled build
+  output; only the `.Rmd` source is tracked).
+
+### Fixed
+- `R/00_source_all.R`: the `r_directory` path-detection fallback only triggered on an
+  *error* from `sys.frame(1)$ofile`, not on an `ofile` that resolves to `NULL` without
+  erroring (the case inside a knitr/`evaluate()` chunk) -- `base::dirname(NULL)` then
+  threw `"a character vector argument expected"` before the existing `is.null(r_directory)`
+  fallback check could ever run. Moved the null check inside the `tryCatch` so the
+  existing `"R"` fallback is reached in both cases. No change to behavior when `ofile`
+  resolves normally (every `analysis/*.R` script and `tests/testthat.R`, confirmed still
+  all-green).
+
+## 2026-10-02 (resident onboarding guide)
+
+### Added
+- `docs/resident_onboarding.md`: a guided walkthrough for a clinically-trained reader with little
+  or no R/health-economics background, aimed at a resident picking up this repository for the first
+  time. Covers: the clinical question in plain language (pointing back to README rather than
+  duplicating it), a step-by-step setup-and-run sequence, how to read `config/model_parameters.csv`
+  and its `evidence_tier` column, how a parameter flows into `R/strategy_costs.R`'s per-strategy cost
+  functions, the three sensitivity analyses and what each one answers, a "if someone asks you X, go
+  to Y" lookup table spanning the existing `docs/` files, a plain-English glossary of terms used
+  throughout this repository's documentation, and a short list of ground rules (never hand-type a
+  number, never average facility/nonfacility rates, always verify rather than recall, always run the
+  test suite before and after a change). Linked first in README's Documentation index.
+
 ## 2026-10-02 (figures reference and a full tables/data dictionary)
 
 ### Added

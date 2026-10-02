@@ -261,7 +261,11 @@ emb_colonoscopy/
   docs/            reuse mapping, data source provenance, methods notes, validation
                    notes, CHEERS 2022 audit, testing philosophy, appendix,
                    clinical coding reference (CPT/HCPCS/ICD-10 + Mermaid diagrams),
+                   resident onboarding guide, figures reference, tables dictionary,
                    vignettes/ (narrative walkthroughs)
+  vignettes/       the same three vignette topics as knittable R Markdown, in
+                   standard R-package vignette format (no DESCRIPTION/installed
+                   package -- render directly with rmarkdown::render())
 ```
 
 ## Quick start
@@ -499,6 +503,9 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 
 ## Documentation
 
+- [`docs/resident_onboarding.md`](docs/resident_onboarding.md) -- start here if you're new: a
+  guided walkthrough (setup, running the base case, reading the parameter table, the three
+  sensitivity analyses, a glossary, and a "where do I find the answer to X" lookup table)
 - [`CHANGELOG.md`](CHANGELOG.md) -- exhaustive technical log of every addition, change, fix, and removal
 - [`NEWS.md`](NEWS.md) -- the same history, user-facing highlights only
 - [`docs/appendix.md`](docs/appendix.md) -- documentation index, bug-reproduction record, CI workflow
@@ -523,6 +530,11 @@ for the full component-by-component mapping of what was reused, adapted, or newl
 - [`docs/vignettes/`](docs/vignettes/) -- three narrative walkthroughs: running the base case end to end,
   adding a new hospital's payer-rate data, and interpreting evidence tiers alongside the three
   sensitivity analyses
+- [`vignettes/`](vignettes/) -- the same three topics as knittable R Markdown, written in the
+  standard R-package vignette format (even though this repository has no `DESCRIPTION` and is not
+  built as an installed package -- see `R/00_source_all.R`'s own docblock). Render with
+  `rmarkdown::render("vignettes/<name>.Rmd")` from the repository root to see the real,
+  live-executed output of each step.
 
 Every blocking test in `tests/testthat/` is required to be proven to fail on a
 planted defect and pass when reverted, and any finding capable of changing the

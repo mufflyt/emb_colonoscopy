@@ -6,6 +6,11 @@
 renv/
 tmp/
 
+# Knitted vignette output -- only the .Rmd source is tracked; render with
+# rmarkdown::render("vignettes/<name>.Rmd") from the repository root.
+vignettes/*.html
+vignettes/*.R
+
 # Downloaded copies of the journal articles this model's parameters cite.
 # This is a public repository -- publisher-copyrighted PDFs must not be
 # redistributed here. Kept locally for the author's own reference; every
