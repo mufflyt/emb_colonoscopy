@@ -128,7 +128,7 @@ resolve this" below.
 **Partially wired in, as of 2026-09-01.** `compute_dnc_strategy_cost()`'s `expected_total_cost` now
 includes `adverse_event_cost_partial_perforation_only` -- the sourced portion of this table only
 (observation, $0; laparoscopy-only, $6,492.30), weighted by `dnc_perforation_probability`. This
-raised the D&C base-case cost from $3,827.04 to $3,839.81 (+$12.77), with a small pass-through
+raised the D&C base-case cost from $3,810.02 to $3,822.79 (+$12.77), with a small pass-through
 increase to the office and combined arms via their escalation-cost terms. Every nonzero term in that
 partial component has a traceable source (see `config/model_parameters.csv`'s
 `dnc_perforation_management_observation_fraction`, `dnc_perforation_management_laparoscopy_only_fraction`,

@@ -661,8 +661,10 @@ underlying data cited from them (`emb_failure_lynch`'s pooled 5/25 and
 this reference list was wrong, most likely from an earlier drafting
 pass that generated a plausible-sounding title without checking it
 against the source. Reference 8 (Yi et al.)'s author list was also
-found wrong ("Yi Y, Lu Y, Wu J") and corrected to "Yi Y, Yi Y, Bryce
-CL, et al." (the real author list per PMID 29747864); its title,
+found wrong ("Yi Y, Lu Y, Wu J"). A first correction pass replaced it
+with "Yi Y, Yi Y, Bryce CL, et al.", which duplicated the first author;
+corrected again 2026-11-06 to the full real list per PMID 29747864,
+"Yi Y, Bryce CL, Adambekov S, Edwards RP, Goughnour SL, Linkov F". Its title,
 journal, year, volume, and pages were already correct. Adding the three
 missing citations to the Introduction (textually before references
 2-4, the CMS Physician Fee Schedule/OPPS/Ben-Baruch citations in
@@ -702,10 +704,10 @@ independent, direct verification, not a manual read-through. -->
    Accessed August 31, 2026.
 7. Ben-Baruch G, Menczer J, Frenkel Y, Serr DM. Laparoscopy in the
    management of uterine perforation. J Reprod Med 1982;27:73-76.
-8. Yi Y, Yi Y, Bryce CL, et al. Cost-effectiveness analysis of biopsy
-   strategies for endometrial cancer diagnosis in women with postmenopausal
-   bleeding: Pipelle sampling curette versus dilatation & curettage. Gynecol
-   Oncol 2018;150:112-118.
+8. Yi Y, Bryce CL, Adambekov S, Edwards RP, Goughnour SL, Linkov F.
+   Cost-effectiveness analysis of biopsy strategies for endometrial cancer
+   diagnosis in women with postmenopausal bleeding: Pipelle sampling curette
+   versus dilatation & curettage. Gynecol Oncol 2018;150:112-118.
 9. Kandil D, Yang X, Stockl T, Liu Y. Clinical outcomes of patients with
    insufficient sample from endometrial biopsy or curettage. Int J Gynecol
    Pathol 2014;33(5):500-506.
