@@ -164,18 +164,18 @@ calls the function that originally produced it, before being treated as establis
 
 ### Base case
 
-In the base case, combined EMB cost an estimated **$506.11** per patient, compared with **$749.18**
-for standalone office EMB and **$3,839.81** for operative D&C (Table 3, Figure 1). Combined EMB was
-**$243.06 (32.4%)** less expensive than office EMB, and both office-based strategies were substantially
+In the base case, combined EMB cost an estimated **$485.11** per patient, compared with **$727.48**
+for standalone office EMB and **$3,822.79** for operative D&C (Table 3, Figure 1). Combined EMB was
+**$242.36 (33.3%)** less expensive than office EMB, and both office-based strategies were substantially
 less expensive than D&C, which was dominated by both alternatives at every facility fee tested,
 including a facility fee of $0 (i.e., D&C's professional fee, pathology, preoperative visit, and
 anesthesia costs alone already exceed either office-based strategy's total cost).
 
 Cost components (Table 2) show the combined arm's cost is driven primarily by the facility-setting EMB
-professional fee ($60.05), incremental procedure-room time ($143.67 for 5 minutes at the marginal
-per-minute rate), pathology ($70.14), and a required separate preoperative office visit ($88.76, per
+professional fee ($60.05), incremental procedure-room time ($142.55 for 5 minutes at the marginal
+per-minute rate), pathology ($50.75), and a required separate preoperative office visit ($88.76, per
 the model owner's confirmed clinical practice). The office arm's cost is driven by its office visit
-($88.76), professional fee ($97.03), and pathology ($70.14), plus an escalation-weighted contribution
+($88.76), professional fee ($97.03), and pathology ($50.75), plus an escalation-weighted contribution
 from the 13.3% probability of a failed attempt -- now split, as of 2026-09-02, between a repeat office
 attempt (5% of failures, succeeding 75% of the time) and direct D&C escalation (see "Office repeat-attempt
 structure" below).
@@ -183,19 +183,19 @@ structure" below).
 ### Deterministic sensitivity
 
 The combined-vs-office cost difference was most sensitive to the office EMB failure probability
-(`emb_failure_lynch`, range: -$131.80 to -$491.54 across its 10.3%-20.0% bound) and the combined arm's
-incremental added minutes (`combined_emb_added_minutes`, range: -$376.80 to -$9.01 across its
+(`emb_failure_lynch`, range: -$131.63 to -$489.68 across its 10.3%-20.0% bound) and the combined arm's
+incremental added minutes (`combined_emb_added_minutes`, range: -$375.06 to -$10.14 across its
 observed 1-12 minute range), followed by the D&C facility fee, the combined-arm escalation probability,
 and the per-minute room and anesthesia rates (Table 4, Figure 2). At the upper end of the observed
-added-minutes range (12 minutes), the combined arm's advantage over office EMB narrows to $9.01 but
+added-minutes range (12 minutes), the combined arm's advantage over office EMB narrows to $10.14 but
 does not reverse.
 
 ### Probabilistic sensitivity analysis
 
-Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $539.93 (SD $116.01; 95% range
-$359.33-$794.41) and office EMB a mean cost of $755.70 (SD $119.99; 95% range $544.00-$1025.84) (Table 5).
-Combined EMB was the least expensive strategy in **91.4%** of draws; office EMB was least expensive in
-the remaining 8.6%. D&C was never the least expensive strategy in any of the 1,000 draws. Office EMB's
+Across 1,000 Monte Carlo draws, combined EMB had a mean cost of $518.88 (SD $114.64; 95% range
+$342.53-$769.47) and office EMB a mean cost of $733.14 (SD $119.14; 95% range $522.95-$998.53) (Table 5).
+Combined EMB was the least expensive strategy in **91.8%** of draws; office EMB was least expensive in
+the remaining 8.2%. D&C was never the least expensive strategy in any of the 1,000 draws. Office EMB's
 PSA mean rose noticeably from the pre-repeat-attempt-structure figure despite the base case falling
 slightly -- see "Office repeat-attempt structure" below for why.
 
@@ -211,8 +211,8 @@ tested range ($0-$20,000) caused D&C to stop being dominated by both alternative
 ### Budget impact
 
 At illustrative cohort sizes of 10, 25, 50, 100, and 1,000 patients screened annually, adopting
-combined EMB over standalone office EMB was projected to save $2,431, $6,077, $12,153, $24,306, and
-$243,062 per year, respectively (Table 7).
+combined EMB over standalone office EMB was projected to save $2,424, $6,059, $12,118, $24,236, and
+$242,363 per year, respectively (Table 7).
 
 ### Office repeat-attempt structure (wired in 2026-09-02)
 
@@ -230,7 +230,7 @@ procedure by 12-month follow-up, and that second sample was adequate in 75% of t
 value 0.75; reconstructed 95% CI 70.73%-79.15%, since the abstract reports only rounded percentages,
 not raw counts -- see `config/model_parameters.csv`'s own notes field for the reconstruction
 methodology and its caveats). `compute_office_emb_strategy_cost()` now models: on failure, either a
-repeat office visit (costing the same $255.93 as the initial visit, since it is billed as an
+repeat office visit (costing the same $236.54 as the initial visit, since it is billed as an
 established-patient encounter) that succeeds 75% of the time, or direct escalation to D&C. Relative to
 the pre-repeat-attempt-structure baseline, this lowered the office arm's **base-case** cost
 ($766.62 -> $749.18, since some failures now resolve via a successful repeat instead of always paying
@@ -243,6 +243,15 @@ disciplined range that no longer lets office EMB look artificially cheap in PSA 
 single wide-uncertainty parameter did. Swapping Adambekov (25%) for Kandil (75%) itself moved the
 office-arm base case from $761.94 to $749.18 (since more repeats now succeed, fewer failures pay the
 full D&C cost) and the PSA mean from $759.34 to $755.70.
+
+> **Historical figures (pre-2026-09-12).** The dollar amounts and thresholds in this
+> section record the state of the model at the time of the change described. They predate
+> commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
+> `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
+> figure. They are kept as written, not restated, so the change history stays truthful.
+> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
+> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+
 
 **This also eliminates the office arm's delayed-neoplasia estimate.** Yi et al. 2018's decision tree
 has no branch where a failed repeat attempt is left unresolved -- their own text: "If there is a
@@ -276,10 +285,10 @@ between the two office-based strategies.
 ### Geographic sensitivity
 
 Combined EMB remained the least expensive strategy in all four localities tested (Figure 6). Its
-advantage over office EMB ranged from $195.62 per patient in the low-cost locality (Arkansas) to
-$257.82 in Colorado to $333.44 per patient in the high-cost locality (Manhattan) -- i.e., the
+advantage over office EMB ranged from $194.89 per patient in the low-cost locality (Arkansas) to
+$257.12 in Colorado to $332.78 per patient in the high-cost locality (Manhattan) -- i.e., the
 combined-arm cost advantage widened, rather than narrowed or reversed, at the high-cost extreme. The
-national-locality estimate ($506.11 / $749.18 / $3,839.81 for combined / office / D&C) exactly
+national-locality estimate ($485.11 / $727.48 / $3,822.79 for combined / office / D&C) exactly
 reproduced the base case, confirming the geographic-adjustment methodology introduces no distortion at
 the reference locality.
 

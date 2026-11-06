@@ -5,6 +5,173 @@ All notable changes to this project are documented here. Format loosely follows
 `samevisit` package (`DESCRIPTION`), but this changelog predates that and still groups
 entries by date rather than package version.
 
+## 2026-11-06 (saboteur test suite; eight weeks of stale documentation figures corrected)
+
+### Added
+- `tests/testthat/test-saboteurs.R` (40 assertions): an adversarial suite that attacks the
+  headline finding instead of confirming it. Each test pushes one documented weakness in the
+  base case to an adversarial but *defensible* value and records the outcome, labelled
+  `SURVIVES` (the conclusion holds; the assertion guards it) or `BREAKS` (the conclusion
+  genuinely flips; the assertion pins where). The result survives the full published 1-12
+  minute range for `combined_emb_added_minutes`, the `combined_requires_preop_office_visit`
+  toggle set either way, the 10.3%-20.0% `emb_failure_lynch` bound, a **free** D&C facility,
+  the ASC facility rate, Yi et al. 2018's own roughly 52% lower D&C price, the full plausible
+  range of `emb_pathology_cost`, the upper bound of `direct_room_cost_per_minute`, and both
+  Medicaid and commercial payer multipliers. It breaks between 12 and 13 incremental minutes
+  (one minute above the top of the observed range), between a 6% and 7% office failure rate,
+  between $250 and $300 of coordination cost, and -- the case no tornado diagram can show --
+  when all six anti-combined bounds are stacked simultaneously, which flips the cheapest
+  strategy to office EMB. Documented in full in the new `docs/saboteur_tests.md`.
+- `tests/testthat/test-sensitivity-scenarios.R` (72 assertions): first tests for the analysis
+  layer that generates published tables, none of which had any coverage.
+  `run_one_way_sensitivity()` (Table 4, Figure 2) is checked for non-negative spreads, a base
+  metric invariant to which parameter is perturbed, the spread/absolute-difference identity,
+  and agreement with the committed `tables/one_way_sensitivity.csv` including the tornado's
+  bar order. `run_scenario_analysis()` is checked for commercial > base > Medicaid
+  monotonicity across all three strategies, exact agreement between its base-case row and the
+  standalone base-case model, and combined EMB winning in every scenario.
+  `build_summary_sentence()` is checked three ways: verbatim reproduction of
+  `tables/manuscript_summary_sentence.txt`, correct use of "more than" when forced past the
+  breakpoint, and graceful degradation to "across the tested range" instead of printing
+  "NA minutes" when the threshold is absent. Also covers all four `metric_*` target functions,
+  `compare_two_strategies()` antisymmetry and its duplicate/missing-row errors,
+  `model_parameters_as_list()`, `draw_parameter_set()` (never samples the structural boolean;
+  every probability stays in 0-1 across 20 draws), `summarize_psa_cost_interval()` seed
+  reproducibility, and `weighted_sd()`.
+- `tests/testthat/test-text-helpers.R` (132 assertions): first tests for the pure string, CSV,
+  and classification helpers. The load-bearing one is a round-trip of `csv_line_join()` and
+  `csv_line_fields()` over **every row of the real `config/model_parameters.csv`**, not a toy
+  fixture, because `refresh_payer_multipliers()` rewrites that file line by line and its
+  `notes`/`source` fields contain embedded commas, nested quotes, and parentheses; a
+  round-trip bug there would silently corrupt the parameter table every published number
+  depends on. The test guards itself by asserting at least 60 rows actually round-tripped, so
+  a universal parse failure cannot make the loop vacuously pass. Also covers
+  `quote_r_string()` (round-tripped through `parse()`/`eval()`), `format_cost()`,
+  `format_percent()`, `census_region_from_state()` (all 50 states plus DC classified, checked
+  against the official Census region sizes 9/12/17/13 so a dropped or duplicated state is
+  caught rather than merely "no NAs"), `normalize_hospital_name()`, `hospital_name_tokens()`,
+  `hospital_name_score()` (Jaccard properties: 1 on self, 0 on disjoint, symmetric, 0 rather
+  than NaN when both names are all stop words), `extract_url_hostname()`, and
+  `infer_mrf_format()`.
+- `tests/run_without_install.R`: development test runner that sources `R/*.R` directly instead
+  of requiring an installed `samevisit`, for the common case of iterating on a test while the
+  installed copy is absent or stale. Runs the whole suite or a single named file. Written while
+  adding the saboteur tests, where the install-then-test cycle dominated iteration time, and
+  preserved here rather than left untracked (the same treatment
+  `analysis/12_independent_psa_verification.R` received). `tests/testthat.R` remains the
+  canonical runner and the one CI uses; the new script's own header and
+  `docs/appendix.md` both state plainly that sourcing is not installing, so namespace
+  collisions, missing `@importFrom` declarations, and `R CMD check` problems are invisible to
+  it by construction.
+- `docs/saboteur_tests.md`: the saboteur methodology, the `SURVIVES`/`BREAKS` taxonomy and how
+  to read a failure of each kind, every tested breakpoint, the two real problems found by
+  attacking the result, and the documentation-drift guards.
+- Three documentation-drift guards in `tests/testthat/test-saboteurs.R`: the README must quote
+  `tables/manuscript_summary_sentence.txt` verbatim (whitespace-normalized); no line in
+  `docs/*.md` or `README.md` pairing a bold dollar figure with "per patient" may use a cost
+  the current model does not produce; and `tables/combined_vs_office.csv`'s recorded margin
+  must equal the live model's margin. Guard 2 exempts historical change-narratives, which are
+  flagged with a `> **Historical figures (pre-...)**` block.
+- `docs/appendix.md`: an incident record for the stale-figure failure below, a section on the
+  new development test harness and its deliberate limitations, and an index row for
+  `docs/saboteur_tests.md`.
+
+### Fixed
+- **Eight weeks of stale derived figures in `docs/` and `README.md`.** Commit `471e067`
+  (2026-09-12) updated `emb_pathology_cost` from $70.14 to $50.75 and `dc_professional_cost`
+  from $209.76 to $212.13 from live CMS PUF queries, regenerated `tables/` and `figures/`, and
+  verified every number cited in the manuscript against the re-run pipeline -- but did not
+  touch `docs/` or `README.md`, which went on quoting the previous run. Because both
+  parameters feed every strategy total, the entire derived set was wrong. Corrected, after
+  re-running the model to confirm `tables/` was the authoritative side rather than assuming it:
+  combined $506.11 -> **$485.11**, office $749.18 -> **$727.48**, D&C $3,839.81 ->
+  **$3,822.79**, margin $243.06 (32.4%) -> **$242.36 (33.3%)**, PSA win rate 91.4% ->
+  **91.8%** and its complement 8.6% -> **8.2%**, PSA means/SDs/intervals for the office and
+  combined arms, all four ICERs ($20,843 -> $20,784; $36,823 -> $36,718; $33,437 -> $33,488;
+  $59,073 -> $59,162), the one-way sensitivity bounds, budget impact at all five cohort sizes,
+  the geographic savings range $195.62-$333.44 -> **$194.89-$332.78** (and Colorado $257.82 ->
+  $257.12), the societal add-ons ($257.94 -> $257.24; $412.32 -> $411.63; $331.83 -> $331.12),
+  the repeat-visit cost $255.93 -> **$236.54**, the combined arm's incremental room-time
+  component $143.67 -> **$142.55**, the D&C adverse-event pass-through ($3,827.04 -> $3,839.81
+  restated as $3,810.02 -> $3,822.79), and the two input values themselves in
+  `docs/data_sources.md`'s parameter table and `docs/validation_notes.md`'s derived sums
+  ($195.96 -> $176.57; $3,517.00 -> $3,519.37). `docs/testing_philosophy.md` additionally
+  carried a stale manuscript claim (81.4% of draws, 0.36-vs-2.15-per-1,000 adverse-event
+  exposure), corrected to 91.8% and 0.36-vs-2.48. The README's quoted base-case paragraph is
+  now byte-identical to the generated sentence.
+- **Reference 8's author list, wrong in four files, in two different ways.**
+  `manuscript/manuscript.qmd` read "Yi Y, Yi Y, Bryce CL, et al." -- a duplicated first author
+  introduced by an earlier correction pass that was itself fixing a wholly fabricated "Yi Y,
+  Lu Y, Wu J" -- while `config/model_parameters.csv` and
+  `tables/manuscript_table1_parameters.csv` still carried the fabricated version, and
+  `analysis/18_manuscript_slides.R` carried the duplicated one. PubMed 29747864 gives the real
+  list, now used everywhere: **Yi Y, Bryce CL, Adambekov S, Edwards RP, Goughnour SL,
+  Linkov F**. The full history is preserved in `manuscript/manuscript.qmd`'s provenance
+  comment rather than silently overwritten. Noted in passing: Adambekov being a Yi co-author
+  explains Yi et al.'s self-citation to Adambekov et al. 2017 for the sampling-success
+  probability in their own Table 1.
+- `README.md`'s provisional-parameter count, which read "8 of 77 parameters" against an actual
+  79 rows with 10 flagged `TRUE`. The two unlisted parameters
+  (`colonoscopy_typical_duration_minutes`,
+  `colonoscopy_national_medicare_payment_aspe2015`, both tier B and used only by the
+  opportunity-cost bound, neither feeding a strategy cost) are now named.
+- `README.md`'s "nineteen numbered scripts" (there are twenty; `00_get_public_inputs.R` was
+  missing from the prose list) and "five real mutation tests" (the log in
+  `docs/testing_philosophy.md` now has twenty-five rows).
+
+### Found but not fixed
+- **`office_emb_serious_infection_probability` is declared but never consumed.** The parameter
+  is in `config/model_parameters.csv` with a base value of 0, flagged `provisional`, and
+  described as reflecting absent incidence data rather than a claim of zero risk. It appears
+  nowhere in `R/`. Setting it to 5% changes no output: each arm's adverse-event exposure is
+  exactly its D&C-rescue probability times the D&C complication rate, so the reported
+  0.36-versus-2.48-per-1,000 contrast excludes office-side infection entirely. Asserted as a
+  tested gap in `test-saboteurs.R`, written to **fail once the parameter is wired in** so the
+  test does not have to be remembered. Worth recording that the first version of that test
+  passed for the wrong reason -- `expect_gte(perturbed, baseline)` is satisfied by an
+  unchanged value -- which is the characteristic failure mode of a test written against an
+  assumption instead of against the code.
+- `manuscript/manuscript.docx` and `manuscript/manuscript_slides.pptx` are rendered artifacts
+  and still carry the old Yi author string. Re-render before submission.
+- `emb_colonoscopy/R/` and `mufflyt/samevisit`'s `R/` remain byte-identical copies with no
+  `Imports:` relationship, so they will drift, and the published numbers will not record which
+  copy produced them.
+
+### Changed
+- Four historical change-narratives in `docs/methods_notes.md`, `docs/data_sources.md` (two),
+  and `docs/manuscript_methods_results.md` keep their original pre-2026-09-12 figures and
+  carry a new dated `> **Historical figures (pre-...)**` block instead of being restated.
+  Restating them would falsify the record of what the model said at the time of each change.
+  A fifth such block was added to `docs/data_sources.md`'s before/after PSA table for the
+  degenerate-beta fix, whose "after" column (69.3%) is also no longer current, since the
+  parameter it measured was superseded on 2026-09-02.
+- A misconception corrected in the process: the first draft of
+  `test-sensitivity-scenarios.R` asserted that `emb_pathology_cost` has **zero** leverage on
+  the combined-versus-office gap, on the reasoning that pathology is charged identically to
+  all three arms and must cancel. The test failed with a spread of $3.73. Pathology is billed
+  **per specimen, not per strategy**: office EMB pays it again on a repeat attempt and again
+  on D&C rescue, while the combined arm pays it again only on its own much rarer rescue. The
+  gap's sensitivity is therefore the price range times the difference in expected specimen
+  count, `31.98 x |0.018 - (0.133 x 0.05 + 0.1280125)| = 3.73086675`, matching
+  `tables/one_way_sensitivity.csv` to the digit. Both tests now assert that identity, plus a
+  second confirming the leverage collapses by more than 100x when the two arms' escalation
+  rates are equalized. The ranking still cannot flip on pathology, so the corresponding
+  `SURVIVES` saboteur test stands, but its originally stated reason was wrong.
+
+### Verified
+- All three new test files were mutation-tested per `docs/testing_philosophy.md`'s Rule 1, and
+  the six new rows are logged there. Planted defects and the failures each produced:
+  reintroducing `$506.11` into `docs/methods_notes.md` (1); corrupting the README summary
+  quote (1); removing `base::abs()` from `run_one_way_sensitivity()`'s spread (6, including
+  the tornado bar order); dropping DC from the South Census region vector (2); making
+  `weighted_sd()` divide by `n` instead of `sum(weights)` (3); hardcoding "less than" in
+  `build_summary_sentence()` (2, i.e. the generated abstract sentence would have asserted the
+  opposite of its own arithmetic). `R/` was restored to a clean state after each.
+- Full suite green: 21 test files, no failures, before and after every change in this entry.
+  Note that the suite was exercised through `tests/run_without_install.R` because `samevisit`
+  is not installed on the authoring machine; the canonical
+  `Rscript tests/testthat.R` path is what CI verifies.
+
 ## 2026-10-02 (documented every exported function; R CMD check now passes clean)
 
 ### Added

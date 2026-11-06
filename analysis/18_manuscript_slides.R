@@ -517,7 +517,7 @@ references <- base::c(
   "Centers for Medicare & Medicaid Services. Physician Fee Schedule. Accessed August 31, 2026.",
   "Centers for Medicare & Medicaid Services. Hospital Outpatient Prospective Payment System. Accessed August 31, 2026.",
   "Ben-Baruch G, Menczer J, Frenkel Y, Serr DM. Laparoscopy in the management of uterine perforation. Journal of Reproductive Medicine 1982;27:73-76.",
-  "Yi Y, Yi Y, Bryce CL, et al. Cost-effectiveness analysis of biopsy strategies for endometrial cancer diagnosis in women with postmenopausal bleeding: Pipelle sampling curette versus dilatation and curettage. Gynecologic Oncology 2018;150:112-118.",
+  "Yi Y, Bryce CL, Adambekov S, Edwards RP, Goughnour SL, Linkov F. Cost-effectiveness analysis of biopsy strategies for endometrial cancer diagnosis in women with postmenopausal bleeding: Pipelle sampling curette versus dilatation and curettage. Gynecologic Oncology 2018;150:112-118.",
   "Kandil D, Yang X, Stockl T, Liu Y. Clinical outcomes of patients with insufficient sample from endometrial biopsy or curettage. International Journal of Gynecological Pathology 2014;33(5):500-506.",
   "Nebgen DR, Lu KH, Rimes S, Keeler E, Broaddus R, Munsell MF, Lynch PM. Combined colonoscopy and endometrial biopsy cancer screening results in women with Lynch syndrome. Gynecologic Oncology 2014;135:85-89.",
   "Huang M, Sun C, Boyd-Rogers S, et al. Prospective study of combined colon and endometrial cancer screening in women with Lynch syndrome: a patient-centered approach. Journal of Oncology Practice 2011;7:43-47.",

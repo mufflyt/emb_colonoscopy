@@ -81,7 +81,7 @@ just via different Medicare years and combined vs. split professional/facility c
 
 - **Pipelle**: Yi et al. 2018 (2017 dollars) = $244.41 combined professional+facility. This
   repository's `emb_office_professional_cost` ($97.03, nonfacility professional only, 2024) +
-  `emb_pathology_cost` ($70.14) + `emb_disposable_supply_cost` ($28.79) = $195.96 professional-side
+  `emb_pathology_cost` ($50.75) + `emb_disposable_supply_cost` ($28.79) = $176.57 professional-side
   total, not directly comparable since Yi's figure is Medicare's *combined* nonfacility rate (which,
   per the CMS Direct PE Inputs finding documented above, already bundles supplies into the
   professional fee) -- so the closer comparison is `emb_office_professional_cost` alone ($97.03,
@@ -91,7 +91,7 @@ just via different Medicare years and combined vs. split professional/facility c
   here. This gap is flagged, not resolved -- it would need Yi's own CPT-code-level sourcing (their
   ref [39], a Medicaid.gov page, no longer specific enough to trace) to reconcile further.
 - **D&C**: Yi et al. 2018 (2017) = $2,310.47 combined. This repository's `dc_professional_cost`
-  ($209.76, 2026) + `dnc_facility_or_asc_fee` ($3,307.24, 2026) = $3,517.00 combined. The ~52% gap is
+  ($212.13, 2026) + `dnc_facility_or_asc_fee` ($3,307.24, 2026) = $3,519.37 combined. The ~52% gap is
   directionally expected (7 years of Medicare payment updates, a genuinely major-procedure OPPS
   facility fee vs. Yi's more modest combined figure) but not independently reconciled here either.
 

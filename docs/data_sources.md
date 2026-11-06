@@ -12,8 +12,8 @@ mining, in the order it was identified during model design.
 | `emb_office_professional_cost` | $97.03 | CMS PUF 2024, CPT 58100, `Place_Of_Srvc = O` (nonfacility/office), service-volume-weighted mean across 299 real provider-service rows, 4,431 observed services (live CMS Data API query). Applies to office_emb only |
 | `emb_office_professional_cost_facility` | $60.05 | CMS PUF 2024, CPT 58100, `Place_Of_Srvc = F` (facility), service-volume-weighted mean across 20 real provider-service rows, 283 observed services (live CMS Data API query). Applies to combined_emb only -- see "Supply-cost double-count" note below |
 | `emb_disposable_supply_cost` | $28.79 | CMS CY2026 PFS Final Rule Direct PE Inputs file (CMS-1832-F), CPT 58100 nonfacility supply line items, summed directly (see below). Applies to combined_emb only |
-| `emb_pathology_cost` | $70.14 | CMS PFS 2026, CPT 88305 (third-party aggregator) |
-| `dc_professional_cost` | $209.76 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
+| `emb_pathology_cost` | $50.75 | CMS PFS 2026, CPT 88305 (third-party aggregator) |
+| `dc_professional_cost` | $212.13 | CMS PFS 2026, CPT 58120 facility professional payment (third-party aggregator) |
 | `dnc_facility_or_asc_fee` | $3,307.24 | CMS OPPS Addendum B, July 2026, CPT 58120 (downloaded directly from cms.gov 2026-08-28); low bound $1,738.07 is the real CMS ASC Addendum AA rate, also named as `dnc_facility_fee_asc_2026` |
 | `dnc_anesthesia_cost` | $114.50 | CMS PUF 2024, CPT 00952 (ASA crosswalk code for CPT 58120), service-weighted mean across 118 real provider-service rows, 1,936 observed services; low/high are the real p25/p75 |
 | `scheduler_hourly_wage_onet_2025` | $22.08/hr | O*NET OnLine, median wage report for SOC 43-6013 Medical Secretaries and Administrative Assistants, 2025 (BLS OEWS data; bls.gov itself blocks automated retrieval, so this real number was retrieved via O*NET OnLine, the DOL/BLS-funded site republishing the same data) |
@@ -357,6 +357,15 @@ halved along with the escalation probability); the combined-vs-office margin wid
 (24.9%) to $259.04 (33.9%); the minutes threshold widened from ~10.7 to ~12.7. See
 `docs/methods_notes.md` for the full base-case history.
 
+> **Historical figures (pre-2026-09-12).** The dollar amounts and thresholds in this
+> section record the state of the model at the time of the change described. They predate
+> commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
+> `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
+> figure. They are kept as written, not restated, so the change history stays truthful.
+> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
+> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+
+
 ## Literature search for `office_to_dnc_escalation_fraction` (2026-08-30, partially resolved)
 
 Searched for a Lynch-specific fraction of failed/inadequate standalone office EMB attempts that
@@ -414,6 +423,15 @@ assumption). This narrowed the combined-vs-office margin from $294.22 (37.7%) to
 the minutes threshold from ~13.8 to ~11.1 -- see `docs/methods_notes.md` for the full base-case
 history.
 
+> **Historical figures (pre-2026-09-12).** The dollar amounts and thresholds in this
+> section record the state of the model at the time of the change described. They predate
+> commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
+> `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
+> figure. They are kept as written, not restated, so the change history stays truthful.
+> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
+> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+
+
 ## Fixed: `office_to_dnc_escalation_fraction` was a degenerate beta distribution in PSA (2026-08-31)
 
 Running `analysis/03_probabilistic_sensitivity.R` after adding the diagnostic-yield extension below
@@ -452,6 +470,15 @@ before -> after):
 | Office EMB mean cost | $766 | $680 |
 | Combined EMB mean cost | $616 | $598 |
 | `office_emb_neoplasia_delayed_per_1000` | exactly 0 in all 1,000 draws | median 1.41, mean 1.60, range 0.002-5.42 (all 1,000 draws nonzero) |
+
+> **Historical figures (pre-2026-09-02).** Both columns of the table above predate the
+> supersession of `office_to_dnc_escalation_fraction` by the two-parameter repeat-attempt
+> structure, and also predate commit 471e067's parameter update. Neither 81.4% nor 69.3%
+> is the current PSA win rate, and `office_emb_neoplasia_delayed_per_1000` is now exactly
+> 0 in every draw by construction rather than by parameter value. They are kept as a
+> record of what this specific fix changed. Current values: 91.8% of draws, office mean
+> $733.14, combined mean $518.88, delayed neoplasia 0. See `tables/` for the
+> authoritative set.
 
 The prior 81.4% figure was effectively conditioning on `P(D&C after failed office EMB) ~= 1` in every
 draw, which understated office EMB's true expected rescue-D&C cost across the parameter's own declared
@@ -688,12 +715,12 @@ value were ever left unsourced.
 **The critical validation, run first:** the `national` locality's GPCIs and wage index are all 1.0 by
 construction, so it must reproduce `compute_strategy_costs()`'s own base-case output exactly. Confirmed
 both by an automated test (`tests/testthat/test-geographic-sensitivity.R`, INDEPENDENT-CONFIRMATION-
-flavored, mutation-tested) and by the actual analysis run: national locality produced $506.11 /
-$749.18 / $3,839.81 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
+flavored, mutation-tested) and by the actual analysis run: national locality produced $485.11 /
+$727.48 / $3,822.79 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
 
 **Result** (`Rscript analysis/09_geographic_sensitivity.R`): combined EMB remained the least expensive
-strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $195.62 (Arkansas, the
-low-cost locality) to $333.44 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
+strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $194.89 (Arkansas, the
+low-cost locality) to $332.78 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
 qualitative conclusion (combined EMB cheaper than office EMB) is not an artifact of national-average
 pricing; it holds, and if anything strengthens, at both geographic extremes tested. See
 `tables/geographic_sensitivity_summary.csv` for the full table and

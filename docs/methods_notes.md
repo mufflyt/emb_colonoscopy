@@ -157,9 +157,9 @@ deliberately not the medical-care CPI series used elsewhere, since a wage-based 
 general price/wage inflation, not medical-service-price inflation).
 
 **Result:** in the base case, this widens rather than narrows combined biopsy's cost advantage over
-office biopsy ($243.06 healthcare-sector -> $257.94 societal-total), and widens it much further under
+office biopsy ($242.36 healthcare-sector -> $257.24 societal-total), and widens it much further under
 the alternate scenario where combined biopsy's preoperative visit is folded into the colonoscopy day
-($331.83 healthcare-sector -> $412.32 societal-total). See the manuscript's Methods/Results/Discussion
+($331.12 healthcare-sector -> $411.63 societal-total). See the manuscript's Methods/Results/Discussion
 for the reported numbers and `patient_time_opportunity_cost_per_visit`'s own notes in
 `config/model_parameters.csv` for the full sourcing and disclosed limitations (dollar-year inferred
 rather than primary-confirmed; captures time and travel-TIME opportunity cost only, not out-of-pocket
@@ -233,14 +233,14 @@ as interchangeable "failure rate" parameters.
 Running `analysis/01_base_case.R` under current parameters (many of them still provisional -- see
 `docs/data_sources.md`) produces:
 
-- Combined EMB: **$506.11** per patient
-- Office EMB: **$749.18** per patient (includes the office repeat-attempt structure wired in
+- Combined EMB: **$485.11** per patient
+- Office EMB: **$727.48** per patient (includes the office repeat-attempt structure wired in
   2026-09-02, using the Kandil-et-al.-2014-sourced 75% repeat-success probability -- see
   "Interpretation of delayed-neoplasia outcomes" above)
-- Operative D&C: **$3,839.81** per patient (includes a partial, management-pathway-weighted adverse-event
+- Operative D&C: **$3,822.79** per patient (includes a partial, management-pathway-weighted adverse-event
   cost for uterine perforation, wired in 2026-09-01 -- see `docs/ae_cost_evidence_table.md` for the
   full sourcing and what remains deliberately excluded)
-- Combined EMB is **$243.06 (32.4%) cheaper** than office EMB
+- Combined EMB is **$242.36 (33.3%) cheaper** than office EMB
 - Combined EMB remains the least expensive strategy as long as incremental colonoscopy-suite time
   stays below **~12.3 minutes** -- above the observed 1-12 minute range from Huang et al. 2011,
   meaning the base case's own room-time assumption is now comfortably inside the threshold rather
@@ -272,6 +272,15 @@ gone in **both directions** across these corrections: some raised the combined a
 others (genuine double-count removals, a confirmed clinical-practice requirement) shrank it -- evidence
 this process is following the data, not steering toward a preferred conclusion. Minutes threshold
 moved from ~11.2 to ~13.8 to ~11.1 to ~10.7 to ~12.7.)
+
+> **Historical figures (pre-2026-09-12).** The dollar amounts and thresholds in this
+> section record the state of the model at the time of the change described. They predate
+> commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
+> `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
+> figure. They are kept as written, not restated, so the change history stays truthful.
+> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
+> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+
 
 **`combined_requires_preop_office_visit` flipped to TRUE (2026-08-30):** per the model owner's
 clinical practice (Tyler Muffly, MD, Denver Health), the combined strategy's protocol includes a
@@ -373,7 +382,7 @@ locality [Arkansas], a high-cost locality [Manhattan]) using real CMS GPCI and O
 see `docs/data_sources.md` for the full methodology, citations, and a disclosed limitation (physician
 GPCI locality and hospital OPPS wage-index geography are two different CMS systems that don't share a
 common unit). Result: combined EMB remained the least expensive strategy in all 4 of 4 localities
-tested, with its advantage over office EMB *widening* from $195.62 in the low-cost locality to $333.44
+tested, with its advantage over office EMB *widening* from $194.89 in the low-cost locality to $332.78
 in the high-cost locality. This is a deterministic analysis, deliberately kept out of
 `run_probabilistic_sensitivity()` -- geography is a "does this generalize elsewhere" question, not a
 parameter-uncertainty question the way a study's confidence interval is.
@@ -400,9 +409,9 @@ case in a cohort of any size.
 sorted frontier) generically, tested against synthetic cases exercising both, not just this
 repository's real three-strategy data (which -- as it happens -- triggers neither: cost and detection
 probability rise together from combined_emb -> office_emb -> dnc for both cancer and precancer, so
-all three remain on the frontier). Result: ICER(office_emb vs combined_emb) ~ $20,843 per additional
-cancer case detected (~$36,823 for AEH); ICER(dnc vs office_emb) ~ $33,437 per additional cancer case
-detected (~$59,073 for AEH). Like `compute_diagnostic_yield()` itself, this is a deterministic point
+all three remain on the frontier). Result: ICER(office_emb vs combined_emb) ~ $20,784 per additional
+cancer case detected (~$36,718 for AEH); ICER(dnc vs office_emb) ~ $33,488 per additional cancer case
+detected (~$59,162 for AEH). Like `compute_diagnostic_yield()` itself, this is a deterministic point
 estimate, not integrated into the probabilistic sensitivity analysis, and inherits the same evidence
 caveats (general, symptomatic, non-Lynch sensitivity data; D&C's own sensitivity estimate carries a
 very wide 95% CI). See `analysis/15_cost_effectiveness.R` / `tables/cost_effectiveness.csv` for the

@@ -63,7 +63,7 @@ collapsed to one row per strategy. `strategy`, `mean_cost`, `sd_cost`, `p2_5`, `
 simulation interval bounds).
 
 **`probabilistic_sensitivity_probability_cheapest.csv`** -- how often each strategy won.
-`strategy`, `n_draws_cheapest`, `pct_draws_cheapest` (the source of the oft-quoted "91.4%
+`strategy`, `n_draws_cheapest`, `pct_draws_cheapest` (the source of the oft-quoted "91.8%
 of draws" headline figure).
 
 ### Threshold analysis (`analysis/04_threshold_analysis.R`)

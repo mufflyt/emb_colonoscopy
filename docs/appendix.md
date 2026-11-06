@@ -15,7 +15,8 @@ navigation index now that there are several of them.
 | [`docs/methods_notes.md`](methods_notes.md) | The incremental-cost principle, decision-tree structure, cost-minimization-vs-cost-effectiveness framing, simplifying assumptions |
 | [`docs/validation_notes.md`](validation_notes.md) | Why Yi et al. 2018 is not numerically reproduced, and what a real replication would require |
 | [`docs/evidence_layers.md`](evidence_layers.md) | The CMS/HPT/MEPS public-data layer: what exists, what was dropped (APCD, CMS facility) and why, three real bugs caught during review |
-| [`docs/testing_philosophy.md`](testing_philosophy.md) | Two CI meta-rules: prove every blocking test fails-then-passes on a planted defect; independently re-derive any study-frame-changing finding. Worked log of five real mutation tests. |
+| [`docs/testing_philosophy.md`](testing_philosophy.md) | Two CI meta-rules: prove every blocking test fails-then-passes on a planted defect; independently re-derive any study-frame-changing finding. Worked log of twenty-five real mutation tests. |
+| [`docs/saboteur_tests.md`](saboteur_tests.md) | Adversarial test suite: the SURVIVES/BREAKS taxonomy, every tested breakpoint, the two defects found by attacking the result, and the documentation-drift guards |
 | [`docs/ae_cost_evidence_table.md`](ae_cost_evidence_table.md) | Management-pathway-based adverse-event costing evidence table (uterine perforation, severe hemorrhage) -- what's sourced, what's explicitly unsourceable, and why. Not yet wired into any cost function. |
 | `docs/appendix.md` (this file) | Bug-reproduction record, CI workflow notes, provenance of the evidence-layer code, raw CMS source-file inventory |
 
@@ -167,3 +168,75 @@ To extend this workflow later: add a second job for `R CMD check`-style linting
 (e.g. `lintr`), or a matrix build across R versions, once the project's dependency
 surface stabilizes. Not added now because it would be speculative infrastructure for
 a check this repository doesn't yet need.
+
+## Development test harness (`tests/run_without_install.R`)
+
+`tests/testthat.R` is the canonical runner and the one CI uses. It requires `samevisit`
+to be installed, which is the right precondition to enforce before a release but a slow
+loop when iterating on a single test. `tests/run_without_install.R` sources `R/*.R`
+directly instead, so what runs is the working tree rather than the installed library:
+
+```sh
+Rscript tests/run_without_install.R                     # whole suite
+Rscript tests/run_without_install.R test-saboteurs.R    # one file
+```
+
+Like `analysis/12_independent_psa_verification.R`, this started life as an untracked
+scratch script (written while adding `tests/testthat/test-saboteurs.R`, where the
+install-then-test cycle dominated the iteration time) and is preserved here rather than
+reconstructed from memory each time.
+
+Two limitations are deliberate and are repeated in the script's own header. Sourcing is
+not installing, so namespace collisions, missing `@importFrom` declarations, and
+`R CMD check` problems are invisible by construction; a green run here is not a
+substitute for `Rscript tests/testthat.R`, and is not what the badge reports. And the
+script attaches the Imports it needs itself, so a new load-time dependency in
+`DESCRIPTION` has to be added to its `required_packages` vector.
+
+## Incident record: eight weeks of stale figures in `docs/` and `README.md` (found 2026-11-06)
+
+**What happened.** Commit `471e067` (2026-09-12, "Finalize manuscript for submission")
+updated two parameters from live CMS PUF queries -- `emb_pathology_cost` from $70.14 to
+$50.75 and `dc_professional_cost` from $209.76 to $212.13 -- regenerated `tables/` and
+`figures/`, and verified every number cited in the manuscript against the re-run
+pipeline. It did not touch `docs/` or `README.md`. Those files went on quoting the
+previous run for eight weeks.
+
+**What was wrong.** The entire derived set, because both parameters feed every strategy
+total: combined $506.11 (actual $485.11), office $749.18 ($727.48), D&C $3,839.81
+($3,822.79), margin $243.06 / 32.4% ($242.36 / 33.3%), the PSA win rate 91.4% (91.8%)
+and its complement 8.6% (8.2%), PSA means and intervals for both office and combined
+arms, all four ICERs, the one-way sensitivity bounds, budget impact at all five cohort
+sizes, the geographic savings range $195.62-$333.44 ($194.89-$332.78), the societal
+add-ons, the repeat-visit cost $255.93 ($236.54), the combined arm's room-time component
+$143.67 ($142.55), and the D&C adverse-event pass-through.
+
+**Why it took eight weeks to notice.** Nothing could notice. The manuscript was verified
+against the pipeline; `docs/` never was. A reader checking any figure in `docs/` against
+`tables/` would have found the mismatch immediately, and nobody had reason to.
+
+**What was done.** All current-results figures were corrected against `tables/`, after
+re-running the model to confirm `tables/` was the authoritative side rather than assuming
+it. Four historical change-narratives kept their original numbers and received a dated
+`> **Historical figures (pre-2026-09-12).**` block instead, because restating them would
+falsify the record of what the model said when each change was made. Three
+documentation-drift guards were added to `tests/testthat/test-saboteurs.R` and
+mutation-tested; see [`docs/saboteur_tests.md`](saboteur_tests.md). The guards, not the
+corrections, are the actual fix: hand-syncing prose against generated tables would simply
+rot again on the next parameter update.
+
+**Also found in the same pass.** Reference 8's author list was wrong in four files. The
+manuscript read "Yi Y, Yi Y, Bryce CL, et al.", a duplicated first author introduced by
+an earlier correction pass that was itself fixing a wholly fabricated "Yi Y, Lu Y, Wu J";
+`config/model_parameters.csv` and `tables/manuscript_table1_parameters.csv` still carried
+the fabricated version. PubMed 29747864 gives the real list: Yi Y, Bryce CL, Adambekov S,
+Edwards RP, Goughnour SL, Linkov F. Corrected everywhere, with the full history preserved
+in `manuscript/manuscript.qmd`'s provenance comment. Note that Adambekov being a Yi
+co-author explains Yi et al.'s self-citation to Adambekov et al. 2017 for the
+sampling-success probability in their Table 1.
+
+**Still outstanding.** `manuscript/manuscript.docx` and `manuscript/manuscript_slides.pptx`
+are rendered artifacts and still carry the old author string; re-render before submission.
+Separately, `emb_colonoscopy/R/` and `mufflyt/samevisit`'s `R/` are byte-identical copies
+with no `Imports:` relationship between them, so they will drift, and the published
+numbers will not record which copy produced them.

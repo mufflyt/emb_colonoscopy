@@ -3,6 +3,67 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-11-06 (wrote tests to break the result, and found the documentation had already broken)
+
+Up to now every test in this repository asked the same question: does the model do what its
+documentation says? That is a useful question, and it is also the easy one. This round added a
+suite that asks the hard one instead: how little would it take to make the headline finding go
+away?
+
+The rule was that an attack has to be one a reviewer could actually make. Setting the
+colonoscopy-suite time to 500 minutes proves nothing. Setting it to 15, which any endoscopy unit
+that timed its own suite could assert, proves quite a lot -- and the finding does not survive it.
+Every test says up front whether it expects the conclusion to hold or to break, so that when one
+fails later, the next person can tell the difference between "something that used to be robust
+isn't" and "the breakpoint moved."
+
+The good news is how much holds. Combined biopsy stays cheapest across the entire published
+1-12 minute range, whether or not the preoperative visit is counted, across the full published
+failure-rate range, under Medicaid and under commercial rates, and -- the one worth dwelling on --
+even if the operating room were **free**. It also stays cheapest if you adopt the roughly 52%
+lower D&C price from the one comparable published study, which is the substitution a skeptical
+reviewer is most likely to propose.
+
+The honest news is where it stops holding. Push the added suite time to 13 minutes, one minute
+past the top of the observed range, and office biopsy wins. Assume an operator who fails only 6%
+of the time rather than the pooled literature's 13%, which is entirely plausible for someone with
+high volume, and office biopsy wins. And if you push every single assumption to its least
+favourable published bound **at once**, office biopsy wins. That last one matters because the
+standard tornado diagram moves one assumption at a time, which is exactly how a fragile result
+can look sturdy. None of this contradicts the manuscript, which already states these limits in
+prose. The difference is that they are now pinned to specific numbers in a test file instead of
+living in a limitations paragraph.
+
+Two real problems turned up, both from attacking rather than confirming. One parameter --
+the risk of serious infection after an office biopsy -- has been sitting in the configuration file,
+flagged as a placeholder, while being connected to nothing at all. Setting it to any value
+whatsoever changes no result, which means the reported safety comparison between the two
+office-based approaches quietly leaves office-side infection out. And a belief this project had
+held about pathology costs turned out to be wrong: pathology is billed **per specimen**, not per
+strategy, so it does not cancel out between the arms the way everyone assumed. It is a small
+effect, $3.73, and it does not change which strategy wins, but the stated reason it didn't matter
+was wrong, and the test that found it now asserts the real arithmetic.
+
+The most embarrassing find was not in the model. In September, two cost inputs were updated from
+live Medicare queries, every table and figure was regenerated, and every number in the manuscript
+was checked against the re-run. The documentation was not. For eight weeks, `README.md` and the
+files in `docs/` went on quoting the previous run's results: the wrong cost for all three
+strategies, the wrong saving, the wrong probability, the wrong four cost-effectiveness ratios.
+Nothing was capable of noticing, because nothing was checking. All of it is corrected, and three
+guards now make that specific failure detectable: the README has to quote the machine-generated
+summary sentence word for word, no document may state a per-patient cost the model no longer
+produces, and the saved tables have to agree with each other. The guards, not the corrections, are
+the actual fix. Hand-syncing prose against generated numbers would simply rot again on the next
+update.
+
+Historical passages were deliberately left alone. Where a document records what the model said at
+the time of some past change, those old numbers stay, with a dated note pointing at the current
+set. Rewriting them would have produced a tidier repository and a dishonest one.
+
+Also fixed: a reference in the manuscript whose author list had been wrong in two different ways
+across four files, including a duplicated name introduced by an earlier attempt to fix a set of
+authors that had been invented outright.
+
 ## 2026-10-02 (made good on a promise about the check mark)
 
 Last time, the honest answer for why `samevisit` didn't have a green "passing checks"
