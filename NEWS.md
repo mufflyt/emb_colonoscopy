@@ -3,6 +3,37 @@
 User-facing highlights. For the exhaustive technical log (every file added/changed/
 fixed/removed), see [`CHANGELOG.md`](CHANGELOG.md).
 
+## 2026-11-06, later (the paper now cites its own method, and the Introduction is five words too long)
+
+Three loose ends from this morning, two closed and one handed back.
+
+The manuscript had never cited a source for its own study design. Every economic reference
+in it was either a different kind of analysis or a price list. That is the sort of gap a
+reviewer closes for you, unkindly, so two references now sit on the sentence where the
+design's main weakness is admitted: the classic argument that this kind of analysis should
+be abandoned because its central assumption is almost never proven, and the later paper that
+rescues it by setting out when the assumption is fair. They landed at the end of the list and
+needed no renumbering, which is luck rather than planning.
+
+The Word and PowerPoint files were rebuilt. Both had been carrying a mangled author name
+that was fixed in the source files this morning but never re-rendered, and a file on a
+hard drive does not update itself because the text it came from did. Both were checked by
+opening the archives and reading the text back out, rather than assuming the render worked.
+
+The find nobody wanted: the Introduction is 255 words against a hard limit of 250. The file
+has been asserting in its own notes that it was 234 words and compliant since the start of
+September, and that note was simply wrong. Three different ways of counting agree on 255.
+Five words over a hard cap is the kind of thing that gets a paper returned before anyone
+reads it. The trims that would fix it are measured and written down, but not made: deciding
+which five words of an argument to give up belongs to whoever wrote the argument.
+
+One correction to yesterday's own write-up. It claimed the package code lives in two places
+with nothing linking them, and implied this repository should depend on the other and delete
+its copy. That was backwards. This repository *is* the package; the other one is an export of
+it. Following that advice would have deleted the thing every script here loads. Both READMEs
+now state plainly which direction is which, so the next person to notice the duplication does
+not reach the same wrong conclusion.
+
 ## 2026-11-06 (wrote tests to break the result, and found the documentation had already broken)
 
 Up to now every test in this repository asked the same question: does the model do what its

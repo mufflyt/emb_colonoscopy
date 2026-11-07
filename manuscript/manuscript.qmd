@@ -13,8 +13,18 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
   Discussion only -- excludes title page, abstract, precis, tables, figures,
   references, SDC), <=30 references, <=5 figures+tables COMBINED. Within
   that total, the Introduction itself must not exceed 250 words and the
-  Discussion must not exceed 750 words (verified live 2026-09-01; current
-  draft: Introduction 234 words, Discussion 673 words -- both compliant).
+  Discussion must not exceed 750 words.
+  RECOUNTED LIVE 2026-11-06 (three independent counters agreeing -- a Python
+  tokenizer, `wc -w`, and `pandoc -t plain` -- over the section text with
+  HTML comments, headings, and superscript citation markers stripped):
+  Introduction **255**, Methods 1,428, Results 559, Discussion 742,
+  total 2,984. Total and Discussion are compliant; the **Introduction is 5
+  words OVER the 250-word cap and must be trimmed before submission.**
+  The previous note here claimed "Introduction 234 words, Discussion 673
+  words -- both compliant" as of 2026-09-01; both figures were wrong, and
+  the Introduction's has been wrong in the non-compliant direction since at
+  least the 2026-09-03 addition of the cost-consequence analysis. See
+  docs/appendix.md for suggested trims that lose the least meaning.
 - Structured abstract, headings exactly: Objective / Methods / Results /
   Conclusion (+ Funding Source only if industry-funded).
 - Body sections: Introduction / Methods / Results / Discussion.
@@ -64,7 +74,16 @@ https://journals.lww.com/greenjournal/pages/information-for-authors
 
 WORD COUNT: run a word count on the Introduction+Methods+Results+Discussion
 text only (not this comment block, not the abstract/precis/references/
-tables) before submission -- target <=3,000.
+tables) before submission -- target <=3,000, with the Introduction <=250 and
+the Discussion <=750. Do not trust a previously recorded count: the one in
+the constraints block above was wrong on both of its numbers for two months.
+Recount from the file, which is what the 2026-11-06 figures above are.
+
+REFERENCES: 21 of the journal's 30 slots used as of 2026-11-06. References 20
+(Briggs & O'Brien 2001) and 21 (Dakin & Wordsworth 2013) were added to the
+Discussion's cost-minimization limitation sentence; because the Discussion
+begins after reference 19's first appearance in the Methods, they took the
+next two numbers and required no renumbering pass.
 
 FIGURE/TABLE SELECTION: finalized at 5 of 5 slots (2 tables + 3 figures) --
 see "Figures and Tables" at the end of this file. Remaining analyses are
@@ -487,9 +506,9 @@ that should make it an attractive default where gastroenterology and
 gynecology scheduling can be coordinated.
 
 This model's principal limitation is that its cost-minimization design
-formally assumes equivalent diagnostic effectiveness across strategies. We
-tested that assumption two ways, with different results. First, whether a
-failed sample goes entirely undiagnosed: both arms' failure-resolution
+formally assumes equivalent diagnostic effectiveness across
+strategies.^20,21^ We tested that assumption two ways, with different
+results. First, whether a failed sample goes entirely undiagnosed: both arms' failure-resolution
 pathways (the office arm's repeat-attempt-or-D&C structure and the
 combined arm's directly observed escalation rate) account for essentially
 all failed attempts, leaving no probability mass for a sample that is
@@ -744,6 +763,10 @@ independent, direct verification, not a manual read-through. -->
 19. Munro MG, Kasiewicz JL, Desai VB. Office versus institutional operative
     hysteroscopy: an economic model. J Minim Invasive Gynecol
     2022;29:535-548.
+20. Briggs AH, O'Brien BJ. The death of cost-minimisation analysis? Health
+    Econ 2001;10:179-184.
+21. Dakin H, Wordsworth S. Cost-minimisation analysis versus
+    cost-effectiveness analysis, revisited. Health Econ 2013;22:22-34.
 
 <!-- ACOG Committee Opinion 800 and Namazov et al. 2017 would support a
 D&C/hysteroscopy adverse-event or hysteroscopy-guided-D&C extension if one
