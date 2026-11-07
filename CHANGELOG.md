@@ -5,6 +5,73 @@ All notable changes to this project are documented here. Format loosely follows
 `samevisit` package (`DESCRIPTION`), but this changelog predates that and still groups
 entries by date rather than package version.
 
+## 2026-11-06, later (cost-minimization methods citations; artifacts re-rendered; Introduction found over the word cap)
+
+### Added
+- References **20 (Briggs AH, O'Brien BJ. The death of cost-minimisation analysis? Health
+  Econ 2001;10:179-184)** and **21 (Dakin H, Wordsworth S. Cost-minimisation analysis versus
+  cost-effectiveness analysis, revisited. Health Econ 2013;22:22-34)**, cited together on the
+  Discussion's cost-minimization limitation sentence. Until now the manuscript had no
+  citation for its own study design: every economic reference was a cost-effectiveness
+  analysis, an economic model, an opportunity-cost study, or a price source. Briggs and
+  O'Brien is the standard argument that cost-minimization should be abandoned because
+  equivalent effectiveness is almost never established, which is the objection this
+  manuscript's limitation paragraph already concedes in its own words; Dakin and Wordsworth
+  is the rehabilitation that sets out when the design is legitimately the efficient choice.
+  Because the Discussion begins well after reference 19's first appearance in the Methods,
+  the two took the next numbers and **no renumbering pass was needed**. Citation integrity
+  re-verified programmatically: first-appearance order is strictly 1-21 with no gaps, and
+  the cited set equals the listed set. 21 of the journal's 30 reference slots now used.
+
+### Fixed
+- `manuscript/manuscript.docx` and `manuscript/manuscript_slides.pptx` re-rendered
+  (`quarto render manuscript/manuscript.qmd`; `Rscript analysis/18_manuscript_slides.R`
+  after `R CMD INSTALL .`). Both had still contained the duplicated "Yi Y, Yi Y" author
+  string corrected in the source files earlier today. Verified by unzipping each archive and
+  searching the extracted document text rather than trusting the render: the bad string is
+  absent from both, the correct author list is present in both, and references 20 and 21 are
+  present in the .docx. The deck's figures were already current, being generated from the
+  live model.
+- The manuscript's own recorded word counts, which were wrong in the dangerous direction.
+  The constraints block claimed "Introduction 234 words, Discussion 673 words -- both
+  compliant" as of 2026-09-01. Replaced with a live recount and a standing instruction not
+  to trust a previously recorded count.
+
+### Found but not fixed
+- **The Introduction is 5 words over the journal's 250-word cap.** Recounted live with three
+  independent counters agreeing (a Python tokenizer, `wc -w`, and `pandoc -t plain`, each
+  over the section text with HTML comments, headings, and superscript citation markers
+  stripped): Introduction **255**, Methods 1,428, Results 559, Discussion 742, total 2,984.
+  The total and the Discussion are compliant; the Introduction is not, and has probably been
+  over since the 2026-09-03 cost-consequence addition, with nothing checking. Adding
+  references 20 and 21 contributed nothing, since citation markers are not words and both
+  were attached to an existing sentence. Five trim options and their combinations are costed
+  by measurement in `docs/appendix.md`; A+C reaches 249 with the fewest edits and A+E
+  reaches 247 with the most margin. Not applied here: choosing which five words of a
+  scientific argument to lose is an authorial decision, unlike a wrong author list or a stale
+  derived figure.
+
+### Changed
+- **The canonical direction between this repository and `mufflyt/samevisit` is now documented
+  in both READMEs**, replacing an earlier claim in `docs/appendix.md` that was backwards.
+  That claim described the two `R/` trees as byte-identical copies "with no `Imports:`
+  relationship", implying this repository should import the other and delete its own `R/`.
+  It should not. `emb_colonoscopy` **is** the `samevisit` package: `DESCRIPTION` declares
+  `Package: samevisit`, `man/` holds 201 help pages, 23 files call `library(samevisit)`, and
+  continuous integration installs it with `extra-packages: local::.`. Deleting `R/` here
+  would delete the package and break the analysis pipeline and the whole test suite, and
+  `Imports: samevisit` would be a self-dependency. `mufflyt/samevisit` is the 7-commit export
+  (first commit: "Initial extraction from mufflyt/emb_colonoscopy"). Both READMEs now say:
+  change code here, then re-export; if the trees ever differ, this one is correct; every
+  published figure came from this copy. The trees were still byte-identical when checked.
+
+### Verified
+- `samevisit` installed locally (`R CMD INSTALL .`) and the **canonical** runner
+  `Rscript tests/testthat.R` run against the installed package: all 21 files green. This
+  closes the verification gap noted in the previous entry, where the suite had only been
+  exercised through `tests/run_without_install.R` because the package was not installed on
+  the authoring machine.
+
 ## 2026-11-06 (saboteur test suite; eight weeks of stale documentation figures corrected)
 
 ### Added

@@ -235,8 +235,83 @@ in `manuscript/manuscript.qmd`'s provenance comment. Note that Adambekov being a
 co-author explains Yi et al.'s self-citation to Adambekov et al. 2017 for the
 sampling-success probability in their Table 1.
 
-**Still outstanding.** `manuscript/manuscript.docx` and `manuscript/manuscript_slides.pptx`
-are rendered artifacts and still carry the old author string; re-render before submission.
-Separately, `emb_colonoscopy/R/` and `mufflyt/samevisit`'s `R/` are byte-identical copies
-with no `Imports:` relationship between them, so they will drift, and the published
-numbers will not record which copy produced them.
+**Resolved 2026-11-06.** Both rendered artifacts were re-rendered
+(`quarto render manuscript/manuscript.qmd` and `Rscript analysis/18_manuscript_slides.R`,
+the latter after `R CMD INSTALL .`) and verified by unzipping each and searching the
+extracted text: the duplicated "Yi Y, Yi Y" string is gone from both, the correct author
+list is present in both, and the new references 20 and 21 are present in the .docx. The
+slide deck's figures were already current, since it is generated from the live model.
+
+**Correction to this record's own framing.** An earlier version of this section stated that
+`emb_colonoscopy/R/` and `mufflyt/samevisit`'s `R/` were byte-identical copies "with no
+`Imports:` relationship between them", implying the fix was for this repository to import
+the other and delete its own `R/`. That is backwards and would have been destructive.
+`emb_colonoscopy` **is** the `samevisit` package: `DESCRIPTION` declares
+`Package: samevisit`, `man/` holds 201 help pages, 23 files call `library(samevisit)`, and
+continuous integration installs it with `extra-packages: local::.`. Deleting `R/` here
+would delete the package and break the entire analysis pipeline and test suite, and
+`Imports: samevisit` would be a self-dependency. `mufflyt/samevisit` is the 7-commit export
+(its first commit: "Initial extraction from mufflyt/emb_colonoscopy"). The direction is now
+documented in both repositories' READMEs: change code here, then re-export. The trees were
+still byte-identical when checked on 2026-11-06.
+
+## The Introduction is over the journal's word cap (found 2026-11-06)
+
+**The manuscript's own recorded word counts were wrong, in the dangerous direction.**
+`manuscript/manuscript.qmd`'s constraints block claimed "Introduction 234 words,
+Discussion 673 words -- both compliant" as of 2026-09-01. Recounted live on 2026-11-06
+with three independent counters agreeing (a Python tokenizer, `wc -w`, and
+`pandoc -t plain`, each over the section text with HTML comments, headings, and
+superscript citation markers stripped):
+
+| Section | Words | Cap | Status |
+| --- | --- | --- | --- |
+| Introduction | **255** | 250 | **OVER by 5** |
+| Methods | 1,428 | -- | -- |
+| Results | 559 | -- | -- |
+| Discussion | 742 | 750 | OK |
+| **Total** | **2,984** | 3,000 | OK |
+
+The total and the Discussion are fine. The Introduction is five words over a hard cap,
+which is a desk-reject risk at submission. It has probably been over since the
+2026-09-03 cost-consequence addition, and nothing was checking.
+
+Adding references 20 and 21 did **not** contribute: superscript citation markers are not
+words, and both were attached to an existing sentence rather than a new one, so the
+count is unchanged at 255.
+
+### Verified trim options
+
+Each saving below was measured by applying the edit and recounting, not estimated. The
+prose is the author's, so these are offered rather than applied.
+
+| | Change | Saves |
+| --- | --- | --- |
+| **A** | "...in affected women and, in some carriers, presenting before a colorectal cancer diagnosis." to "...in affected women and, in some carriers, presenting first." | 4 |
+| **B** | "is the standard sampling method" to "is the standard method" | 1 |
+| **C** | "requires a dedicated clinic visit distinct from the surveillance colonoscopy" to "requires a clinic visit separate from the colonoscopy" | 2 |
+| **D** | "can fail to obtain an adequate specimen" to "can fail to obtain adequate tissue" | 1 |
+| **E** | "once the full cost of an escalation to D&C after a failed sampling attempt is accounted for in each strategy" to "once each strategy's full cost of escalating to D&C after a failed attempt is accounted for" | 4 |
+
+Combinations, measured:
+
+| Combination | Resulting Introduction | Margin |
+| --- | --- | --- |
+| A | 251 | still over |
+| A+B | 250 | exactly at cap, no margin |
+| **A+C** | **249** | 1 word (fewest edits that clear it) |
+| A+B+C | 248 | 2 words |
+| **A+E** | **247** | 3 words (most margin for two edits) |
+
+A alone is not enough. A+B lands exactly on 250, which leaves no room for a copyedit, so
+it is not recommended. A+C is the smallest change that clears the cap; A+E gives the most
+margin for the same number of edits, at the cost of rephrasing the study-question
+sentence, which is the one most worth leaving alone.
+
+### Why this was not fixed here
+
+Trimming an Introduction is an authorial decision about which five words of a scientific
+argument to lose, not a mechanical correction like a wrong author list or a stale derived
+figure. The measurement is recorded, the options are costed, and the choice is the
+author's. What *was* corrected in the file is the factually wrong count that had been
+sitting in the constraints block asserting compliance.

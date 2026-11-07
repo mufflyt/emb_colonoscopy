@@ -344,10 +344,22 @@ standalone procedure against the same procedure performed during an already-sche
 encounter instead of its own separate visit. Its function and parameter names are still
 this specific application's names (`compute_strategy_costs()`, `emb_failure_lynch`, etc.)
 -- generalizing those is a deliberate follow-up, not done yet; see that repo's README for
-its current status. This repository maintains its own local copy of the same source
-(installed here as the `samevisit` package via `DESCRIPTION`/`NAMESPACE`) rather than
-depending on the GitHub repo directly, so a change to one does not automatically appear in
-the other yet.
+its current status.
+
+**This repository is the canonical source; `mufflyt/samevisit` is a periodic export of it.**
+`R/` here is not a vendored copy of an external dependency -- it *is* the package
+(`DESCRIPTION` declares `Package: samevisit`, `man/` holds its 201 help pages, 23 files
+call `library(samevisit)`, and continuous integration installs it with
+`extra-packages: local::.`). Deleting `R/` here would delete the package, and adding
+`Imports: samevisit` would be a self-dependency; the duplicate copy to reconcile is the
+exported one, not this one. `mufflyt/samevisit`'s own first commit records the direction:
+"Initial extraction from mufflyt/emb_colonoscopy."
+
+So: make every change here, where the full test suite and continuous integration exercise
+it, then re-export. The two `R/` trees were byte-identical as of 2026-11-06; if they ever
+differ, this one is correct, and every figure in the manuscript was produced by this copy.
+Nothing syncs automatically, which is the known cost of keeping a standalone, separately
+installable library alongside the study that produced it.
 
 A real second project, `mufflyt/iud_bariatric` (standalone vs. bariatric-surgery-combined
 LNG-IUD insertion), confirmed the pattern generalizes but exposed that the core cost
