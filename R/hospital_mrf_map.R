@@ -34,7 +34,9 @@ classify_freida_hospitals <- function(hospital_payer_rates) {
 
   hospital_payer_rates %>%
     dplyr::mutate(
-      row_usable = !(.data$medicare_confidence %in% not_usable) |
+      row_usable = !base::is.na(.data$medicare_confidence) &
+        !(.data$medicare_confidence %in% not_usable) |
+        !base::is.na(.data$commercial_confidence) &
         !(.data$commercial_confidence %in% not_usable)
     ) %>%
     dplyr::group_by(.data$hospital, .data$state) %>%

@@ -42,17 +42,7 @@ estimate_meps_office_visit_cost <- function(office_tbl) {
     "PERWT24F"
   )
 
-  missing_cols <- base::setdiff(
-    required_cols,
-    base::names(office_tbl)
-  )
-
-  if (base::length(missing_cols) > 0L) {
-    base::stop(
-      "MEPS office file missing: ",
-      base::paste(missing_cols, collapse = ", ")
-    )
-  }
+  validate_columns(office_tbl, required_cols, "MEPS office file")
 
   valid_tbl <- office_tbl |>
     dplyr::filter(
@@ -99,17 +89,7 @@ estimate_meps_hourly_wage <- function(jobs_tbl) {
     "PERWT24F"
   )
 
-  missing_cols <- base::setdiff(
-    required_cols,
-    base::names(jobs_tbl)
-  )
-
-  if (base::length(missing_cols) > 0L) {
-    base::stop(
-      "MEPS jobs file missing: ",
-      base::paste(missing_cols, collapse = ", ")
-    )
-  }
+  validate_columns(jobs_tbl, required_cols, "MEPS jobs file")
 
   wage_tbl <- jobs_tbl |>
     dplyr::filter(

@@ -26,7 +26,7 @@ metric_combined_vs_office_incremental <- function(strategy_costs) {
 #' @export
 metric_expected_total_cost <- function(strategy_name) {
   function(strategy_costs) {
-    strategy_costs$expected_total_cost[strategy_costs$strategy == strategy_name]
+    get_strategy_value(strategy_costs, strategy_name, "expected_total_cost")
   }
 }
 
@@ -73,8 +73,8 @@ evaluate_metric_at <- function(
 #' @param model_parameters Tibble from [load_model_parameters()].
 #' @param parameter_names Character vector of parameter names to vary.
 #'   Each must have non-missing `low_value`/`high_value` in
-#'   `model_parameters`. Defaults to every non-fixed, non-provisional-only
-#'   numeric parameter with bounds defined.
+#'   `model_parameters`. Defaults to every non-fixed parameter with bounds
+#'   defined.
 #' @param price_index_table Tibble from [load_price_index_table()].
 #' @param target_metric_fn Function of `strategy_costs` returning a
 #'   numeric scalar. Defaults to
@@ -90,7 +90,8 @@ run_one_way_sensitivity <- function(
   model_parameters,
   parameter_names = model_parameters$parameter[
     !base::is.na(model_parameters$low_value) &
-      !base::is.na(model_parameters$high_value)
+      !base::is.na(model_parameters$high_value) &
+      model_parameters$distribution != "fixed"
   ],
   price_index_table = load_price_index_table(),
   target_metric_fn = metric_combined_vs_office_incremental,
@@ -100,6 +101,19 @@ run_one_way_sensitivity <- function(
     "Running one-way sensitivity analysis on ", length(parameter_names),
     " parameter(s)."
   )
+
+  if (length(parameter_names) == 0) {
+    return(tibble::tibble(
+      parameter = character(),
+      base_value = numeric(),
+      low_value = numeric(),
+      high_value = numeric(),
+      metric_at_base = numeric(),
+      metric_at_low = numeric(),
+      metric_at_high = numeric(),
+      spread = numeric()
+    ))
+  }
 
   base_metric <- evaluate_metric_at(
     model_parameters,

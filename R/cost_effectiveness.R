@@ -57,13 +57,9 @@
 #'   incremental cost/effect between adjacent frontier strategies).
 #' @export
 compute_incremental_cost_effectiveness <- function(cost_effect_table) {
-  required_columns <- c("strategy", "cost", "effect")
-  missing_columns <- base::setdiff(required_columns, base::names(cost_effect_table))
-  if (length(missing_columns) > 0) {
-    base::stop(
-      "cost_effect_table is missing required column(s): ",
-      base::paste(missing_columns, collapse = ", ")
-    )
+  validate_columns(cost_effect_table, c("strategy", "cost", "effect"), "cost_effect_table")
+  if (anyDuplicated(cost_effect_table$strategy)) {
+    base::stop("cost_effect_table must have unique 'strategy' values.")
   }
 
   ordered <- cost_effect_table %>% dplyr::arrange(.data$cost)
@@ -112,8 +108,7 @@ compute_incremental_cost_effectiveness <- function(cost_effect_table) {
 
     if (base::is.na(violation_index)) break
 
-    extendedly_dominated_strategy <- frontier$strategy[[violation_index]]
-    status[ordered$strategy == extendedly_dominated_strategy] <- "extendedly_dominated"
+    status[[frontier_rows[[violation_index]]]] <- "extendedly_dominated"
   }
 
   frontier_rows <- base::which(status == "on_frontier")

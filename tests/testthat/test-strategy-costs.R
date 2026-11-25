@@ -170,11 +170,11 @@ test_that("combined EMB arm uses the facility-setting professional fee, not the 
     model_parameters, dnc_result$expected_total_cost, price_index_table, 2026
   )
 
-  emb_office_professional_cost_facility <- get_parameter_value(
-    model_parameters, "emb_office_professional_cost_facility"
+  emb_office_professional_cost_facility <- get_adjusted_cost_parameter(
+    model_parameters, "emb_office_professional_cost_facility", price_index_table, 2026
   )
-  emb_office_professional_cost <- get_parameter_value(
-    model_parameters, "emb_office_professional_cost"
+  emb_office_professional_cost <- get_adjusted_cost_parameter(
+    model_parameters, "emb_office_professional_cost", price_index_table, 2026
   )
 
   expect_true(
@@ -224,7 +224,9 @@ test_that("combined EMB adds the preop office visit cost only when the scenario 
     on_parameters, 1000, price_index_table, 2026
   )
 
-  office_visit_cost <- get_parameter_value(model_parameters, "office_visit_em_cost")
+  office_visit_cost <- get_adjusted_cost_parameter(
+    model_parameters, "office_visit_em_cost", price_index_table, 2026
+  )
 
   expect_false("preop_office_visit" %in% off_result$components$component)
   expect_true("preop_office_visit" %in% on_result$components$component)

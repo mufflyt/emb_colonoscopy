@@ -89,7 +89,7 @@ provisional (see `docs/data_sources.md`). Independent confirmation checks the ma
 not the inputs.
 
 **Also applied, at the manuscript level:** the manuscript's PSA-derived clinical-outcome
-claims (combined EMB cheaper in 91.8% of draws, 0.36-vs-2.48-per-1,000 adverse-event
+claims (combined EMB cheaper in 92.1% of draws, 0.36-vs-2.48-per-1,000 adverse-event
 exposure, 100% no-worse-delayed-neoplasia-risk) were re-derived by
 `analysis/12_independent_psa_verification.R`, which reads only the saved
 `tables/probabilistic_sensitivity_draws.csv` and never calls `library(samevisit)` or

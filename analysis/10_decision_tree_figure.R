@@ -23,14 +23,18 @@ strategy_result <- compute_strategy_costs(model_parameters, price_index_table)
 costs <- strategy_result$strategy_costs
 
 get_cost <- function(strategy_name) {
-  base::round(costs$expected_total_cost[costs$strategy == strategy_name], 0)
+  base::round(get_strategy_value(costs, strategy_name, "expected_total_cost"), 0)
 }
 get_escalation_probability <- function(strategy_name) {
-  costs$escalation_probability[costs$strategy == strategy_name]
+  get_strategy_value(costs, strategy_name, "escalation_probability")
 }
 
-office_initial_cost <- base::round(costs$initial_cost[costs$strategy == "office_emb"], 0)
-combined_initial_cost <- base::round(costs$initial_cost[costs$strategy == "combined_emb"], 0)
+office_initial_cost <- base::round(
+  get_strategy_value(costs, "office_emb", "initial_cost"), 0
+)
+combined_initial_cost <- base::round(
+  get_strategy_value(costs, "combined_emb", "initial_cost"), 0
+)
 dnc_cost <- get_cost("dnc")
 office_escalation_pct <- scales::percent(get_escalation_probability("office_emb"), accuracy = 0.1)
 office_success_pct <- scales::percent(1 - get_escalation_probability("office_emb"), accuracy = 0.1)

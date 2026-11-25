@@ -90,9 +90,7 @@ find_parameter_threshold <- function(
 #' @return Numeric scalar.
 #' @export
 metric_combined_vs_min_other <- function(strategy_costs) {
-  combined_cost <- strategy_costs$expected_total_cost[
-    strategy_costs$strategy == "combined_emb"
-  ]
+  combined_cost <- get_strategy_value(strategy_costs, "combined_emb")
   other_costs <- strategy_costs$expected_total_cost[
     strategy_costs$strategy != "combined_emb"
   ]
@@ -108,7 +106,7 @@ metric_combined_vs_min_other <- function(strategy_costs) {
 #' @return Numeric scalar.
 #' @export
 metric_dnc_dominated <- function(strategy_costs) {
-  dnc_cost <- strategy_costs$expected_total_cost[strategy_costs$strategy == "dnc"]
+  dnc_cost <- get_strategy_value(strategy_costs, "dnc")
   other_costs <- strategy_costs$expected_total_cost[
     strategy_costs$strategy != "dnc"
   ]

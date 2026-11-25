@@ -91,12 +91,20 @@ test_that("pathology moves the combined-vs-office gap only through extra specime
       (1 - value_of("office_repeat_attempt_fraction") * value_of("office_repeat_attempt_success_probability"))
   combined_extra_specimens <- value_of("combined_to_dnc_probability")
 
+  price_index_table <- test_price_index_table()
   result <- suppressMessages(run_one_way_sensitivity(
     parameters,
     parameter_names = c("emb_pathology_cost"),
-    price_index_table = test_price_index_table()
+    price_index_table = price_index_table
   ))
-  price_range <- result$high_value[[1]] - result$low_value[[1]]
+  # The one-way sweep varies the raw (source-year) bound, but the metric is
+  # computed in reference-year dollars, so the spread scales with the
+  # inflation-adjusted price range, not the raw one.
+  pathology_row <- parameters[parameters$parameter == "emb_pathology_cost", ]
+  reference_year <- value_of("reference_dollar_year")
+  inflation_ratio <- price_index_table$index_value[price_index_table$year == reference_year] /
+    price_index_table$index_value[price_index_table$year == pathology_row$dollar_year]
+  price_range <- (result$high_value[[1]] - result$low_value[[1]]) * inflation_ratio
   expect_equal(
     result$spread[[1]],
     price_range * abs(combined_extra_specimens - office_extra_specimens),

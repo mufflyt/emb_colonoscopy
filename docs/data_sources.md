@@ -362,8 +362,8 @@ halved along with the escalation probability); the combined-vs-office margin wid
 > commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
 > `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
 > figure. They are kept as written, not restated, so the change history stays truthful.
-> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
-> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+> Current values: combined $496.71, office $743.54, D&C $3,849.49, margin $246.83 (33.2%),
+> minutes threshold ~12.4. See `tables/` for the authoritative current set.
 
 
 ## Literature search for `office_to_dnc_escalation_fraction` (2026-08-30, partially resolved)
@@ -428,8 +428,8 @@ history.
 > commit 471e067 (2026-09-12), which updated `emb_pathology_cost` ($70.14 -> $50.75) and
 > `dc_professional_cost` ($209.76 -> $212.13) from CMS PUF queries and shifted every derived
 > figure. They are kept as written, not restated, so the change history stays truthful.
-> Current values: combined $485.11, office $727.48, D&C $3,822.79, margin $242.36 (33.3%),
-> minutes threshold ~12.3. See `tables/` for the authoritative current set.
+> Current values: combined $496.71, office $743.54, D&C $3,849.49, margin $246.83 (33.2%),
+> minutes threshold ~12.4. See `tables/` for the authoritative current set.
 
 
 ## Fixed: `office_to_dnc_escalation_fraction` was a degenerate beta distribution in PSA (2026-08-31)
@@ -476,8 +476,8 @@ before -> after):
 > structure, and also predate commit 471e067's parameter update. Neither 81.4% nor 69.3%
 > is the current PSA win rate, and `office_emb_neoplasia_delayed_per_1000` is now exactly
 > 0 in every draw by construction rather than by parameter value. They are kept as a
-> record of what this specific fix changed. Current values: 91.8% of draws, office mean
-> $733.14, combined mean $518.88, delayed neoplasia 0. See `tables/` for the
+> record of what this specific fix changed. Current values: 92.1% of draws, office mean
+> $749.23, combined mean $530.53, delayed neoplasia 0. See `tables/` for the
 > authoritative set.
 
 The prior 81.4% figure was effectively conditioning on `P(D&C after failed office EMB) ~= 1` in every
@@ -715,12 +715,12 @@ value were ever left unsourced.
 **The critical validation, run first:** the `national` locality's GPCIs and wage index are all 1.0 by
 construction, so it must reproduce `compute_strategy_costs()`'s own base-case output exactly. Confirmed
 both by an automated test (`tests/testthat/test-geographic-sensitivity.R`, INDEPENDENT-CONFIRMATION-
-flavored, mutation-tested) and by the actual analysis run: national locality produced $485.11 /
-$727.48 / $3,822.79 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
+flavored, mutation-tested) and by the actual analysis run: national locality produced $496.71 /
+$743.54 / $3,849.49 (combined/office/D&C), exactly matching `analysis/01_base_case.R`'s output.
 
 **Result** (`Rscript analysis/09_geographic_sensitivity.R`): combined EMB remained the least expensive
-strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $194.89 (Arkansas, the
-low-cost locality) to $332.78 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
+strategy in all 4 of 4 localities. Combined-vs-office savings ranged from $198.94 (Arkansas, the
+low-cost locality) to $337.76 (Manhattan, the high-cost locality) per patient -- i.e. the base case's
 qualitative conclusion (combined EMB cheaper than office EMB) is not an artifact of national-average
 pricing; it holds, and if anything strengthens, at both geographic extremes tested. See
 `tables/geographic_sensitivity_summary.csv` for the full table and

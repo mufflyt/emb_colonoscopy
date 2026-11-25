@@ -139,17 +139,10 @@ save_colonoscopy_figure(
   height = 10
 )
 
-summary_stamp <- base::format(
-  base::Sys.time(),
-  "%Y%m%d_%H%M%S"
-)
-summary_path <- base::file.path(
+summary_path <- timestamped_path(
   "tables",
-  base::paste0(
-    "colonoscopy_dynamic_summary_",
-    summary_stamp,
-    ".txt"
-  )
+  "colonoscopy_dynamic_summary",
+  ".txt"
 )
 base::writeLines(trend_sentence, summary_path)
 base::message("Saved dynamic summary: ", summary_path)

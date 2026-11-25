@@ -1,4 +1,4 @@
 strategy,strategy_label,initial_cost,escalation_probability,escalation_cost,expected_total_cost,incremental_cost_vs_cheapest,pct_difference_vs_cheapest,is_cheapest
-combined_emb,Endometrial biopsy with colonoscopy,416.3,0.018,68.81,485.11,0,0,TRUE
-office_emb,Office endometrial biopsy (standalone),236.54,0.128,489.36,727.48,242.36,50,FALSE
-dnc,Operative dilation and curettage,3822.79,0,0,3822.79,3337.68,688,FALSE
+combined_emb,Endometrial biopsy with colonoscopy,427.42,0.018,69.29,496.71,0,0,TRUE
+office_emb,Office endometrial biopsy (standalone),249.1,0.128,492.78,743.54,246.83,49.7,FALSE
+dnc,Operative dilation and curettage,3849.49,0,0,3849.49,3352.78,675,FALSE

@@ -62,19 +62,16 @@ estimate_budget_impact_all_comparators <- function(
   strategy_costs,
   cohort_sizes = c(10, 25, 50, 100, 1000)
 ) {
-  combined_cost <- strategy_costs$expected_total_cost[
-    strategy_costs$strategy == "combined_emb"
-  ]
+  combined_vs_office <- compare_two_strategies(strategy_costs, "combined_emb", "office_emb")
+  combined_vs_dnc <- compare_two_strategies(strategy_costs, "combined_emb", "dnc")
 
   dplyr::bind_rows(
     estimate_budget_impact(
-      compare_combined_vs_office(strategy_costs)$incremental_cost_combined_vs_office,
+      combined_vs_office$incremental_cost,
       cohort_sizes, "office_emb"
     ),
     estimate_budget_impact(
-      combined_cost - strategy_costs$expected_total_cost[
-        strategy_costs$strategy == "dnc"
-      ],
+      combined_vs_dnc$incremental_cost,
       cohort_sizes, "dnc"
     )
   )

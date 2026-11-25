@@ -1286,19 +1286,10 @@ save_colonoscopy_cache <- function(colonoscopy_tbl,
     base::dir.create(cache_dir, recursive = TRUE)
   }
 
-  stamp <- base::format(
-    base::Sys.time(),
-    "%Y%m%d_%H%M%S"
-  )
-  path <- base::file.path(
+  path <- timestamped_path(
     cache_dir,
-    base::paste0(
-      "cms_colonoscopy_",
-      data_year,
-      "_",
-      stamp,
-      ".csv"
-    )
+    base::paste0("cms_colonoscopy_", data_year),
+    ".csv"
   )
 
   readr::write_csv(colonoscopy_tbl, path)

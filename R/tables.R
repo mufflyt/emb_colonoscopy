@@ -66,9 +66,12 @@ build_strategy_comparison_table <- function(strategy_comparison) {
 #'   `sd_cost`, `p2_5`, `p97_5`, `n_draws_cheapest`, `pct_draws_cheapest`.
 #' @export
 build_psa_summary_table <- function(probabilistic_estimates) {
+  cost_column_names <- base::grep(
+    "_cost$", base::names(probabilistic_estimates), value = TRUE
+  )
   cost_summary <- probabilistic_estimates %>%
     tidyr::pivot_longer(
-      cols = c("office_emb_cost", "combined_emb_cost", "dnc_cost"),
+      cols = tidyselect::all_of(cost_column_names),
       names_to = "strategy", values_to = "expected_total_cost"
     ) %>%
     dplyr::mutate(strategy = base::sub("_cost$", "", .data$strategy)) %>%
@@ -115,9 +118,7 @@ build_summary_sentence <- function(
   threshold_estimates
 ) {
   get_cost <- function(strategy_name) {
-    strategy_comparison$expected_total_cost[
-      strategy_comparison$strategy == strategy_name
-    ]
+    get_strategy_value(strategy_comparison, strategy_name, "expected_total_cost")
   }
 
   minutes_threshold <- threshold_estimates$threshold_value[

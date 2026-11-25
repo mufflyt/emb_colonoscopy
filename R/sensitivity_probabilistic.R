@@ -150,19 +150,7 @@ run_probabilistic_sensitivity <- function(
   validate_positive(n_simulations, "n_simulations")
 
   if (!base::is.null(seed)) {
-    old_seed <- if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-      base::get(".Random.seed", envir = .GlobalEnv)
-    } else {
-      NULL
-    }
-    base::on.exit({
-      if (!base::is.null(old_seed)) {
-        base::assign(".Random.seed", old_seed, envir = .GlobalEnv)
-      } else if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-        base::rm(".Random.seed", envir = .GlobalEnv)
-      }
-    }, add = TRUE)
-    base::set.seed(seed)
+    withr::local_seed(seed)
   }
 
   base::message(
@@ -191,9 +179,9 @@ run_probabilistic_sensitivity <- function(
     # paired to the same underlying parameter realization).
     clinical_outcomes <- compute_strategy_clinical_outcomes(sampled_parameters)
 
-    dnc_cost <- strategy_result$strategy_costs$expected_total_cost[
-      strategy_result$strategy_costs$strategy == "dnc"
-    ]
+    dnc_cost <- get_strategy_value(
+      strategy_result$strategy_costs, "dnc", "expected_total_cost"
+    )
 
     draw_costs <- c(
       office_emb = incremental_result$office_emb_cost,
@@ -332,19 +320,7 @@ evaluate_metric_psa_interval_at <- function(
   pinned_parameters$distribution[[pinned_row]] <- "fixed"
 
   if (!base::is.null(seed)) {
-    old_seed <- if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-      base::get(".Random.seed", envir = .GlobalEnv)
-    } else {
-      NULL
-    }
-    base::on.exit({
-      if (!base::is.null(old_seed)) {
-        base::assign(".Random.seed", old_seed, envir = .GlobalEnv)
-      } else if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-        base::rm(".Random.seed", envir = .GlobalEnv)
-      }
-    }, add = TRUE)
-    base::set.seed(seed)
+    withr::local_seed(seed)
   }
 
   draw_values <- purrr::map_dbl(base::seq_len(n_simulations), function(draw_index) {
@@ -440,19 +416,7 @@ run_probabilistic_sensitivity_generic <- function(
   validate_positive(n_simulations, "n_simulations")
 
   if (!base::is.null(seed)) {
-    old_seed <- if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-      base::get(".Random.seed", envir = .GlobalEnv)
-    } else {
-      NULL
-    }
-    base::on.exit({
-      if (!base::is.null(old_seed)) {
-        base::assign(".Random.seed", old_seed, envir = .GlobalEnv)
-      } else if (base::exists(".Random.seed", envir = .GlobalEnv)) {
-        base::rm(".Random.seed", envir = .GlobalEnv)
-      }
-    }, add = TRUE)
-    base::set.seed(seed)
+    withr::local_seed(seed)
   }
 
   base::message(

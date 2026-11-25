@@ -35,14 +35,7 @@
 #' @return Invisibly TRUE.
 #' @export
 validate_geographic_columns <- function(input_tbl, required_columns, input_name) {
-  missing_columns <- base::setdiff(required_columns, base::names(input_tbl))
-  if (base::length(missing_columns) > 0) {
-    base::stop(
-      input_name, " is missing required column(s): ",
-      base::paste(missing_columns, collapse = ", ")
-    )
-  }
-  base::invisible(TRUE)
+  validate_columns(input_tbl, required_columns, input_name)
 }
 
 #' Calculate a Medicare PFS geographic multiplier
