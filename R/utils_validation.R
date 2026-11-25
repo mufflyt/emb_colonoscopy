@@ -68,6 +68,24 @@ validate_boolean <- function(logical_value, value_name) {
   base::invisible(TRUE)
 }
 
+#' Validate that a table has required columns
+#'
+#' @param input_tbl Tibble/data frame to check.
+#' @param required_columns Character vector of required column names.
+#' @param input_name Character scalar used in the error message.
+#' @return Invisibly `TRUE` if valid; otherwise raises an error.
+#' @export
+validate_columns <- function(input_tbl, required_columns, input_name = "input") {
+  missing_columns <- base::setdiff(required_columns, base::names(input_tbl))
+  if (length(missing_columns) > 0) {
+    base::stop(
+      input_name, " is missing required column(s): ",
+      base::paste(missing_columns, collapse = ", ")
+    )
+  }
+  base::invisible(TRUE)
+}
+
 #' Validate the shape and contents of a model-parameter table
 #'
 #' Checks that a `model_parameters` tibble (as produced by
@@ -86,13 +104,7 @@ validate_model_parameters <- function(model_parameters) {
     "evidence_tier"
   )
 
-  missing_columns <- base::setdiff(required_columns, base::names(model_parameters))
-  if (length(missing_columns) > 0) {
-    base::stop(
-      "model_parameters is missing required column(s): ",
-      base::paste(missing_columns, collapse = ", ")
-    )
-  }
+  validate_columns(model_parameters, required_columns, "model_parameters")
 
   duplicated_names <- model_parameters$parameter[
     base::duplicated(model_parameters$parameter)

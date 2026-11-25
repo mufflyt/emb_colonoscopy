@@ -107,11 +107,13 @@ compute_dnc_strategy_cost <- function(
   laparoscopy_only_fraction <- get_parameter_value(
     model_parameters, "dnc_perforation_management_laparoscopy_only_fraction"
   )
-  laparoscopy_professional_cost <- get_parameter_value(
-    model_parameters, "dnc_perforation_laparoscopy_professional_cost"
+  laparoscopy_professional_cost <- get_adjusted_cost_parameter(
+    model_parameters, "dnc_perforation_laparoscopy_professional_cost",
+    price_index_table, reference_year
   )
-  laparoscopy_facility_cost <- get_parameter_value(
-    model_parameters, "dnc_perforation_laparoscopy_facility_cost"
+  laparoscopy_facility_cost <- get_adjusted_cost_parameter(
+    model_parameters, "dnc_perforation_laparoscopy_facility_cost",
+    price_index_table, reference_year
   )
   adverse_event_cost_partial <- perforation_probability * (
     observation_fraction * 0 +
@@ -130,11 +132,21 @@ compute_dnc_strategy_cost <- function(
       "adverse_event_cost_partial_perforation_only"
     ),
     amount = c(
-      get_parameter_value(model_parameters, "dc_professional_cost"),
-      get_parameter_value(model_parameters, "emb_pathology_cost"),
-      get_parameter_value(model_parameters, "dnc_facility_or_asc_fee"),
-      get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost"),
-      get_parameter_value(model_parameters, "dnc_anesthesia_cost"),
+      get_adjusted_cost_parameter(
+        model_parameters, "dc_professional_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_pathology_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "dnc_facility_or_asc_fee", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "dnc_preop_clinic_visit_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "dnc_anesthesia_cost", price_index_table, reference_year
+      ),
       adverse_event_cost_partial
     )
   )
@@ -187,9 +199,15 @@ compute_office_emb_strategy_cost <- function(
       "pathology"
     ),
     amount = c(
-      get_parameter_value(model_parameters, "office_visit_em_cost"),
-      get_parameter_value(model_parameters, "emb_office_professional_cost"),
-      get_parameter_value(model_parameters, "emb_pathology_cost")
+      get_adjusted_cost_parameter(
+        model_parameters, "office_visit_em_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_office_professional_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_pathology_cost", price_index_table, reference_year
+      )
     )
   )
 
@@ -330,19 +348,29 @@ compute_combined_emb_strategy_cost <- function(
       "coordination"
     ),
     amount = c(
-      get_parameter_value(model_parameters, "emb_office_professional_cost_facility"),
-      get_parameter_value(model_parameters, "emb_pathology_cost"),
-      get_parameter_value(model_parameters, "emb_disposable_supply_cost"),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_office_professional_cost_facility",
+        price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_pathology_cost", price_index_table, reference_year
+      ),
+      get_adjusted_cost_parameter(
+        model_parameters, "emb_disposable_supply_cost", price_index_table, reference_year
+      ),
       incremental_room_cost,
       incremental_anesthesia_time_cost,
       # combined_emb_anesthesia_drug_increment_cost: base case $0, per
       # Nebgen et al. 2014 (PMC4389779): "No increases in anesthetic
       # medication dosing or change in type of sedation offered were
       # necessitated by the addition of the EMBx."
-      get_parameter_value(
-        model_parameters, "combined_emb_anesthesia_drug_increment_cost"
+      get_adjusted_cost_parameter(
+        model_parameters, "combined_emb_anesthesia_drug_increment_cost",
+        price_index_table, reference_year
       ),
-      get_parameter_value(model_parameters, "coordination_cost")
+      get_adjusted_cost_parameter(
+        model_parameters, "coordination_cost", price_index_table, reference_year
+      )
     )
   )
 
@@ -355,7 +383,9 @@ compute_combined_emb_strategy_cost <- function(
       tibble::tibble(
         strategy = "combined_emb",
         component = "preop_office_visit",
-        amount = get_parameter_value(model_parameters, "office_visit_em_cost")
+        amount = get_adjusted_cost_parameter(
+          model_parameters, "office_visit_em_cost", price_index_table, reference_year
+        )
       )
     )
   }

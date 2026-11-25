@@ -8,9 +8,9 @@
 #'
 #' Deliberately reads the ALREADY-SAVED `tables/probabilistic_sensitivity_draws.csv`
 #' rather than calling run_probabilistic_sensitivity() again:
-#' run_probabilistic_sensitivity() is unseeded, so a fresh call here would
-#' draw a different 1,000 simulations than the ones the manuscript's Results
-#' text was written from, reintroducing the same same-document
+#' even though run_probabilistic_sensitivity() is seeded by default, a fresh
+#' call here could still diverge from the draws file if its seed or simulation
+#' count ever changed, reintroducing the same same-document
 #' internal-inconsistency bug already caught once (see CHANGELOG.md,
 #' "Draft Methods and Results sections for the manuscript"). Re-run
 #' analysis/03_probabilistic_sensitivity.R first if the draws file needs

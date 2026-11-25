@@ -40,13 +40,7 @@ adjust_for_inflation <- function(
   }
 
   required_columns <- c("year", "index_value")
-  missing_columns <- base::setdiff(required_columns, base::names(price_index_table))
-  if (length(missing_columns) > 0) {
-    base::stop(
-      "price_index_table is missing required column(s): ",
-      base::paste(missing_columns, collapse = ", ")
-    )
-  }
+  validate_columns(price_index_table, required_columns, "price_index_table")
 
   source_index <- price_index_table$index_value[
     price_index_table$year == source_year

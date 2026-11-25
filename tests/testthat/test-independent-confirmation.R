@@ -20,6 +20,29 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
   price_index_table <- test_price_index_table()
   reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
 
+  # Independent inflation adjustment: read the CPI table directly and scale
+  # each dollar-denominated parameter by reference_index/source_index. This
+  # deliberately does NOT call adjust_for_inflation() or
+  # get_adjusted_cost_parameter(), so a shared bug in those helpers cannot
+  # validate a wrong pipeline result.
+  independent_adjusted_cost <- function(parameter_name) {
+    parameter_row <- model_parameters[
+      model_parameters$parameter == parameter_name, , drop = FALSE
+    ]
+    cost_value <- as.numeric(parameter_row$base_value[[1]])
+    source_year <- parameter_row$dollar_year[[1]]
+    if (is.na(source_year) || source_year == reference_year) {
+      return(cost_value)
+    }
+    source_index <- price_index_table$index_value[
+      price_index_table$year == source_year
+    ][[1]]
+    reference_index <- price_index_table$index_value[
+      price_index_table$year == reference_year
+    ][[1]]
+    cost_value * reference_index / source_index
+  }
+
   # -- D&C cost at zero facility fee, summed directly from raw parameters --
   # dnc_recovery_room_cost is deliberately excluded: it is packaged into
   # dnc_facility_or_asc_fee under OPPS/ASC payment methodology (MedPAC,
@@ -33,17 +56,17 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
     get_parameter_value(model_parameters, "dnc_perforation_probability") * (
       get_parameter_value(model_parameters, "dnc_perforation_management_observation_fraction") * 0 +
         get_parameter_value(model_parameters, "dnc_perforation_management_laparoscopy_only_fraction") * (
-          get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_professional_cost") +
-            get_parameter_value(model_parameters, "dnc_perforation_laparoscopy_facility_cost")
+          independent_adjusted_cost("dnc_perforation_laparoscopy_professional_cost") +
+            independent_adjusted_cost("dnc_perforation_laparoscopy_facility_cost")
         )
     )
 
   independent_dnc_cost_at_zero_fee <-
-    get_parameter_value(model_parameters, "dc_professional_cost") +
-    get_parameter_value(model_parameters, "emb_pathology_cost") +
+    independent_adjusted_cost("dc_professional_cost") +
+    independent_adjusted_cost("emb_pathology_cost") +
     0 + # dnc_facility_or_asc_fee set to zero for this check
-    get_parameter_value(model_parameters, "dnc_preop_clinic_visit_cost") +
-    get_parameter_value(model_parameters, "dnc_anesthesia_cost") +
+    independent_adjusted_cost("dnc_preop_clinic_visit_cost") +
+    independent_adjusted_cost("dnc_anesthesia_cost") +
     independent_ae_cost
 
   # -- office EMB expected cost, summed directly from raw parameters --
@@ -52,9 +75,9 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
   # already priced into emb_office_professional_cost's nonfacility PE RVU
   # -- see R/strategy_costs.R and tests/testthat/test-strategy-costs.R.
   independent_office_initial_cost <-
-    get_parameter_value(model_parameters, "office_visit_em_cost") +
-    get_parameter_value(model_parameters, "emb_office_professional_cost") +
-    get_parameter_value(model_parameters, "emb_pathology_cost")
+    independent_adjusted_cost("office_visit_em_cost") +
+    independent_adjusted_cost("emb_office_professional_cost") +
+    independent_adjusted_cost("emb_pathology_cost")
   # office_repeat_attempt_fraction / office_repeat_attempt_success_probability
   # superseded office_to_dnc_escalation_fraction 2026-09-02 -- see
   # R/strategy_costs.R for the full derivation and citations.
@@ -85,27 +108,27 @@ test_that("INDEPENDENT CONFIRMATION: D&C is dominated by both alternatives even 
 
   added_minutes <- get_parameter_value(model_parameters, "combined_emb_added_minutes")
   independent_room_cost <- added_minutes *
-    get_parameter_value(model_parameters, "direct_room_cost_per_minute") * inflation_multiplier
+    independent_adjusted_cost("direct_room_cost_per_minute")
   independent_anesthesia_time_cost <- added_minutes *
-    get_parameter_value(model_parameters, "anesthesia_cost_per_minute") * inflation_multiplier
+    independent_adjusted_cost("anesthesia_cost_per_minute")
 
   independent_requires_preop_visit <- get_parameter_value(
     model_parameters, "combined_requires_preop_office_visit", as_numeric = FALSE
   )
   independent_preop_visit_cost <- if (isTRUE(independent_requires_preop_visit)) {
-    get_parameter_value(model_parameters, "office_visit_em_cost")
+    independent_adjusted_cost("office_visit_em_cost")
   } else {
     0
   }
 
   independent_combined_initial_cost <-
-    get_parameter_value(model_parameters, "emb_office_professional_cost_facility") +
-    get_parameter_value(model_parameters, "emb_pathology_cost") +
-    get_parameter_value(model_parameters, "emb_disposable_supply_cost") +
+    independent_adjusted_cost("emb_office_professional_cost_facility") +
+    independent_adjusted_cost("emb_pathology_cost") +
+    independent_adjusted_cost("emb_disposable_supply_cost") +
     independent_room_cost +
     independent_anesthesia_time_cost +
-    get_parameter_value(model_parameters, "combined_emb_anesthesia_drug_increment_cost") +
-    get_parameter_value(model_parameters, "coordination_cost") +
+    independent_adjusted_cost("combined_emb_anesthesia_drug_increment_cost") +
+    independent_adjusted_cost("coordination_cost") +
     independent_preop_visit_cost
   independent_combined_escalation_probability <-
     get_parameter_value(model_parameters, "combined_to_dnc_probability")

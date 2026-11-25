@@ -1,4 +1,18 @@
 year,index_value,index_source,is_placeholder
-2010,388.436,BLS CPI-U Medical Care (series CUUR0000SAM) annual average; confirmed against the BLS Public Data API v2 on 2026-09-13 (388.436).,FALSE
-2014,435.292,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average, retrieved from the BLS Public Data API v2 (annualaverage=true) on 2026-09-13. Replaces the earlier geometrically interpolated placeholder (431.9). Used for the Childers/Maggard-Gibbons JAMA Surgery per-minute OR/anesthesia cost parameters (dollar_year 2014).",FALSE
+2010,388.436,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2011,400.258,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2012,414.924,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2013,425.134,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2014,435.292,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2015,446.752,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2016,463.675,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2017,475.322,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2018,484.707,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2019,498.413,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2020,518.876,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2021,525.276,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2022,546.554,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2023,549.084,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2024,563.841,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
+2025,580.102,"BLS CPI-U Medical Care (series CUUR0000SAM) annual average (period M13), retrieved from the BLS Public Data API v2 on 2026-11-25.",FALSE
 2026,593.781,"BLS CPI-U Medical Care (series CUUR0000SAM), July 2026 monthly value; confirmed against the BLS Public Data API v2 on 2026-09-13 (593.781).",FALSE

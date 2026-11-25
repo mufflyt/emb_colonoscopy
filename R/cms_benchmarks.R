@@ -465,17 +465,7 @@ summarize_cms_benchmarks <- function(cms_tbl) {
     "Tot_Srvcs"
   )
 
-  missing_cols <- base::setdiff(
-    required_cols,
-    base::names(cms_tbl)
-  )
-
-  if (base::length(missing_cols) > 0L) {
-    base::stop(
-      "CMS table missing: ",
-      base::paste(missing_cols, collapse = ", ")
-    )
-  }
+  validate_columns(cms_tbl, required_cols, "CMS table")
 
   cms_tbl |>
     dplyr::group_by(.data$HCPCS_Cd) |>
@@ -543,17 +533,7 @@ summarize_cms_facility_benchmarks <- function(
     payment_field
   )
 
-  missing_cols <- base::setdiff(
-    required_cols,
-    base::names(cms_facility_tbl)
-  )
-
-  if (base::length(missing_cols) > 0L) {
-    base::stop(
-      "CMS facility table missing: ",
-      base::paste(missing_cols, collapse = ", ")
-    )
-  }
+  validate_columns(cms_facility_tbl, required_cols, "CMS facility table")
 
   cms_facility_tbl |>
     dplyr::group_by(

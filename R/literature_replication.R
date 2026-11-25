@@ -36,13 +36,9 @@ validate_against_published_model <- function(
   strategy_result <- compute_strategy_costs(model_parameters, price_index_table)
 
   validation_rows <- purrr::imap(targets, function(target_cost, strategy_name) {
-    modeled_cost <- strategy_result$strategy_costs$expected_total_cost[
-      strategy_result$strategy_costs$strategy == strategy_name
-    ]
-
-    if (length(modeled_cost) != 1) {
-      base::stop("No modeled cost found for strategy '", strategy_name, "'.")
-    }
+    modeled_cost <- get_strategy_value(
+      strategy_result$strategy_costs, strategy_name, "expected_total_cost"
+    )
 
     pct_difference <- 100 * (modeled_cost - target_cost) / target_cost
 
