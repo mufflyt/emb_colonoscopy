@@ -96,15 +96,41 @@ test_that("combined_emb cost rises less than dnc cost as dnc_facility_or_asc_fee
   expect_true(combined_delta < office_delta)
 })
 
-test_that("the Ladabaum-historical scenario reproduces the documented ~1.529x inflation multiplier", {
+test_that("the Ladabaum-historical scenario lands on the documented ~1.529x inflation multiplier", {
+  # The override replaces emb_office_professional_cost's base_value, which
+  # is denominated in THAT parameter's dollar_year -- the cost engine then
+  # carries it to reference_year. The override itself must therefore be the
+  # Ladabaum anchor inflated only to the fee parameter's own dollar_year;
+  # storing the fully reference-year-inflated value would double-inflate.
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()
+  reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
+  fee_dollar_year <- model_parameters$dollar_year[
+    model_parameters$parameter == "emb_office_professional_cost"
+  ]
 
   scenario_definitions <- build_scenario_definitions(model_parameters, price_index_table)
   ladabaum_scenario_cost <- scenario_definitions$office_cost_ladabaum_historical$
     overrides$emb_office_professional_cost
 
-  expect_equal(base::round(ladabaum_scenario_cost / 224, 3), 1.529)
+  index_at <- function(year) {
+    price_index_table$index_value[price_index_table$year == year]
+  }
+  effective_reference_cost <- ladabaum_scenario_cost *
+    index_at(reference_year) / index_at(fee_dollar_year)
+
+  expect_equal(
+    effective_reference_cost,
+    224 * index_at(reference_year) / index_at(2010),
+    tolerance = 1e-9
+  )
+  # And the round-trip must not equal a naive double adjustment.
+  expect_false(isTRUE(all.equal(
+    effective_reference_cost,
+    224 * (index_at(reference_year) / index_at(2010)) *
+      (index_at(reference_year) / index_at(fee_dollar_year)),
+    tolerance = 1e-9
+  )))
 })
 
 test_that("payer scenarios scale each reimbursement input by its own empirical multiplier", {

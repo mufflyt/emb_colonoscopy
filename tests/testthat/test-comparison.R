@@ -8,6 +8,25 @@ test_that("compare_strategies_to_cheapest flags exactly one cheapest strategy", 
   expect_equal(min(strategy_comparison$incremental_cost_vs_cheapest), 0)
 })
 
+test_that("compare_strategies_to_cheapest flags every strategy tied for cheapest", {
+  # A tie for minimum cost must mark ALL tied strategies cheapest --
+  # flagging only the first one by row order misreports the result.
+  tied_strategies <- tibble::tibble(
+    strategy = c("combined_emb", "office_emb", "dnc"),
+    expected_total_cost = c(100, 100, 300)
+  )
+  tied_comparison <- suppressMessages(
+    compare_strategies_to_cheapest(tied_strategies)
+  )
+
+  expect_equal(sum(tied_comparison$is_cheapest), 2)
+  expect_equal(
+    tied_comparison$strategy[tied_comparison$is_cheapest],
+    c("combined_emb", "office_emb")
+  )
+  expect_equal(min(tied_comparison$incremental_cost_vs_cheapest), 0)
+})
+
 test_that("compare_combined_vs_office matches the direct cost difference", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

@@ -89,7 +89,24 @@ build_scenario_definitions <- function(
 ) {
   ladabaum_row <- model_parameters %>%
     dplyr::filter(.data$parameter == "cost_emb_ladabaum_2010")
+  # The override replaces emb_office_professional_cost's base_value, and
+  # base_value is denominated in that parameter's own dollar_year -- the
+  # cost engine then carries it the rest of the way to reference_year.
+  # Adjusting straight to reference_year here would double-inflate once
+  # get_adjusted_cost_parameter() applies its own source->reference step.
+  emb_fee_row <- model_parameters %>%
+    dplyr::filter(.data$parameter == "emb_office_professional_cost")
+  ladabaum_target_year <- emb_fee_row$dollar_year[[1]]
+  if (base::is.na(ladabaum_target_year)) {
+    ladabaum_target_year <- reference_year
+  }
   ladabaum_inflated_cost <- adjust_for_inflation(
+    cost_value = base::as.numeric(ladabaum_row$base_value[[1]]),
+    source_year = ladabaum_row$dollar_year[[1]],
+    reference_year = ladabaum_target_year,
+    price_index_table = price_index_table
+  )
+  ladabaum_reference_cost <- adjust_for_inflation(
     cost_value = base::as.numeric(ladabaum_row$base_value[[1]]),
     source_year = ladabaum_row$dollar_year[[1]],
     reference_year = reference_year,
@@ -129,7 +146,7 @@ build_scenario_definitions <- function(
         "Cross-validation scenario: substitutes the office-EMB professional fee with the ",
         "Ladabaum et al. 2011 $224 (2010 dollars) literature anchor, inflated to ",
         reference_year, " dollars via the real BLS CPI-U Medical Care series (~$",
-        base::round(ladabaum_inflated_cost, 0), "). Tests whether the base-case conclusion ",
+        base::round(ladabaum_reference_cost, 0), "). Tests whether the base-case conclusion ",
         "is sensitive to using an independent historical cost track instead of the CMS-2026 ",
         "fee-schedule figure."
       ),
