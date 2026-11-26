@@ -102,6 +102,23 @@ test_that("sample_triangular falls back to the mode instead of dividing by zero 
   expect_equal(draw_parameter_sample(degenerate_row), 7.5)
 })
 
+test_that("sample_triangular errors when the mode falls outside [min, max]", {
+  # Without this guard, an out-of-range mode silently produces draws
+  # outside [min_value, max_value]: mode_fraction leaves [0, 1], so one
+  # branch is always taken and its square root can exceed the range.
+  expect_error(sample_triangular(0, 10, 5), "min_value <= mode_value <= max_value")
+  expect_error(sample_triangular(5, 10, 0), "min_value <= mode_value <= max_value")
+  expect_error(sample_triangular(0, -1, 5), "min_value <= mode_value <= max_value")
+  expect_error(sample_triangular(10, 5, 0), "min_value <= mode_value <= max_value")
+
+  # Boundary modes are legal and must still sample inside the range.
+  set.seed(1)
+  draws <- replicate(500, sample_triangular(0, 0, 5))
+  expect_true(all(draws >= 0 & draws <= 5))
+  draws <- replicate(500, sample_triangular(0, 5, 5))
+  expect_true(all(draws >= 0 & draws <= 5))
+})
+
 test_that("run_probabilistic_sensitivity is reproducible under its default seed", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

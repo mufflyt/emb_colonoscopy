@@ -127,7 +127,17 @@ compute_strategy_societal_costs <- function(
     ) %>%
     dplyr::mutate(
       societal_total_cost = .data$healthcare_sector_cost + .data$societal_addon
-    ) %>%
+    )
+
+  if (base::anyNA(societal_costs$healthcare_sector_cost)) {
+    base::stop(
+      "compute_strategy_societal_costs() found strategies in the encounter ",
+      "table with no matching row in strategy_costs; cannot compute ",
+      "societal_total_cost."
+    )
+  }
+
+  societal_costs <- societal_costs %>%
     dplyr::arrange(.data$societal_total_cost)
 
   base::message("Societal-perspective total cost (lowest to highest):")

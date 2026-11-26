@@ -112,6 +112,41 @@ columns to generalize as a thin wrapper, so it was left untouched rather than fo
 API is actually usable by a 2-arm, no-rescue-strategy comparison -- `iud_bariatric`'s own
 repository was not modified; porting it onto this API is a separate future step.
 
+## `mystery*` packages evaluated for canonical helpers (2026-11 audit round 3)
+
+The author's sibling packages (`mysterycall`, `mysterymaps`, `mysterymedicaid`,
+`mysterynpi`, `mysteryroster`) are installed locally and export genuinely reusable
+helpers. Checked each against this repository's hand-rolled equivalents:
+
+- **`mysterycall`** (local dev package, v1.6.3.9000, not on CRAN) exports the
+  closest matches to code written here by hand: `mysterycall_safe_inner_join()` /
+  `mysterycall_safe_left_join()` / `mysterycall_safe_anti_join()` (joins that
+  assert unique keys and verify row counts instead of silently dropping or
+  fanning out rows), `mysterycall_assert_unique_keys()`, `mysterycall_read_table()`,
+  and `mysterycall_verify_artifact()`. **Not adopted as a dependency**: it is a
+  local-only package, so adding it to `Imports` would break `R CMD check` and
+  portability for anyone without it installed. Its *patterns* were applied by
+  hand instead: this round added explicit duplicate-`strategy` guards to
+  `build_pairwise_comparison_table()` and a missing-strategy (NA-join) guard to
+  `compute_strategy_societal_costs()`, matching the unique-key discipline
+  `mysterycall_safe_*_join()` enforces, and round 2 added the analogous
+  hospital/state join check in `R/hospital_mrf_map.R`.
+- **`mysteryroster`** exports `deduplicate_roster()`-style registry/data-quality
+  helpers. The one place this repository deduplicates (`build_hospital_mrf_points()`
+  in `R/hospital_mrf_map.R`, first-occurrence-wins across FREIDA/convenience
+  sources) is a two-source precedence rule specific to this dataset, not a
+  general roster dedup; current data has no duplicate `(hospital, state)` keys,
+  so the hand-rolled `distinct()` is sufficient. Same local-only dependency
+  constraint applies.
+- **`mysterymedicaid`** is a Medicaid claims-ingestion pipeline; this
+  repository's evidence layer (`R/cms_benchmarks.R`, `R/hpt_*.R`,
+  `R/meps_burden.R`) pulls from CMS PFS/OPPS, Hospital Price Transparency MRFs,
+  and MEPS instead -- different sources, no overlapping helper surface.
+- **`mysterymaps` / `mysterynpi`**: already evaluated above; still not used.
+
+If `mysterycall` is ever published (or vendored), the safe-join helpers are the
+first candidates to adopt for the join sites listed above.
+
 ## The one-cycle decision-tree structure inherited from `cost_lefort`
 
 `cost_lefort` (the predecessor scaffold named in `colpocleisis_costeff/ONBOARDING.md`) frames its

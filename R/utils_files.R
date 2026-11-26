@@ -19,7 +19,6 @@ timestamp_string <- function() {
 #' @return Character scalar path `directory/prefix_timestamp.extension`.
 #' @export
 timestamped_path <- function(directory, prefix, extension, timestamp = timestamp_string()) {
-  validate_non_negative(length(directory), "directory")
   if (!base::is.character(directory) || length(directory) != 1 || base::is.na(directory) || directory == "") {
     base::stop("directory must be one non-empty character string.")
   }

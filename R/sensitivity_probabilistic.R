@@ -91,6 +91,13 @@ sample_triangular <- function(min_value, mode_value, max_value) {
     return(mode_value)
   }
 
+  if (!(min_value <= mode_value && mode_value <= max_value)) {
+    base::stop(
+      "sample_triangular() requires min_value <= mode_value <= max_value; ",
+      "got min = ", min_value, ", mode = ", mode_value, ", max = ", max_value, "."
+    )
+  }
+
   uniform_draw <- stats::runif(1)
   mode_fraction <- (mode_value - min_value) / (max_value - min_value)
 

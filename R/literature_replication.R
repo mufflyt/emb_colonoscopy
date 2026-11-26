@@ -40,14 +40,19 @@ validate_against_published_model <- function(
       strategy_result$strategy_costs, strategy_name, "expected_total_cost"
     )
 
-    pct_difference <- 100 * (modeled_cost - target_cost) / target_cost
+    pct_difference <- if (target_cost == 0) {
+      if (modeled_cost == 0) 0 else Inf
+    } else {
+      100 * (modeled_cost - target_cost) / target_cost
+    }
 
     tibble::tibble(
       strategy = strategy_name,
       modeled_cost = modeled_cost,
       target_cost = target_cost,
       pct_difference = pct_difference,
-      within_tolerance = base::abs(pct_difference) <= tolerance_pct
+      within_tolerance = base::is.finite(pct_difference) &&
+        base::abs(pct_difference) <= tolerance_pct
     )
   })
 

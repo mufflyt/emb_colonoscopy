@@ -61,9 +61,9 @@ format_percent <- function(x) {
 
 #' Compose a one-sentence summary of an external cost-validation comparison
 #'
-#' Describes the direction (higher/lower/the same "in Colorado") and
-#' magnitude of `comparison_tbl$absolute_difference[[1]]` over the given
-#' year range, with an optional p-value.
+#' Describes the direction (higher/lower/the same) and magnitude of
+#' `comparison_tbl$absolute_difference[[1]]` over the given year range,
+#' with an optional p-value.
 #'
 #' @param comparison_tbl Tibble with an `absolute_difference` column; only
 #'   the first row/element is used.
@@ -81,8 +81,8 @@ format_external_validation_sentence <- function(
   difference <- comparison_tbl$absolute_difference[[1]]
 
   direction <- dplyr::case_when(
-    difference > 0 ~ "higher in Colorado",
-    difference < 0 ~ "lower in Colorado",
+    difference > 0 ~ "higher",
+    difference < 0 ~ "lower",
     TRUE ~ "the same"
   )
 
