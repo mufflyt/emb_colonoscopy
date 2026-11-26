@@ -87,12 +87,30 @@ build_hospital_mrf_points <- function(
     dplyr::select(hospital = "hospital", state = "state_abbr") %>%
     dplyr::mutate(coverage = "full")
 
-  dplyr::bind_rows(freida_classified, colonoscopy_only) %>%
-    dplyr::distinct(.data$hospital, .data$state, .keep_all = TRUE) %>%
+  hospital_rows <- dplyr::bind_rows(freida_classified, colonoscopy_only) %>%
+    dplyr::distinct(.data$hospital, .data$state, .keep_all = TRUE)
+
+  # Join on hospital AND state: same-named hospitals in different states
+  # must not pick up each other's city coordinates.
+  hospital_points <- hospital_rows %>%
     dplyr::inner_join(
-      hospital_cities %>% dplyr::select("hospital", "lat", "lon", "coordinate_source"),
-      by = "hospital"
+      hospital_cities %>%
+        dplyr::select("hospital", "state", "lat", "lon", "coordinate_source"),
+      by = c("hospital", "state")
     )
+
+  dropped <- dplyr::anti_join(
+    hospital_rows, hospital_cities, by = c("hospital", "state")
+  )
+  if (base::nrow(dropped) > 0) {
+    base::message(
+      "  WARNING: ", base::nrow(dropped), " usable hospital(s) have no row in ",
+      "hospital_cities and were dropped from the map: ",
+      base::paste(dropped$hospital, " (", dropped$state, ")", collapse = ", ")
+    )
+  }
+
+  hospital_points
 }
 
 #' Static jittered point map of hospitals with usable MRF-derived payer-rate data

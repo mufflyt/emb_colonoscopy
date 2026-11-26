@@ -30,7 +30,7 @@ compare_strategies_to_cheapest <- function(strategy_costs) {
       } else {
         100 * .data$incremental_cost_vs_cheapest / cheapest_cost
       },
-      is_cheapest = .data$strategy == cheapest_strategy
+      is_cheapest = .data$expected_total_cost == cheapest_cost
     ) %>%
     dplyr::arrange(.data$expected_total_cost)
 
