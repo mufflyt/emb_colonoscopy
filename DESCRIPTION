@@ -16,7 +16,6 @@ Description: Decision-analytic cost modeling for comparing a standalone
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 Depends:
     R (>= 4.1.0)
 Imports:
@@ -47,3 +46,4 @@ Suggests:
     DiagrammeRsvg,
     rsvg
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.1

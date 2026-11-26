@@ -14,7 +14,7 @@ timestamped_path(directory, prefix, extension, timestamp = timestamp_string())
 \item{extension}{Character scalar extension including the leading dot,
 e.g. \code{".csv"}.}
 
-\item{timestamp}{Character scalar timestamp; defaults to
+\item{timestamp}{Character scalar timestamp; defaults to the value from
 \code{\link[=timestamp_string]{timestamp_string()}}.}
 }
 \value{

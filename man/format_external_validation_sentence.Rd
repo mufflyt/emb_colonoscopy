@@ -26,7 +26,7 @@ report that no p-value was estimated.}
 Character scalar, a complete sentence describing the comparison.
 }
 \description{
-Describes the direction (higher/lower/the same "in Colorado") and
-magnitude of \code{comparison_tbl$absolute_difference[[1]]} over the given
-year range, with an optional p-value.
+Describes the direction (higher/lower/the same) and magnitude of
+\code{comparison_tbl$absolute_difference[[1]]} over the given year range,
+with an optional p-value.
 }

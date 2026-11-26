@@ -7,7 +7,7 @@
 run_one_way_sensitivity(
   model_parameters,
   parameter_names = model_parameters$parameter[!base::is.na(model_parameters$low_value) &
-    !base::is.na(model_parameters$high_value)],
+    !base::is.na(model_parameters$high_value) & model_parameters$distribution != "fixed"],
   price_index_table = load_price_index_table(),
   target_metric_fn = metric_combined_vs_office_incremental,
   strategy_cost_fn = compute_strategy_costs
@@ -18,8 +18,8 @@ run_one_way_sensitivity(
 
 \item{parameter_names}{Character vector of parameter names to vary.
 Each must have non-missing \code{low_value}/\code{high_value} in
-\code{model_parameters}. Defaults to every non-fixed, non-provisional-only
-numeric parameter with bounds defined.}
+\code{model_parameters}. Defaults to every non-fixed parameter with bounds
+defined.}
 
 \item{price_index_table}{Tibble from \code{\link[=load_price_index_table]{load_price_index_table()}}.}
 

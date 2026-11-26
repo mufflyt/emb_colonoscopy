@@ -123,3 +123,48 @@ test_that("every parameter has a recognized evidence tier", {
     model_parameters$evidence_tier %in% c("A", "B", "C", "D", "structural")
   ))
 })
+
+test_that("validate_against_published_model handles a zero target_cost without NaN", {
+  # 100 * (modeled - 0) / 0 is Inf (or NaN when modeled is also 0), which
+  # used to leak into within_tolerance as NA. A real miss must report
+  # pct_difference = Inf and within_tolerance = FALSE -- never NA.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+
+  validation_tbl <- suppressMessages(
+    validate_against_published_model(
+      model_parameters, price_index_table,
+      targets = list(office_emb = 0)
+    )
+  )
+
+  expect_equal(validation_tbl$pct_difference, Inf)
+  expect_false(validation_tbl$within_tolerance)
+  expect_true(is.finite(validation_tbl$modeled_cost))
+})
+
+test_that("format_external_validation_sentence reports direction without a hard-coded geography", {
+  # Regression guard: this helper was copied from a Colorado project and
+  # hard-coded "higher/lower in Colorado". It must describe the sign of
+  # absolute_difference generically.
+  comparison_tbl <- tibble::tibble(absolute_difference = c(12.5))
+
+  positive_sentence <- format_external_validation_sentence(
+    comparison_tbl, start_year = 2010, end_year = 2026
+  )
+  negative_sentence <- format_external_validation_sentence(
+    tibble::tibble(absolute_difference = c(-12.5)),
+    start_year = 2010, end_year = 2026
+  )
+  zero_sentence <- format_external_validation_sentence(
+    tibble::tibble(absolute_difference = c(0)),
+    start_year = 2010, end_year = 2026
+  )
+
+  expect_true(grepl("higher", positive_sentence))
+  expect_true(grepl("lower", negative_sentence))
+  expect_true(grepl("the same", zero_sentence))
+  expect_false(grepl("Colorado", positive_sentence))
+  expect_false(grepl("Colorado", negative_sentence))
+  expect_false(grepl("Colorado", zero_sentence))
+})

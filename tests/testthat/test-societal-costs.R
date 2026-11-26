@@ -216,3 +216,24 @@ test_that("MUTATION GUARD: zeroing patient_time_opportunity_cost_per_visit colla
   expect_true(all(societal$societal_addon == 0))
   expect_equal(societal$societal_total_cost, societal$healthcare_sector_cost)
 })
+
+test_that("compute_strategy_societal_costs errors when strategy_costs is missing a strategy", {
+  # The encounter table is fixed at office_emb/combined_emb/dnc; a
+  # strategy_costs tibble missing one of them would otherwise left_join
+  # to NA and silently produce NA societal_total_cost.
+  model_parameters <- test_model_parameters()
+  price_index_table <- test_price_index_table()
+  all_items_price_index_table <- test_all_items_price_index_table()
+  reference_year <- get_parameter_value(model_parameters, "reference_dollar_year")
+
+  cost_result <- compute_strategy_costs(model_parameters, price_index_table)
+  incomplete_costs <- cost_result$strategy_costs %>%
+    dplyr::filter(.data$strategy != "dnc")
+
+  expect_error(
+    compute_strategy_societal_costs(
+      model_parameters, incomplete_costs, all_items_price_index_table, reference_year
+    ),
+    "no matching row in strategy_costs"
+  )
+})

@@ -84,6 +84,20 @@ test_that("build_pairwise_comparison_table returns NA percent difference rather 
   expect_true(all(is.finite(zero_denominator_rows$absolute_difference)))
 })
 
+test_that("build_pairwise_comparison_table errors on duplicate strategy names", {
+  # expand_grid + left_join would otherwise silently fan out duplicate
+  # rows; consistent with the uniqueness guard in
+  # compute_incremental_cost_effectiveness().
+  duplicated_strategies <- tibble::tibble(
+    strategy = c("office_emb", "office_emb", "dnc"),
+    expected_total_cost = c(100, 100, 300)
+  )
+  expect_error(
+    build_pairwise_comparison_table(duplicated_strategies),
+    "unique 'strategy' values"
+  )
+})
+
 test_that("pairwise absolute_difference is antisymmetric", {
   model_parameters <- test_model_parameters()
   price_index_table <- test_price_index_table()

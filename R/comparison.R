@@ -127,6 +127,10 @@ compare_combined_vs_office <- function(strategy_costs) {
 #'   the absolute and percentage cost difference.
 #' @export
 build_pairwise_comparison_table <- function(strategy_costs) {
+  if (base::anyDuplicated(strategy_costs$strategy)) {
+    base::stop("strategy_costs must have unique 'strategy' values.")
+  }
+
   strategy_pairs <- tidyr::expand_grid(
     strategy_a = strategy_costs$strategy,
     strategy_b = strategy_costs$strategy
